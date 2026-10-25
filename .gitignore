@@ -1,0 +1,19 @@
+# Python (bake/)
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.ruff_cache/
+.pytest_cache/
+.env
+
+# Node (web/)
+node_modules/
+web/.next/
+web/out/
+web/next-env.d.ts
+*.tsbuildinfo
+
+# Baked data: the committed fixture lives in web/public/data/; a real tape bake
+# goes to web/public/data-tape/ (or straight to R2) and is never committed.
+web/public/data-tape/

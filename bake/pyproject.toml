@@ -1,0 +1,36 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "argus-lightbox-bake"
+version = "0.1.0"
+description = "Bake an argus-lightbox gallery index (captions, explain data, EXIF, images) from the cortex tape or a synthetic fixture"
+requires-python = ">=3.11"
+license = "MIT"
+dependencies = [
+    "argus-lens>=0.7.0",
+    "Pillow>=10.0",
+]
+
+[project.optional-dependencies]
+# Reading the recorded pipeline run: lineage rows from Postgres, image bytes from MinIO/S3.
+tape = ["argus-cortex[postgres,s3]>=0.3.0"]
+dev = ["pytest>=8.0", "ruff==0.15.16"]
+
+[project.scripts]
+lightbox-bake = "lightbox_bake.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/lightbox_bake"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM"]
+ignore = ["E501"]

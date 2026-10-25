@@ -1,0 +1,1920 @@
+{
+ "version": "1.0",
+ "generated_at": "2026-10-25T08:41:45+00:00",
+ "source": "fixture",
+ "lens_version": "0.7.0",
+ "categories": [
+  "identity",
+  "wardrobe",
+  "pose_composition",
+  "setting",
+  "lighting",
+  "action"
+ ],
+ "photos": [
+  {
+   "id": "31cce6c8ddc9eaae",
+   "sha256": "31cce6c8ddc9eaae9e46121303f54d951cfeb4d904b936595de92bbe09c70eb1",
+   "image": "images/31cce6c8ddc9eaae.webp",
+   "thumb": "thumbs/31cce6c8ddc9eaae.webp",
+   "xmp": "xmp/31cce6c8ddc9eaae.xmp",
+   "width": 1067,
+   "height": 1600,
+   "color": "#efad84",
+   "caption": {
+    "final_caption": "long hair, brown hair, smile, standing, looking at viewer, red dress, outdoors",
+    "caption_variants": {
+     "identity": "long hair, brown hair, smile, standing, looking at viewer, red dress, outdoors",
+     "wardrobe": "red dress, long hair, brown hair, smile, standing, looking at viewer, outdoors",
+     "pose_composition": "standing, looking at viewer, long hair, brown hair, smile, red dress, outdoors",
+     "setting": "outdoors, beach, ocean, sky, cloud, long hair, brown hair",
+     "lighting": "sunset, long hair, brown hair, smile, standing, looking at viewer",
+     "action": "long hair, brown hair, smile, standing, looking at viewer, red dress, outdoors",
+     "training": "standing, looking at viewer, smile, red dress, sunset, ocean, outdoors",
+     "training_prose": "A smiling woman wearing a red dress, standing on a sandy beach at sunset with waves.",
+     "zeroshot": "long hair, brown hair, smile, 1girl, solo, looking at viewer, standing, red dress, sunset, outdoors"
+    },
+    "selected_category": "identity",
+    "raw_tags": "1girl, solo, long hair, brown hair, red dress, standing, outdoors, beach, sunset, smile, looking at viewer, ocean, sky, cloud",
+    "raw_prose": "A photograph of a smiling woman with long brown hair wearing a red dress, standing on a sandy beach at sunset with waves behind her.",
+    "backend_name": "hybrid",
+    "profile": {
+     "target_style": "photo",
+     "target_category": "identity",
+     "target_backend": "sdxl"
+    },
+    "version": 1
+   },
+   "explain": {
+    "buckets": {
+     "tags": {
+      "identity": [
+       "long hair",
+       "brown hair",
+       "smile"
+      ],
+      "wardrobe": [
+       "red dress"
+      ],
+      "pose_composition": [
+       "standing",
+       "looking at viewer"
+      ],
+      "setting": [
+       "outdoors",
+       "beach",
+       "ocean",
+       "sky",
+       "cloud"
+      ],
+      "lighting": [
+       "sunset"
+      ],
+      "action": [],
+      "unclassified": []
+     },
+     "prose": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": []
+     }
+    },
+    "compaction_notes": [
+     "Normalised prose (opener).",
+     "Stripped rating/meta tags that have no training value.",
+     "Removed prose clauses that duplicated tag content.",
+     "Trimmed lower-priority fragments to keep captions compact.",
+     "Suppressed identity traits for training variant (learned visually).",
+     "Repaired disjointed fragments in assembled captions."
+    ],
+    "subjects": {
+     "count": 1,
+     "multiple": false,
+     "tag_count": 1,
+     "prose_count": 1,
+     "agree": true,
+     "evidence": [
+      "1girl",
+      "solo",
+      "a smiling woman"
+     ]
+    },
+    "drift": false
+   },
+   "compare": {
+    "tags": {
+     "final_caption": "long hair, brown hair, smile, standing, looking at viewer, red dress, outdoors",
+     "caption_variants": {
+      "identity": "long hair, brown hair, smile, standing, looking at viewer, red dress, outdoors",
+      "wardrobe": "red dress, long hair, brown hair, smile, standing, looking at viewer, outdoors",
+      "pose_composition": "standing, looking at viewer, long hair, brown hair, smile, red dress, outdoors",
+      "setting": "outdoors, beach, ocean, sky, cloud, long hair, brown hair",
+      "lighting": "sunset, long hair, brown hair, smile, standing, looking at viewer",
+      "action": "long hair, brown hair, smile, standing, looking at viewer, red dress, outdoors",
+      "training": "standing, looking at viewer, smile, red dress, sunset, outdoors, beach, ocean",
+      "training_prose": "standing, looking at viewer, smile, red dress, sunset, outdoors, beach, ocean",
+      "zeroshot": "long hair, brown hair, smile, 1girl, solo, looking at viewer, standing, red dress, sunset, outdoors"
+     }
+    },
+    "prose": {
+     "final_caption": "a smiling woman with long brown hair wearing a red dress, standing on a sandy beach at sunset with waves",
+     "caption_variants": {
+      "identity": "a smiling woman with long brown hair wearing a red dress, standing on a sandy beach at sunset with waves",
+      "wardrobe": "a smiling woman with long brown hair wearing a red dress, standing on a sandy beach at sunset with waves",
+      "pose_composition": "a smiling woman with long brown hair wearing a red dress, standing on a sandy beach at sunset with waves",
+      "setting": "a smiling woman with long brown hair wearing a red dress, standing on a sandy beach at sunset with waves",
+      "lighting": "a smiling woman with long brown hair wearing a red dress, standing on a sandy beach at sunset with waves",
+      "action": "a smiling woman with long brown hair wearing a red dress, standing on a sandy beach at sunset with waves",
+      "training": "",
+      "training_prose": "A smiling woman wearing a red dress, standing on a sandy beach at sunset with waves.",
+      "zeroshot": "a smiling woman with long brown hair wearing a red dress, standing on a sandy beach at sunset with waves"
+     }
+    },
+    "hybrid": {
+     "final_caption": "long hair, brown hair, smile, standing, looking at viewer, red dress, outdoors",
+     "caption_variants": {
+      "identity": "long hair, brown hair, smile, standing, looking at viewer, red dress, outdoors",
+      "wardrobe": "red dress, long hair, brown hair, smile, standing, looking at viewer, outdoors",
+      "pose_composition": "standing, looking at viewer, long hair, brown hair, smile, red dress, outdoors",
+      "setting": "outdoors, beach, ocean, sky, cloud, long hair, brown hair",
+      "lighting": "sunset, long hair, brown hair, smile, standing, looking at viewer",
+      "action": "long hair, brown hair, smile, standing, looking at viewer, red dress, outdoors",
+      "training": "standing, smile, looking at viewer, red dress, sunset, ocean, outdoors, beach",
+      "training_prose": "A smiling woman wearing a red dress, standing on a sandy beach at sunset with waves.",
+      "zeroshot": "long hair, brown hair, smile, 1girl, solo, looking at viewer, standing, red dress, sunset, outdoors"
+     }
+    }
+   },
+   "facets": {
+    "identity": [
+     "long hair",
+     "brown hair",
+     "smile"
+    ],
+    "wardrobe": [
+     "red dress"
+    ],
+    "pose_composition": [
+     "standing",
+     "looking at viewer"
+    ],
+    "setting": [
+     "outdoors",
+     "beach",
+     "ocean",
+     "sky",
+     "cloud"
+    ],
+    "lighting": [
+     "sunset"
+    ],
+    "people": [
+     "one person"
+    ]
+   },
+   "exif": {
+    "camera": "FUJIFILM X-T5",
+    "focal_length_mm": 33.0,
+    "aperture": 2.0,
+    "exposure_s": 0.004,
+    "shutter": "1/250s",
+    "iso": 400,
+    "taken_at": "2025-06-14T19:42:10",
+    "software": "argus-lightbox fixture"
+   },
+   "provenance": {
+    "source": "synthetic fixture",
+    "license": "CC0-1.0",
+    "title": "beach sunset"
+   }
+  },
+  {
+   "id": "92bb69cc780b59ef",
+   "sha256": "92bb69cc780b59ef95068caeee6ee63757ad8c4a7400537ed6fdf45c3f182739",
+   "image": "images/92bb69cc780b59ef.webp",
+   "thumb": "thumbs/92bb69cc780b59ef.webp",
+   "xmp": "xmp/92bb69cc780b59ef.xmp",
+   "width": 1600,
+   "height": 1067,
+   "color": "#211c3d",
+   "caption": {
+    "final_caption": "short hair, black hair, wet ground, walking, leather jacket, city",
+    "caption_variants": {
+     "identity": "short hair, black hair, wet ground, walking, leather jacket, city",
+     "wardrobe": "leather jacket, jeans, short hair, black hair, wet ground, walking, city",
+     "pose_composition": "short hair, black hair, wet ground, walking, leather jacket, city",
+     "setting": "city, street, rain, short hair, black hair, wet ground, walking",
+     "lighting": "night, neon lights, short hair, black hair, wet ground, walking",
+     "action": "walking, short hair, black hair, wet ground, leather jacket, city",
+     "training": "walking, jeans, leather jacket, night, neon lights, street, wet ground",
+     "training_prose": "A man in a black leather jacket walks down a rain-soaked city street at night, lit by pink and blue neon signs.",
+     "zeroshot": "short hair, black hair, wet ground, 1boy, solo, walking, leather jacket, jeans, neon lights, night"
+    },
+    "selected_category": "identity",
+    "raw_tags": "1boy, solo, short hair, black hair, leather jacket, jeans, walking, night, city, street, neon lights, rain, wet ground",
+    "raw_prose": "A man in a black leather jacket walks down a rain-soaked city street at night, lit by pink and blue neon signs.",
+    "backend_name": "hybrid",
+    "profile": {
+     "target_style": "photo",
+     "target_category": "identity",
+     "target_backend": "sdxl"
+    },
+    "version": 1
+   },
+   "explain": {
+    "buckets": {
+     "tags": {
+      "identity": [
+       "short hair",
+       "black hair"
+      ],
+      "wardrobe": [
+       "leather jacket",
+       "jeans"
+      ],
+      "pose_composition": [],
+      "setting": [
+       "city",
+       "street",
+       "rain"
+      ],
+      "lighting": [
+       "night",
+       "neon lights"
+      ],
+      "action": [
+       "walking"
+      ],
+      "unclassified": [
+       "wet ground"
+      ]
+     },
+     "prose": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": []
+     }
+    },
+    "compaction_notes": [
+     "Stripped rating/meta tags that have no training value.",
+     "Removed prose clauses that duplicated tag content.",
+     "Trimmed lower-priority fragments to keep captions compact.",
+     "Suppressed identity traits for training variant (learned visually)."
+    ],
+    "subjects": {
+     "count": 1,
+     "multiple": false,
+     "tag_count": 1,
+     "prose_count": 1,
+     "agree": true,
+     "evidence": [
+      "1boy",
+      "solo",
+      "a man"
+     ]
+    },
+    "drift": false
+   },
+   "compare": {
+    "tags": {
+     "final_caption": "short hair, black hair, wet ground, walking, leather jacket, city",
+     "caption_variants": {
+      "identity": "short hair, black hair, wet ground, walking, leather jacket, city",
+      "wardrobe": "leather jacket, jeans, short hair, black hair, wet ground, walking, city",
+      "pose_composition": "short hair, black hair, wet ground, walking, leather jacket, city",
+      "setting": "city, street, rain, short hair, black hair, wet ground, walking",
+      "lighting": "night, neon lights, short hair, black hair, wet ground, walking",
+      "action": "walking, short hair, black hair, wet ground, leather jacket, city",
+      "training": "walking, leather jacket, night, neon lights, city, rain, wet ground",
+      "training_prose": "walking, leather jacket, night, neon lights, city, rain, wet ground",
+      "zeroshot": "short hair, black hair, wet ground, 1boy, solo, walking, leather jacket, jeans, neon lights, night"
+     }
+    },
+    "prose": {
+     "final_caption": "a man in a black leather jacket walks down a rain-soaked city street at night, lit by pink and blue neon signs",
+     "caption_variants": {
+      "identity": "a man in a black leather jacket walks down a rain-soaked city street at night, lit by pink and blue neon signs",
+      "wardrobe": "a man in a black leather jacket walks down a rain-soaked city street at night, lit by pink and blue neon signs",
+      "pose_composition": "a man in a black leather jacket walks down a rain-soaked city street at night, lit by pink and blue neon signs",
+      "setting": "a man in a black leather jacket walks down a rain-soaked city street at night, lit by pink and blue neon signs",
+      "lighting": "a man in a black leather jacket walks down a rain-soaked city street at night, lit by pink and blue neon signs",
+      "action": "a man in a black leather jacket walks down a rain-soaked city street at night, lit by pink and blue neon signs",
+      "training": "leather_jacket, blue_neon, city_street",
+      "training_prose": "A man in a black leather jacket walks down a rain-soaked city street at night, lit by pink and blue neon signs.",
+      "zeroshot": "a man in a black leather jacket walks down a rain-soaked city street at night, lit by pink and blue neon signs"
+     }
+    },
+    "hybrid": {
+     "final_caption": "short hair, black hair, wet ground, walking, leather jacket, city",
+     "caption_variants": {
+      "identity": "short hair, black hair, wet ground, walking, leather jacket, city",
+      "wardrobe": "leather jacket, jeans, short hair, black hair, wet ground, walking, city",
+      "pose_composition": "short hair, black hair, wet ground, walking, leather jacket, city",
+      "setting": "city, street, rain, short hair, black hair, wet ground, walking",
+      "lighting": "night, neon lights, short hair, black hair, wet ground, walking",
+      "action": "walking, short hair, black hair, wet ground, leather jacket, city",
+      "training": "walking, leather jacket, jeans, night, neon lights, rain, city, wet ground",
+      "training_prose": "A man in a black leather jacket walks down a rain-soaked city street at night, lit by pink and blue neon signs.",
+      "zeroshot": "short hair, black hair, wet ground, 1boy, solo, walking, leather jacket, jeans, neon lights, night"
+     }
+    }
+   },
+   "facets": {
+    "identity": [
+     "short hair",
+     "black hair"
+    ],
+    "wardrobe": [
+     "leather jacket",
+     "jeans"
+    ],
+    "setting": [
+     "city",
+     "street",
+     "rain"
+    ],
+    "lighting": [
+     "night",
+     "neon lights"
+    ],
+    "action": [
+     "walking"
+    ],
+    "people": [
+     "one person"
+    ]
+   },
+   "exif": {
+    "camera": "SONY ILCE-7M4",
+    "focal_length_mm": 35.0,
+    "aperture": 1.4,
+    "exposure_s": 0.016666666666666666,
+    "shutter": "1/60s",
+    "iso": 3200,
+    "taken_at": "2025-11-02T22:15:31",
+    "software": "argus-lightbox fixture"
+   },
+   "provenance": {
+    "source": "synthetic fixture",
+    "license": "CC0-1.0",
+    "title": "neon street"
+   }
+  },
+  {
+   "id": "9006cc54b97d60d1",
+   "sha256": "9006cc54b97d60d1f6ec8f4065e067386b2ed569fff89230871369ed4f2d6dca",
+   "image": "images/9006cc54b97d60d1.webp",
+   "thumb": "thumbs/9006cc54b97d60d1.webp",
+   "xmp": "xmp/9006cc54b97d60d1.xmp",
+   "width": 1067,
+   "height": 1600,
+   "color": "#a4b49f",
+   "caption": {
+    "final_caption": "ponytail, blonde hair, hiking, fog, morning, soft lighting, walking, backpack",
+    "caption_variants": {
+     "identity": "ponytail, blonde hair, hiking, fog, morning, soft lighting, walking, backpack",
+     "wardrobe": "backpack, jacket, boots, ponytail, blonde hair, hiking, walking, forest",
+     "pose_composition": "ponytail, blonde hair, hiking, walking, backpack, forest",
+     "setting": "forest, tree, ponytail, blonde hair, hiking, walking, backpack",
+     "lighting": "ponytail, blonde hair, hiking, walking, backpack, forest",
+     "action": "walking, ponytail, blonde hair, hiking, backpack, forest",
+     "training": "walking, backpack, tree, forest, hiking, fog, morning, soft lighting",
+     "training_prose": "A woman hikes along a misty forest trail in the early morning, wearing a green jacket and a backpack.",
+     "zeroshot": "blonde hair, soft lighting, ponytail, hiking, fog, morning, 1girl, solo, walking, a woman with a blonde ponytail hikes along a misty forest trail in the early morning, wearing a green jacket and a backpack"
+    },
+    "selected_category": "identity",
+    "raw_tags": "1girl, solo, ponytail, blonde hair, hiking, backpack, jacket, boots, walking, forest, tree, fog, morning, soft lighting",
+    "raw_prose": "A woman with a blonde ponytail hikes along a misty forest trail in the early morning, wearing a green jacket and a backpack.",
+    "backend_name": "hybrid",
+    "profile": {
+     "target_style": "photo",
+     "target_category": "identity",
+     "target_backend": "sdxl"
+    },
+    "version": 1
+   },
+   "explain": {
+    "buckets": {
+     "tags": {
+      "identity": [
+       "ponytail",
+       "blonde hair"
+      ],
+      "wardrobe": [
+       "backpack",
+       "jacket",
+       "boots"
+      ],
+      "pose_composition": [],
+      "setting": [
+       "forest",
+       "tree"
+      ],
+      "lighting": [],
+      "action": [
+       "walking"
+      ],
+      "unclassified": [
+       "hiking",
+       "fog",
+       "morning",
+       "soft lighting"
+      ]
+     },
+     "prose": {
+      "identity": [],
+      "wardrobe": [
+       "a woman with a blonde ponytail hikes along a misty forest trail in the early morning, wearing a green jacket and a backpack"
+      ],
+      "pose_composition": [],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": []
+     }
+    },
+    "compaction_notes": [
+     "Stripped rating/meta tags that have no training value.",
+     "Trimmed lower-priority fragments to keep captions compact.",
+     "Suppressed identity traits for training variant (learned visually)."
+    ],
+    "subjects": {
+     "count": 1,
+     "multiple": false,
+     "tag_count": 1,
+     "prose_count": 1,
+     "agree": true,
+     "evidence": [
+      "1girl",
+      "solo",
+      "a woman"
+     ]
+    },
+    "drift": false
+   },
+   "compare": {
+    "tags": {
+     "final_caption": "ponytail, blonde hair, hiking, fog, morning, soft lighting, walking, backpack",
+     "caption_variants": {
+      "identity": "ponytail, blonde hair, hiking, fog, morning, soft lighting, walking, backpack",
+      "wardrobe": "backpack, jacket, boots, ponytail, blonde hair, hiking, walking, forest",
+      "pose_composition": "ponytail, blonde hair, hiking, walking, backpack, forest",
+      "setting": "forest, tree, ponytail, blonde hair, hiking, walking, backpack",
+      "lighting": "ponytail, blonde hair, hiking, walking, backpack, forest",
+      "action": "walking, ponytail, blonde hair, hiking, backpack, forest",
+      "training": "walking, backpack, forest, tree, hiking, fog, morning, soft lighting",
+      "training_prose": "walking, backpack, forest, tree, hiking, fog, morning, soft lighting",
+      "zeroshot": "blonde hair, soft lighting, ponytail, hiking, fog, morning, 1girl, solo, walking, backpack"
+     }
+    },
+    "prose": {
+     "final_caption": "a woman with a blonde ponytail hikes along a misty forest trail in the early morning, wearing a green jacket and a backpack",
+     "caption_variants": {
+      "identity": "a woman with a blonde ponytail hikes along a misty forest trail in the early morning, wearing a green jacket and a backpack",
+      "wardrobe": "a woman with a blonde ponytail hikes along a misty forest trail in the early morning, wearing a green jacket and a backpack",
+      "pose_composition": "a woman with a blonde ponytail hikes along a misty forest trail in the early morning, wearing a green jacket and a backpack",
+      "setting": "a woman with a blonde ponytail hikes along a misty forest trail in the early morning, wearing a green jacket and a backpack",
+      "lighting": "a woman with a blonde ponytail hikes along a misty forest trail in the early morning, wearing a green jacket and a backpack",
+      "action": "a woman with a blonde ponytail hikes along a misty forest trail in the early morning, wearing a green jacket and a backpack",
+      "training": "green_jacket",
+      "training_prose": "A woman hikes along a misty forest trail in the early morning, wearing a green jacket and a backpack.",
+      "zeroshot": "a woman with a blonde ponytail hikes along a misty forest trail in the early morning, wearing a green jacket and a backpack"
+     }
+    },
+    "hybrid": {
+     "final_caption": "ponytail, blonde hair, hiking, fog, morning, soft lighting, walking, backpack",
+     "caption_variants": {
+      "identity": "ponytail, blonde hair, hiking, fog, morning, soft lighting, walking, backpack",
+      "wardrobe": "backpack, jacket, boots, ponytail, blonde hair, hiking, walking, forest",
+      "pose_composition": "ponytail, blonde hair, hiking, walking, backpack, forest",
+      "setting": "forest, tree, ponytail, blonde hair, hiking, walking, backpack",
+      "lighting": "ponytail, blonde hair, hiking, walking, backpack, forest",
+      "action": "walking, ponytail, blonde hair, hiking, backpack, forest",
+      "training": "walking, backpack, forest, hiking, fog, morning, soft lighting",
+      "training_prose": "A woman hikes along a misty forest trail in the early morning, wearing a green jacket and a backpack.",
+      "zeroshot": "blonde hair, soft lighting, ponytail, hiking, fog, morning, 1girl, solo, walking, a woman with a blonde ponytail hikes along a misty forest trail in the early morning, wearing a green jacket and a backpack"
+     }
+    }
+   },
+   "facets": {
+    "identity": [
+     "ponytail",
+     "blonde hair"
+    ],
+    "wardrobe": [
+     "backpack",
+     "jacket",
+     "boots"
+    ],
+    "setting": [
+     "forest",
+     "tree"
+    ],
+    "action": [
+     "walking"
+    ],
+    "people": [
+     "one person"
+    ]
+   },
+   "exif": {
+    "camera": "Canon EOS R6",
+    "focal_length_mm": 50.0,
+    "aperture": 2.8,
+    "exposure_s": 0.003125,
+    "shutter": "1/320s",
+    "iso": 800,
+    "taken_at": "2025-09-21T07:05:44",
+    "software": "argus-lightbox fixture"
+   },
+   "provenance": {
+    "source": "synthetic fixture",
+    "license": "CC0-1.0",
+    "title": "forest hike"
+   }
+  },
+  {
+   "id": "9032fae3a173aa83",
+   "sha256": "9032fae3a173aa83eb633c8333bddddf7680a8c6cf2076e0689d17dd7b156e81",
+   "image": "images/9032fae3a173aa83.webp",
+   "thumb": "thumbs/9032fae3a173aa83.webp",
+   "xmp": "xmp/9032fae3a173aa83.xmp",
+   "width": 1067,
+   "height": 1600,
+   "color": "#3e434e",
+   "caption": {
+    "final_caption": "beard, short hair, black turtleneck, rim lighting, sitting, upper body, simple background",
+    "caption_variants": {
+     "identity": "beard, short hair, black turtleneck, rim lighting, sitting, upper body, simple background",
+     "wardrobe": "beard, short hair, black turtleneck, sitting, upper body, simple background",
+     "pose_composition": "sitting, upper body, looking at viewer, beard, short hair, black turtleneck, simple background",
+     "setting": "simple background, grey background, beard, short hair, black turtleneck, sitting, upper body",
+     "lighting": "beard, short hair, black turtleneck, sitting, upper body, simple background",
+     "action": "beard, short hair, black turtleneck, sitting, upper body, simple background",
+     "training": "upper body, sitting, looking at viewer, simple background, grey background, black turtleneck, rim lighting",
+     "training_prose": "A studio portrait of a bearded man in a black turtleneck sitting against a plain grey backdrop, rim light outlining his shoulders.",
+     "zeroshot": "short hair, black turtleneck, rim lighting, beard, 1boy, solo, a studio portrait of a bearded man in a black turtleneck sitting against a plain grey backdrop, rim light outlining his shoulders, looking at viewer, upper body, sitting"
+    },
+    "selected_category": "identity",
+    "raw_tags": "1boy, solo, beard, short hair, black turtleneck, sitting, simple background, grey background, rim lighting, upper body, looking at viewer",
+    "raw_prose": "A studio portrait of a bearded man in a black turtleneck sitting against a plain grey backdrop, rim light outlining his shoulders.",
+    "backend_name": "hybrid",
+    "profile": {
+     "target_style": "photo",
+     "target_category": "identity",
+     "target_backend": "sdxl"
+    },
+    "version": 1
+   },
+   "explain": {
+    "buckets": {
+     "tags": {
+      "identity": [
+       "beard",
+       "short hair"
+      ],
+      "wardrobe": [],
+      "pose_composition": [
+       "sitting",
+       "upper body",
+       "looking at viewer"
+      ],
+      "setting": [
+       "simple background",
+       "grey background"
+      ],
+      "lighting": [],
+      "action": [],
+      "unclassified": [
+       "black turtleneck",
+       "rim lighting"
+      ]
+     },
+     "prose": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [
+       "a studio portrait of a bearded man in a black turtleneck sitting against a plain grey backdrop, rim light outlining his shoulders"
+      ],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": []
+     }
+    },
+    "compaction_notes": [
+     "Stripped rating/meta tags that have no training value.",
+     "Trimmed lower-priority fragments to keep captions compact.",
+     "Suppressed identity traits for training variant (learned visually)."
+    ],
+    "subjects": {
+     "count": 1,
+     "multiple": false,
+     "tag_count": 1,
+     "prose_count": 1,
+     "agree": true,
+     "evidence": [
+      "1boy",
+      "solo",
+      "a bearded man"
+     ]
+    },
+    "drift": false
+   },
+   "compare": {
+    "tags": {
+     "final_caption": "beard, short hair, black turtleneck, rim lighting, sitting, upper body, simple background",
+     "caption_variants": {
+      "identity": "beard, short hair, black turtleneck, rim lighting, sitting, upper body, simple background",
+      "wardrobe": "beard, short hair, black turtleneck, sitting, upper body, simple background",
+      "pose_composition": "sitting, upper body, looking at viewer, beard, short hair, black turtleneck, simple background",
+      "setting": "simple background, grey background, beard, short hair, black turtleneck, sitting, upper body",
+      "lighting": "beard, short hair, black turtleneck, sitting, upper body, simple background",
+      "action": "beard, short hair, black turtleneck, sitting, upper body, simple background",
+      "training": "upper body, sitting, looking at viewer, simple background, grey background, black turtleneck, rim lighting",
+      "training_prose": "upper body, sitting, looking at viewer, simple background, grey background, black turtleneck, rim lighting",
+      "zeroshot": "short hair, black turtleneck, rim lighting, beard, 1boy, solo, looking at viewer, upper body, sitting, simple background"
+     }
+    },
+    "prose": {
+     "final_caption": "a studio portrait of a bearded man in a black turtleneck sitting against a plain grey backdrop, rim light outlining his shoulders",
+     "caption_variants": {
+      "identity": "a studio portrait of a bearded man in a black turtleneck sitting against a plain grey backdrop, rim light outlining his shoulders",
+      "wardrobe": "a studio portrait of a bearded man in a black turtleneck sitting against a plain grey backdrop, rim light outlining his shoulders",
+      "pose_composition": "a studio portrait of a bearded man in a black turtleneck sitting against a plain grey backdrop, rim light outlining his shoulders",
+      "setting": "a studio portrait of a bearded man in a black turtleneck sitting against a plain grey backdrop, rim light outlining his shoulders",
+      "lighting": "a studio portrait of a bearded man in a black turtleneck sitting against a plain grey backdrop, rim light outlining his shoulders",
+      "action": "a studio portrait of a bearded man in a black turtleneck sitting against a plain grey backdrop, rim light outlining his shoulders",
+      "training": "rim_light",
+      "training_prose": "A studio portrait of a bearded man in a black turtleneck sitting against a plain grey backdrop, rim light outlining his shoulders.",
+      "zeroshot": "a studio portrait of a bearded man in a black turtleneck sitting against a plain grey backdrop, rim light outlining his shoulders"
+     }
+    },
+    "hybrid": {
+     "final_caption": "beard, short hair, black turtleneck, rim lighting, sitting, upper body, simple background",
+     "caption_variants": {
+      "identity": "beard, short hair, black turtleneck, rim lighting, sitting, upper body, simple background",
+      "wardrobe": "beard, short hair, black turtleneck, sitting, upper body, simple background",
+      "pose_composition": "sitting, upper body, looking at viewer, beard, short hair, black turtleneck, simple background",
+      "setting": "simple background, grey background, beard, short hair, black turtleneck, sitting, upper body",
+      "lighting": "beard, short hair, black turtleneck, sitting, upper body, simple background",
+      "action": "beard, short hair, black turtleneck, sitting, upper body, simple background",
+      "training": "upper body, sitting, looking at viewer, black turtleneck, rim lighting",
+      "training_prose": "A studio portrait of a bearded man in a black turtleneck sitting against a plain grey backdrop, rim light outlining his shoulders.",
+      "zeroshot": "short hair, black turtleneck, rim lighting, beard, 1boy, solo, a studio portrait of a bearded man in a black turtleneck sitting against a plain grey backdrop, rim light outlining his shoulders, looking at viewer, upper body, sitting"
+     }
+    }
+   },
+   "facets": {
+    "identity": [
+     "beard",
+     "short hair"
+    ],
+    "pose_composition": [
+     "sitting",
+     "upper body",
+     "looking at viewer"
+    ],
+    "setting": [
+     "simple background",
+     "grey background"
+    ],
+    "people": [
+     "one person"
+    ]
+   },
+   "exif": {
+    "camera": "NIKON Z 6_2",
+    "focal_length_mm": 85.0,
+    "aperture": 1.8,
+    "exposure_s": 0.005,
+    "shutter": "1/200s",
+    "iso": 100,
+    "taken_at": "2025-03-08T14:30:00",
+    "software": "argus-lightbox fixture"
+   },
+   "provenance": {
+    "source": "synthetic fixture",
+    "license": "CC0-1.0",
+    "title": "studio portrait"
+   }
+  },
+  {
+   "id": "46cdef93b84d44e8",
+   "sha256": "46cdef93b84d44e8e3bbcaaa0ededdbda5141db16c735996489959bf4c0d704c",
+   "image": "images/46cdef93b84d44e8.webp",
+   "thumb": "thumbs/46cdef93b84d44e8.webp",
+   "xmp": "xmp/46cdef93b84d44e8.xmp",
+   "width": 1600,
+   "height": 1067,
+   "color": "#ccb9a3",
+   "caption": {
+    "final_caption": "coffee cup, smile, daylight, sitting, talking, sweater, table",
+    "caption_variants": {
+     "identity": "coffee cup, smile, daylight, sitting, talking, sweater, table",
+     "wardrobe": "sweater, coffee cup, smile, daylight, sitting, talking, table",
+     "pose_composition": "sitting, coffee cup, smile, daylight, talking, sweater, table",
+     "setting": "table, cafe, indoors, window, coffee cup, smile, daylight",
+     "lighting": "coffee cup, smile, daylight, sitting, talking, sweater",
+     "action": "talking, coffee cup, smile, daylight, sitting, sweater, table",
+     "training": "sitting, smile, talking, sweater, cafe, indoors, coffee cup, daylight",
+     "training_prose": "Two women chat across a small table in a sunlit cafe, coffee cups between them, soft daylight falling through the window.",
+     "zeroshot": "coffee cup, multiple girls, smile, daylight, 2girls, sitting, talking, sweater, two women chat across a small table in a sunlit cafe, coffee cups between them, soft daylight falling through the window, table"
+    },
+    "selected_category": "identity",
+    "raw_tags": "2girls, multiple girls, sitting, table, cafe, indoors, coffee cup, window, talking, smile, sweater, daylight",
+    "raw_prose": "Two women chat across a small table in a sunlit cafe, coffee cups between them, soft daylight falling through the window.",
+    "backend_name": "hybrid",
+    "profile": {
+     "target_style": "photo",
+     "target_category": "identity",
+     "target_backend": "sdxl"
+    },
+    "version": 1
+   },
+   "explain": {
+    "buckets": {
+     "tags": {
+      "identity": [
+       "smile"
+      ],
+      "wardrobe": [
+       "sweater"
+      ],
+      "pose_composition": [
+       "sitting"
+      ],
+      "setting": [
+       "table",
+       "cafe",
+       "indoors",
+       "window"
+      ],
+      "lighting": [],
+      "action": [
+       "talking"
+      ],
+      "unclassified": [
+       "coffee cup",
+       "daylight"
+      ]
+     },
+     "prose": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [
+       "two women chat across a small table in a sunlit cafe, coffee cups between them, soft daylight falling through the window"
+      ],
+      "lighting": [],
+      "action": [],
+      "unclassified": []
+     }
+    },
+    "compaction_notes": [
+     "Trimmed lower-priority fragments to keep captions compact."
+    ],
+    "subjects": {
+     "count": 2,
+     "multiple": true,
+     "tag_count": 2,
+     "prose_count": 2,
+     "agree": true,
+     "evidence": [
+      "2girls",
+      "multiple_girls",
+      "two women"
+     ]
+    },
+    "drift": false
+   },
+   "compare": {
+    "tags": {
+     "final_caption": "coffee cup, smile, daylight, sitting, talking, sweater, table",
+     "caption_variants": {
+      "identity": "coffee cup, smile, daylight, sitting, talking, sweater, table",
+      "wardrobe": "sweater, coffee cup, smile, daylight, sitting, talking, table",
+      "pose_composition": "sitting, coffee cup, smile, daylight, talking, sweater, table",
+      "setting": "table, cafe, indoors, window, coffee cup, smile, daylight",
+      "lighting": "coffee cup, smile, daylight, sitting, talking, sweater",
+      "action": "talking, coffee cup, smile, daylight, sitting, sweater, table",
+      "training": "sitting, smile, talking, sweater, table, indoors, cafe, coffee cup",
+      "training_prose": "sitting, smile, talking, sweater, table, indoors, cafe, coffee cup",
+      "zeroshot": "coffee cup, multiple girls, smile, daylight, 2girls, sitting, talking, sweater, table, cafe"
+     }
+    },
+    "prose": {
+     "final_caption": "two women chat across a small table in a sunlit cafe, coffee cups between them, soft daylight falling through the window",
+     "caption_variants": {
+      "identity": "two women chat across a small table in a sunlit cafe, coffee cups between them, soft daylight falling through the window",
+      "wardrobe": "two women chat across a small table in a sunlit cafe, coffee cups between them, soft daylight falling through the window",
+      "pose_composition": "two women chat across a small table in a sunlit cafe, coffee cups between them, soft daylight falling through the window",
+      "setting": "two women chat across a small table in a sunlit cafe, coffee cups between them, soft daylight falling through the window",
+      "lighting": "two women chat across a small table in a sunlit cafe, coffee cups between them, soft daylight falling through the window",
+      "action": "two women chat across a small table in a sunlit cafe, coffee cups between them, soft daylight falling through the window",
+      "training": "small_table, window",
+      "training_prose": "Two women chat across a small table in a sunlit cafe, coffee cups between them, soft daylight falling through the window.",
+      "zeroshot": "two women chat across a small table in a sunlit cafe, coffee cups between them, soft daylight falling through the window"
+     }
+    },
+    "hybrid": {
+     "final_caption": "coffee cup, smile, daylight, sitting, talking, sweater, table",
+     "caption_variants": {
+      "identity": "coffee cup, smile, daylight, sitting, talking, sweater, table",
+      "wardrobe": "sweater, coffee cup, smile, daylight, sitting, talking, table",
+      "pose_composition": "sitting, coffee cup, smile, daylight, talking, sweater, table",
+      "setting": "table, cafe, indoors, window, coffee cup, smile, daylight",
+      "lighting": "coffee cup, smile, daylight, sitting, talking, sweater",
+      "action": "talking, coffee cup, smile, daylight, sitting, sweater, table",
+      "training": "sitting, smile, table, cafe, indoors, coffee cup, daylight",
+      "training_prose": "Two women chat across a small table in a sunlit cafe, coffee cups between them, soft daylight falling through the window.",
+      "zeroshot": "coffee cup, multiple girls, smile, daylight, 2girls, sitting, talking, sweater, two women chat across a small table in a sunlit cafe, coffee cups between them, soft daylight falling through the window, table"
+     }
+    }
+   },
+   "facets": {
+    "identity": [
+     "smile"
+    ],
+    "wardrobe": [
+     "sweater"
+    ],
+    "pose_composition": [
+     "sitting"
+    ],
+    "setting": [
+     "table",
+     "cafe",
+     "indoors",
+     "window"
+    ],
+    "action": [
+     "talking"
+    ],
+    "people": [
+     "group"
+    ]
+   },
+   "exif": {
+    "camera": "FUJIFILM X100VI",
+    "focal_length_mm": 23.0,
+    "aperture": 2.0,
+    "exposure_s": 0.008,
+    "shutter": "1/125s",
+    "iso": 640,
+    "taken_at": "2025-10-12T10:48:02",
+    "software": "argus-lightbox fixture"
+   },
+   "provenance": {
+    "source": "synthetic fixture",
+    "license": "CC0-1.0",
+    "title": "cafe conversation"
+   }
+  },
+  {
+   "id": "80eb5beb31937523",
+   "sha256": "80eb5beb31937523483539c813e5f1aa7f316306fb7314a90a6e95182d353c8a",
+   "image": "images/80eb5beb31937523.webp",
+   "thumb": "thumbs/80eb5beb31937523.webp",
+   "xmp": "xmp/80eb5beb31937523.xmp",
+   "width": 1600,
+   "height": 1067,
+   "color": "#baa479",
+   "caption": {
+    "final_caption": "scenery, reflection, water, mountain",
+    "caption_variants": {
+     "identity": "scenery, reflection, water, mountain",
+     "wardrobe": "scenery, reflection, water, mountain",
+     "pose_composition": "scenery, reflection, water, mountain",
+     "setting": "mountain, lake, outdoors, sky, cloud, tree, scenery",
+     "lighting": "golden hour, scenery, reflection, water, mountain",
+     "action": "scenery, reflection, water, mountain",
+     "training": "mountain, outdoors, lake, scenery, reflection, water, golden-hour_light",
+     "training_prose": "A still alpine lake reflects snow-capped mountains and pine trees in warm golden-hour light, with no people in the scene.",
+     "zeroshot": "no humans, scenery, reflection, water, golden hour, a still alpine lake reflects snow-capped mountains and pine trees in warm golden-hour light, with no people in the scene, mountain, lake"
+    },
+    "selected_category": "identity",
+    "raw_tags": "no humans, scenery, mountain, lake, reflection, outdoors, sky, cloud, golden hour, tree, water",
+    "raw_prose": "A still alpine lake reflects snow-capped mountains and pine trees in warm golden-hour light, with no people in the scene.",
+    "backend_name": "hybrid",
+    "profile": {
+     "target_style": "photo",
+     "target_category": "identity",
+     "target_backend": "sdxl"
+    },
+    "version": 1
+   },
+   "explain": {
+    "buckets": {
+     "tags": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [
+       "mountain",
+       "lake",
+       "outdoors",
+       "sky",
+       "cloud",
+       "tree"
+      ],
+      "lighting": [
+       "golden hour"
+      ],
+      "action": [],
+      "unclassified": [
+       "scenery",
+       "reflection",
+       "water"
+      ]
+     },
+     "prose": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [
+       "a still alpine lake reflects snow-capped mountains and pine trees in warm golden-hour light, with no people in the scene"
+      ],
+      "lighting": [],
+      "action": [],
+      "unclassified": []
+     }
+    },
+    "compaction_notes": [
+     "Trimmed lower-priority fragments to keep captions compact."
+    ],
+    "subjects": {
+     "count": 0,
+     "multiple": false,
+     "tag_count": 0,
+     "prose_count": null,
+     "agree": null,
+     "evidence": [
+      "no_humans"
+     ]
+    },
+    "drift": false
+   },
+   "compare": {
+    "tags": {
+     "final_caption": "scenery, reflection, water, mountain",
+     "caption_variants": {
+      "identity": "scenery, reflection, water, mountain",
+      "wardrobe": "scenery, reflection, water, mountain",
+      "pose_composition": "scenery, reflection, water, mountain",
+      "setting": "mountain, lake, outdoors, sky, cloud, tree, scenery",
+      "lighting": "golden hour, scenery, reflection, water, mountain",
+      "action": "scenery, reflection, water, mountain",
+      "training": "golden hour, lake, scenery, reflection, water",
+      "training_prose": "golden hour, lake, scenery, reflection, water",
+      "zeroshot": "no humans, scenery, reflection, water, golden hour, mountain, lake, outdoors"
+     }
+    },
+    "prose": {
+     "final_caption": "a still alpine lake reflects snow-capped mountains and pine trees in warm golden-hour light, with no people in the scene",
+     "caption_variants": {
+      "identity": "a still alpine lake reflects snow-capped mountains and pine trees in warm golden-hour light, with no people in the scene",
+      "wardrobe": "a still alpine lake reflects snow-capped mountains and pine trees in warm golden-hour light, with no people in the scene",
+      "pose_composition": "a still alpine lake reflects snow-capped mountains and pine trees in warm golden-hour light, with no people in the scene",
+      "setting": "a still alpine lake reflects snow-capped mountains and pine trees in warm golden-hour light, with no people in the scene",
+      "lighting": "a still alpine lake reflects snow-capped mountains and pine trees in warm golden-hour light, with no people in the scene",
+      "action": "a still alpine lake reflects snow-capped mountains and pine trees in warm golden-hour light, with no people in the scene",
+      "training": "golden-hour_light",
+      "training_prose": "A still alpine lake reflects snow-capped mountains and pine trees in warm golden-hour light, with no people in the scene.",
+      "zeroshot": "a still alpine lake reflects snow-capped mountains and pine trees in warm golden-hour light, with no people in the scene"
+     }
+    },
+    "hybrid": {
+     "final_caption": "scenery, reflection, water, mountain",
+     "caption_variants": {
+      "identity": "scenery, reflection, water, mountain",
+      "wardrobe": "scenery, reflection, water, mountain",
+      "pose_composition": "scenery, reflection, water, mountain",
+      "setting": "mountain, lake, outdoors, sky, cloud, tree, scenery",
+      "lighting": "golden hour, scenery, reflection, water, mountain",
+      "action": "scenery, reflection, water, mountain",
+      "training": "golden hour, lake, outdoors, scenery, reflection, water, golden-hour_light",
+      "training_prose": "A still alpine lake reflects snow-capped mountains and pine trees in warm golden-hour light, with no people in the scene.",
+      "zeroshot": "no humans, scenery, reflection, water, golden hour, a still alpine lake reflects snow-capped mountains and pine trees in warm golden-hour light, with no people in the scene, mountain, lake"
+     }
+    }
+   },
+   "facets": {
+    "setting": [
+     "mountain",
+     "lake",
+     "outdoors",
+     "sky",
+     "cloud",
+     "tree"
+    ],
+    "lighting": [
+     "golden hour"
+    ],
+    "people": [
+     "no people"
+    ]
+   },
+   "exif": {
+    "camera": "Canon EOS R5",
+    "focal_length_mm": 16.0,
+    "aperture": 8.0,
+    "exposure_s": 0.01,
+    "shutter": "1/100s",
+    "iso": 100,
+    "taken_at": "2025-08-03T20:11:57",
+    "software": "argus-lightbox fixture"
+   },
+   "provenance": {
+    "source": "synthetic fixture",
+    "license": "CC0-1.0",
+    "title": "alpine lake"
+   }
+  },
+  {
+   "id": "f12af3e78eeca458",
+   "sha256": "f12af3e78eeca458bc38d22b78ae353788eba797ba90c8d82c834b946b498fe7",
+   "image": "images/f12af3e78eeca458.webp",
+   "thumb": "thumbs/f12af3e78eeca458.webp",
+   "xmp": "xmp/f12af3e78eeca458.xmp",
+   "width": 1600,
+   "height": 1067,
+   "color": "#d8b892",
+   "caption": {
+    "final_caption": "knife, vegetables, warm lighting, standing, cooking, cutting board, apron, kitchen",
+    "caption_variants": {
+     "identity": "knife, vegetables, warm lighting, standing, cooking, cutting board, apron, kitchen",
+     "wardrobe": "apron, t-shirt, knife, vegetables, warm lighting, standing, cooking, cutting board",
+     "pose_composition": "standing, knife, vegetables, warm lighting, cooking, cutting board, apron, kitchen",
+     "setting": "kitchen, indoors, knife, vegetables, warm lighting, standing, cooking",
+     "lighting": "knife, vegetables, warm lighting, standing, cooking, cutting board",
+     "action": "cooking, cutting board, knife, vegetables, warm lighting, standing, apron, kitchen",
+     "training": "standing, cooking, cutting board, t-shirt, apron, kitchen, indoors, knife",
+     "training_prose": "A man in an apron chops vegetables on a wooden cutting board in a warmly lit home kitchen.",
+     "zeroshot": "warm lighting, knife, vegetables, 1boy, solo, standing, cutting board, cooking, apron, t-shirt"
+    },
+    "selected_category": "identity",
+    "raw_tags": "1boy, solo, apron, cooking, kitchen, indoors, cutting board, knife, vegetables, standing, warm lighting, t-shirt",
+    "raw_prose": "A man in an apron chops vegetables on a wooden cutting board in a warmly lit home kitchen.",
+    "backend_name": "hybrid",
+    "profile": {
+     "target_style": "photo",
+     "target_category": "identity",
+     "target_backend": "sdxl"
+    },
+    "version": 1
+   },
+   "explain": {
+    "buckets": {
+     "tags": {
+      "identity": [],
+      "wardrobe": [
+       "apron",
+       "t-shirt"
+      ],
+      "pose_composition": [
+       "standing"
+      ],
+      "setting": [
+       "kitchen",
+       "indoors"
+      ],
+      "lighting": [],
+      "action": [
+       "cooking",
+       "cutting board"
+      ],
+      "unclassified": [
+       "knife",
+       "vegetables",
+       "warm lighting"
+      ]
+     },
+     "prose": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": []
+     }
+    },
+    "compaction_notes": [
+     "Stripped rating/meta tags that have no training value.",
+     "Removed prose clauses that duplicated tag content.",
+     "Trimmed lower-priority fragments to keep captions compact."
+    ],
+    "subjects": {
+     "count": 1,
+     "multiple": false,
+     "tag_count": 1,
+     "prose_count": 1,
+     "agree": true,
+     "evidence": [
+      "1boy",
+      "solo",
+      "a man"
+     ]
+    },
+    "drift": false
+   },
+   "compare": {
+    "tags": {
+     "final_caption": "knife, vegetables, warm lighting, standing, cooking, cutting board, apron, kitchen",
+     "caption_variants": {
+      "identity": "knife, vegetables, warm lighting, standing, cooking, cutting board, apron, kitchen",
+      "wardrobe": "apron, t-shirt, knife, vegetables, warm lighting, standing, cooking, cutting board",
+      "pose_composition": "standing, knife, vegetables, warm lighting, cooking, cutting board, apron, kitchen",
+      "setting": "kitchen, indoors, knife, vegetables, warm lighting, standing, cooking",
+      "lighting": "knife, vegetables, warm lighting, standing, cooking, cutting board",
+      "action": "cooking, cutting board, knife, vegetables, warm lighting, standing, apron, kitchen",
+      "training": "standing, cooking, t-shirt, apron, kitchen, indoors, knife, vegetables",
+      "training_prose": "standing, cooking, t-shirt, apron, kitchen, indoors, knife, vegetables",
+      "zeroshot": "warm lighting, knife, vegetables, 1boy, solo, standing, cutting board, cooking, apron, t-shirt"
+     }
+    },
+    "prose": {
+     "final_caption": "a man in an apron chops vegetables on a wooden cutting board in a warmly lit home kitchen",
+     "caption_variants": {
+      "identity": "a man in an apron chops vegetables on a wooden cutting board in a warmly lit home kitchen",
+      "wardrobe": "a man in an apron chops vegetables on a wooden cutting board in a warmly lit home kitchen",
+      "pose_composition": "a man in an apron chops vegetables on a wooden cutting board in a warmly lit home kitchen",
+      "setting": "a man in an apron chops vegetables on a wooden cutting board in a warmly lit home kitchen",
+      "lighting": "a man in an apron chops vegetables on a wooden cutting board in a warmly lit home kitchen",
+      "action": "a man in an apron chops vegetables on a wooden cutting board in a warmly lit home kitchen",
+      "training": "home_kitchen",
+      "training_prose": "A man in an apron chops vegetables on a wooden cutting board in a warmly lit home kitchen.",
+      "zeroshot": "a man in an apron chops vegetables on a wooden cutting board in a warmly lit home kitchen"
+     }
+    },
+    "hybrid": {
+     "final_caption": "knife, vegetables, warm lighting, standing, cooking, cutting board, apron, kitchen",
+     "caption_variants": {
+      "identity": "knife, vegetables, warm lighting, standing, cooking, cutting board, apron, kitchen",
+      "wardrobe": "apron, t-shirt, knife, vegetables, warm lighting, standing, cooking, cutting board",
+      "pose_composition": "standing, knife, vegetables, warm lighting, cooking, cutting board, apron, kitchen",
+      "setting": "kitchen, indoors, knife, vegetables, warm lighting, standing, cooking",
+      "lighting": "knife, vegetables, warm lighting, standing, cooking, cutting board",
+      "action": "cooking, cutting board, knife, vegetables, warm lighting, standing, apron, kitchen",
+      "training": "standing, cooking, apron, knife, vegetables, warm lighting",
+      "training_prose": "A man in an apron chops vegetables on a wooden cutting board in a warmly lit home kitchen.",
+      "zeroshot": "warm lighting, knife, vegetables, 1boy, solo, standing, cutting board, cooking, apron, t-shirt"
+     }
+    }
+   },
+   "facets": {
+    "wardrobe": [
+     "apron",
+     "t-shirt"
+    ],
+    "pose_composition": [
+     "standing"
+    ],
+    "setting": [
+     "kitchen",
+     "indoors"
+    ],
+    "action": [
+     "cooking",
+     "cutting board"
+    ],
+    "people": [
+     "one person"
+    ]
+   },
+   "exif": {
+    "camera": "Apple iPhone 15 Pro",
+    "focal_length_mm": 6.8,
+    "aperture": 1.8,
+    "exposure_s": 0.016666666666666666,
+    "shutter": "1/60s",
+    "iso": 500,
+    "taken_at": "2025-12-19T18:22:40",
+    "software": "argus-lightbox fixture"
+   },
+   "provenance": {
+    "source": "synthetic fixture",
+    "license": "CC0-1.0",
+    "title": "home kitchen"
+   }
+  },
+  {
+   "id": "f799b9cbe078b65b",
+   "sha256": "f799b9cbe078b65b9d84b3f82bf94013f55b56501146698b755046a0ccf08f15",
+   "image": "images/f799b9cbe078b65b.webp",
+   "thumb": "thumbs/f799b9cbe078b65b.webp",
+   "xmp": "xmp/f799b9cbe078b65b.xmp",
+   "width": 1067,
+   "height": 1600,
+   "color": "#e8e9ea",
+   "caption": {
+    "final_caption": "beanie, smile, running, winter coat, snow",
+    "caption_variants": {
+     "identity": "beanie, smile, running, winter coat, snow",
+     "wardrobe": "winter coat, scarf, beanie, smile, running, snow",
+     "pose_composition": "beanie, smile, running, winter coat, snow",
+     "setting": "snow, outdoors, park, tree, beanie, smile, running",
+     "lighting": "overcast, beanie, smile, running, winter coat, snow",
+     "action": "running, beanie, smile, winter coat, snow",
+     "training": "smile, scarf, winter coat, overcast, outdoors, snow, park, beanie",
+     "training_prose": "A girl in a winter coat, scarf and knitted beanie runs through a snowy park under an overcast sky.",
+     "zeroshot": "beanie, smile, 1girl, solo, running, winter coat, scarf, overcast, snow, outdoors"
+    },
+    "selected_category": "identity",
+    "raw_tags": "1girl, solo, winter coat, scarf, beanie, running, snow, outdoors, park, tree, overcast, smile",
+    "raw_prose": "A girl in a winter coat, scarf and knitted beanie runs through a snowy park under an overcast sky.",
+    "backend_name": "hybrid",
+    "profile": {
+     "target_style": "photo",
+     "target_category": "identity",
+     "target_backend": "sdxl"
+    },
+    "version": 1
+   },
+   "explain": {
+    "buckets": {
+     "tags": {
+      "identity": [
+       "smile"
+      ],
+      "wardrobe": [
+       "winter coat",
+       "scarf"
+      ],
+      "pose_composition": [],
+      "setting": [
+       "snow",
+       "outdoors",
+       "park",
+       "tree"
+      ],
+      "lighting": [
+       "overcast"
+      ],
+      "action": [
+       "running"
+      ],
+      "unclassified": [
+       "beanie"
+      ]
+     },
+     "prose": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": []
+     }
+    },
+    "compaction_notes": [
+     "Stripped rating/meta tags that have no training value.",
+     "Removed prose clauses that duplicated tag content.",
+     "Trimmed lower-priority fragments to keep captions compact."
+    ],
+    "subjects": {
+     "count": 1,
+     "multiple": false,
+     "tag_count": 1,
+     "prose_count": 1,
+     "agree": true,
+     "evidence": [
+      "1girl",
+      "solo",
+      "a girl"
+     ]
+    },
+    "drift": false
+   },
+   "compare": {
+    "tags": {
+     "final_caption": "beanie, smile, running, winter coat, snow",
+     "caption_variants": {
+      "identity": "beanie, smile, running, winter coat, snow",
+      "wardrobe": "winter coat, scarf, beanie, smile, running, snow",
+      "pose_composition": "beanie, smile, running, winter coat, snow",
+      "setting": "snow, outdoors, park, tree, beanie, smile, running",
+      "lighting": "overcast, beanie, smile, running, winter coat, snow",
+      "action": "running, beanie, smile, winter coat, snow",
+      "training": "smile, running, scarf, overcast, outdoors, park, beanie",
+      "training_prose": "smile, running, scarf, overcast, outdoors, park, beanie",
+      "zeroshot": "beanie, smile, 1girl, solo, running, winter coat, scarf, overcast, snow, outdoors"
+     }
+    },
+    "prose": {
+     "final_caption": "a girl in a winter coat, scarf and knitted beanie runs through a snowy park under an overcast sky",
+     "caption_variants": {
+      "identity": "a girl in a winter coat, scarf and knitted beanie runs through a snowy park under an overcast sky",
+      "wardrobe": "a girl in a winter coat, scarf and knitted beanie runs through a snowy park under an overcast sky",
+      "pose_composition": "a girl in a winter coat, scarf and knitted beanie runs through a snowy park under an overcast sky",
+      "setting": "a girl in a winter coat, scarf and knitted beanie runs through a snowy park under an overcast sky",
+      "lighting": "a girl in a winter coat, scarf and knitted beanie runs through a snowy park under an overcast sky",
+      "action": "a girl in a winter coat, scarf and knitted beanie runs through a snowy park under an overcast sky",
+      "training": "winter_coat, snowy_park",
+      "training_prose": "A girl in a winter coat, scarf and knitted beanie runs through a snowy park under an overcast sky.",
+      "zeroshot": "a girl in a winter coat, scarf and knitted beanie runs through a snowy park under an overcast sky"
+     }
+    },
+    "hybrid": {
+     "final_caption": "beanie, smile, running, winter coat, snow",
+     "caption_variants": {
+      "identity": "beanie, smile, running, winter coat, snow",
+      "wardrobe": "winter coat, scarf, beanie, smile, running, snow",
+      "pose_composition": "beanie, smile, running, winter coat, snow",
+      "setting": "snow, outdoors, park, tree, beanie, smile, running",
+      "lighting": "overcast, beanie, smile, running, winter coat, snow",
+      "action": "running, beanie, smile, winter coat, snow",
+      "training": "smile, running, scarf, winter coat, overcast, snow, park, outdoors",
+      "training_prose": "A girl in a winter coat, scarf and knitted beanie runs through a snowy park under an overcast sky.",
+      "zeroshot": "beanie, smile, 1girl, solo, running, winter coat, scarf, overcast, snow, outdoors"
+     }
+    }
+   },
+   "facets": {
+    "identity": [
+     "smile"
+    ],
+    "wardrobe": [
+     "winter coat",
+     "scarf"
+    ],
+    "setting": [
+     "snow",
+     "outdoors",
+     "park",
+     "tree"
+    ],
+    "lighting": [
+     "overcast"
+    ],
+    "action": [
+     "running"
+    ],
+    "people": [
+     "one person"
+    ]
+   },
+   "exif": {
+    "camera": "SONY ILCE-6700",
+    "focal_length_mm": 70.0,
+    "aperture": 4.0,
+    "exposure_s": 0.001,
+    "shutter": "1/1000s",
+    "iso": 200,
+    "taken_at": "2026-01-24T11:03:18",
+    "software": "argus-lightbox fixture"
+   },
+   "provenance": {
+    "source": "synthetic fixture",
+    "license": "CC0-1.0",
+    "title": "snow park"
+   }
+  },
+  {
+   "id": "5acf96b8f7bd3c50",
+   "sha256": "5acf96b8f7bd3c50b1fa7ed371afcf61a4aa8620eb030fa1df059710a7d2741e",
+   "image": "images/5acf96b8f7bd3c50.webp",
+   "thumb": "thumbs/5acf96b8f7bd3c50.webp",
+   "xmp": "xmp/5acf96b8f7bd3c50.xmp",
+   "width": 1600,
+   "height": 1067,
+   "color": "#524187",
+   "caption": {
+    "final_caption": "group, string lights, evening, drink, standing, laughing, rooftop",
+    "caption_variants": {
+     "identity": "group, string lights, evening, drink, standing, laughing, rooftop",
+     "wardrobe": "group, string lights, evening, standing, laughing, rooftop",
+     "pose_composition": "standing, group, string lights, evening, laughing, rooftop",
+     "setting": "rooftop, city, outdoors, group, string lights, evening, standing",
+     "lighting": "group, string lights, evening, standing, laughing, rooftop",
+     "action": "laughing, group, string lights, evening, standing, rooftop",
+     "training": "standing, laughing, city, outdoors, rooftop, group, string lights, evening",
+     "training_prose": "A group of friends laugh together on a city rooftop in the evening under strings of warm fairy lights.",
+     "zeroshot": "string lights, multiple boys, multiple girls, group, evening, drink, standing, laughing, rooftop, city"
+    },
+    "selected_category": "identity",
+    "raw_tags": "multiple boys, multiple girls, group, laughing, rooftop, string lights, evening, city, outdoors, drink, standing",
+    "raw_prose": "A group of friends laugh together on a city rooftop in the evening under strings of warm fairy lights.",
+    "backend_name": "hybrid",
+    "profile": {
+     "target_style": "photo",
+     "target_category": "identity",
+     "target_backend": "sdxl"
+    },
+    "version": 1
+   },
+   "explain": {
+    "buckets": {
+     "tags": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [
+       "standing"
+      ],
+      "setting": [
+       "rooftop",
+       "city",
+       "outdoors"
+      ],
+      "lighting": [],
+      "action": [
+       "laughing"
+      ],
+      "unclassified": [
+       "group",
+       "string lights",
+       "evening",
+       "drink"
+      ]
+     },
+     "prose": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": []
+     }
+    },
+    "compaction_notes": [
+     "Removed prose clauses that duplicated tag content.",
+     "Trimmed lower-priority fragments to keep captions compact."
+    ],
+    "subjects": {
+     "count": 2,
+     "multiple": true,
+     "tag_count": 2,
+     "prose_count": 3,
+     "agree": false,
+     "evidence": [
+      "multiple_boys",
+      "multiple_girls",
+      "group of friends"
+     ]
+    },
+    "drift": false
+   },
+   "compare": {
+    "tags": {
+     "final_caption": "group, string lights, evening, drink, standing, laughing, rooftop",
+     "caption_variants": {
+      "identity": "group, string lights, evening, drink, standing, laughing, rooftop",
+      "wardrobe": "group, string lights, evening, standing, laughing, rooftop",
+      "pose_composition": "standing, group, string lights, evening, laughing, rooftop",
+      "setting": "rooftop, city, outdoors, group, string lights, evening, standing",
+      "lighting": "group, string lights, evening, standing, laughing, rooftop",
+      "action": "laughing, group, string lights, evening, standing, rooftop",
+      "training": "standing, laughing, outdoors, rooftop, city, group, string lights, evening",
+      "training_prose": "standing, laughing, outdoors, rooftop, city, group, string lights, evening",
+      "zeroshot": "string lights, multiple boys, multiple girls, group, evening, drink, standing, laughing, rooftop, city"
+     }
+    },
+    "prose": {
+     "final_caption": "a group of friends laugh together on a city rooftop in the evening under strings of warm fairy lights",
+     "caption_variants": {
+      "identity": "a group of friends laugh together on a city rooftop in the evening under strings of warm fairy lights",
+      "wardrobe": "a group of friends laugh together on a city rooftop in the evening under strings of warm fairy lights",
+      "pose_composition": "a group of friends laugh together on a city rooftop in the evening under strings of warm fairy lights",
+      "setting": "a group of friends laugh together on a city rooftop in the evening under strings of warm fairy lights",
+      "lighting": "a group of friends laugh together on a city rooftop in the evening under strings of warm fairy lights",
+      "action": "a group of friends laugh together on a city rooftop in the evening under strings of warm fairy lights",
+      "training": "",
+      "training_prose": "A group of friends laugh together on a city rooftop in the evening under strings of warm fairy lights.",
+      "zeroshot": "a group of friends laugh together on a city rooftop in the evening under strings of warm fairy lights"
+     }
+    },
+    "hybrid": {
+     "final_caption": "group, string lights, evening, drink, standing, laughing, rooftop",
+     "caption_variants": {
+      "identity": "group, string lights, evening, drink, standing, laughing, rooftop",
+      "wardrobe": "group, string lights, evening, standing, laughing, rooftop",
+      "pose_composition": "standing, group, string lights, evening, laughing, rooftop",
+      "setting": "rooftop, city, outdoors, group, string lights, evening, standing",
+      "lighting": "group, string lights, evening, standing, laughing, rooftop",
+      "action": "laughing, group, string lights, evening, standing, rooftop",
+      "training": "standing, laughing, rooftop, city, group, string lights, evening, drink",
+      "training_prose": "A group of friends laugh together on a city rooftop in the evening under strings of warm fairy lights.",
+      "zeroshot": "string lights, multiple boys, multiple girls, group, evening, drink, standing, laughing, rooftop, city"
+     }
+    }
+   },
+   "facets": {
+    "pose_composition": [
+     "standing"
+    ],
+    "setting": [
+     "rooftop",
+     "city",
+     "outdoors"
+    ],
+    "action": [
+     "laughing"
+    ],
+    "people": [
+     "group"
+    ]
+   },
+   "exif": {
+    "camera": "FUJIFILM X-T5",
+    "focal_length_mm": 18.0,
+    "aperture": 1.4,
+    "exposure_s": 0.0125,
+    "shutter": "1/80s",
+    "iso": 2500,
+    "taken_at": "2025-07-19T21:37:05",
+    "software": "argus-lightbox fixture"
+   },
+   "provenance": {
+    "source": "synthetic fixture",
+    "license": "CC0-1.0",
+    "title": "rooftop friends"
+   }
+  },
+  {
+   "id": "866843833d87f491",
+   "sha256": "866843833d87f4913a52ba2396d783cab8463e0890f4fa5d123cca3d32062a0c",
+   "image": "images/866843833d87f491.webp",
+   "thumb": "thumbs/866843833d87f491.webp",
+   "xmp": "xmp/866843833d87f491.xmp",
+   "width": 1600,
+   "height": 1067,
+   "color": "#b6c5c2",
+   "caption": {
+    "final_caption": "car",
+    "caption_variants": {
+     "identity": "car",
+     "wardrobe": "car",
+     "pose_composition": "car",
+     "setting": "vintage car, road, desert, outdoors, sky",
+     "lighting": "day, sunlight, shadow, car",
+     "action": "car",
+     "training": "road, vintage car",
+     "training_prose": "road, vintage car",
+     "zeroshot": "no humans, day, sunlight, vintage car, road"
+    },
+    "selected_category": "identity",
+    "raw_tags": "no humans, car, vintage car, road, desert, outdoors, sky, day, sunlight, shadow",
+    "raw_prose": "",
+    "backend_name": "wd14",
+    "profile": {
+     "target_style": "photo",
+     "target_category": "identity",
+     "target_backend": "sdxl"
+    },
+    "version": 1
+   },
+   "explain": {
+    "buckets": {
+     "tags": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [
+       "car",
+       "vintage car",
+       "road",
+       "desert",
+       "outdoors",
+       "sky"
+      ],
+      "lighting": [
+       "day",
+       "sunlight",
+       "shadow"
+      ],
+      "action": [],
+      "unclassified": []
+     },
+     "prose": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": []
+     }
+    },
+    "compaction_notes": [
+     "Trimmed lower-priority fragments to keep captions compact.",
+     "Repaired disjointed fragments in assembled captions."
+    ],
+    "subjects": {
+     "count": 0,
+     "multiple": false,
+     "tag_count": 0,
+     "prose_count": null,
+     "agree": null,
+     "evidence": [
+      "no_humans"
+     ]
+    },
+    "drift": false
+   },
+   "compare": {},
+   "facets": {
+    "setting": [
+     "car",
+     "vintage car",
+     "road",
+     "desert",
+     "outdoors",
+     "sky"
+    ],
+    "lighting": [
+     "day",
+     "sunlight",
+     "shadow"
+    ],
+    "people": [
+     "no people"
+    ]
+   },
+   "exif": {
+    "camera": "LEICA Q3",
+    "focal_length_mm": 28.0,
+    "aperture": 5.6,
+    "exposure_s": 0.0005,
+    "shutter": "1/2000s",
+    "iso": 100,
+    "taken_at": "2025-05-30T12:40:11",
+    "software": "argus-lightbox fixture"
+   },
+   "provenance": {
+    "source": "synthetic fixture",
+    "license": "CC0-1.0",
+    "title": "desert road"
+   }
+  },
+  {
+   "id": "fad6132393203da1",
+   "sha256": "fad6132393203da16a0f6b2cd4d7008ff28fdb54f7f84d843c1d5d709db62f1a",
+   "image": "images/fad6132393203da1.webp",
+   "thumb": "thumbs/fad6132393203da1.webp",
+   "xmp": "xmp/fad6132393203da1.xmp",
+   "width": 1600,
+   "height": 1067,
+   "color": "#5c4736",
+   "caption": {
+    "final_caption": "a young woman in glasses and a cardigan sits reading a book in a quiet library, lit by a green desk lamp",
+    "caption_variants": {
+     "identity": "a young woman in glasses and a cardigan sits reading a book in a quiet library, lit by a green desk lamp",
+     "wardrobe": "a young woman in glasses and a cardigan sits reading a book in a quiet library, lit by a green desk lamp",
+     "pose_composition": "a young woman in glasses and a cardigan sits reading a book in a quiet library, lit by a green desk lamp",
+     "setting": "a young woman in glasses and a cardigan sits reading a book in a quiet library, lit by a green desk lamp",
+     "lighting": "a young woman in glasses and a cardigan sits reading a book in a quiet library, lit by a green desk lamp",
+     "action": "a young woman in glasses and a cardigan sits reading a book in a quiet library, lit by a green desk lamp",
+     "training": "green_desk",
+     "training_prose": "A young woman in glasses and a cardigan sits reading a book in a quiet library, lit by a green desk lamp.",
+     "zeroshot": "a young woman in glasses and a cardigan sits reading a book in a quiet library, lit by a green desk lamp"
+    },
+    "selected_category": "identity",
+    "raw_tags": "",
+    "raw_prose": "A young woman in glasses and a cardigan sits reading a book in a quiet library, lit by a green desk lamp.",
+    "backend_name": "florence2",
+    "profile": {
+     "target_style": "photo",
+     "target_category": "identity",
+     "target_backend": "sdxl"
+    },
+    "version": 1
+   },
+   "explain": {
+    "buckets": {
+     "tags": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": []
+     },
+     "prose": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [
+       "a young woman in glasses and a cardigan sits reading a book in a quiet library, lit by a green desk lamp"
+      ],
+      "lighting": [],
+      "action": [],
+      "unclassified": []
+     }
+    },
+    "compaction_notes": [],
+    "subjects": {
+     "count": 1,
+     "multiple": false,
+     "tag_count": null,
+     "prose_count": 1,
+     "agree": null,
+     "evidence": [
+      "a young woman"
+     ]
+    },
+    "drift": false
+   },
+   "compare": {},
+   "facets": {
+    "people": [
+     "one person"
+    ]
+   },
+   "exif": {
+    "camera": "Panasonic DC-S5M2",
+    "focal_length_mm": 50.0,
+    "aperture": 1.8,
+    "exposure_s": 0.01,
+    "shutter": "1/100s",
+    "iso": 1600,
+    "taken_at": "2025-11-28T16:55:49",
+    "software": "argus-lightbox fixture"
+   },
+   "provenance": {
+    "source": "synthetic fixture",
+    "license": "CC0-1.0",
+    "title": "library reader"
+   }
+  },
+  {
+   "id": "dc2b113f79ef880a",
+   "sha256": "dc2b113f79ef880ad9f9ae312b68842b0c5116750edb2d447a72e0cd8d56035f",
+   "image": "images/dc2b113f79ef880a.webp",
+   "thumb": "thumbs/dc2b113f79ef880a.webp",
+   "xmp": "xmp/dc2b113f79ef880a.xmp",
+   "width": 1067,
+   "height": 1600,
+   "color": "#2c496c",
+   "caption": {
+    "final_caption": "blue hour, standing, holding umbrella, trench coat, rain",
+    "caption_variants": {
+     "identity": "blue hour, standing, holding umbrella, trench coat, rain",
+     "wardrobe": "trench coat, blue hour, standing, holding umbrella, rain",
+     "pose_composition": "standing, blue hour, holding umbrella, trench coat, rain",
+     "setting": "rain, street, city, outdoors, umbrella, blue hour, standing",
+     "lighting": "blue hour, standing, holding umbrella, trench coat, rain",
+     "action": "holding umbrella, blue hour, standing, trench coat, rain",
+     "training": "standing, holding umbrella, trench coat, rain, street, blue hour",
+     "training_prose": "A woman in a beige trench coat stands holding an umbrella on a rainy street during the blue hour.",
+     "zeroshot": "blue hour, 1girl, solo, standing, holding umbrella, trench coat, rain, street, city"
+    },
+    "selected_category": "identity",
+    "raw_tags": "1girl, solo, trench coat, umbrella, holding umbrella, standing, rain, street, blue hour, city, outdoors",
+    "raw_prose": "A woman in a beige trench coat stands holding an umbrella on a rainy street during the blue hour.",
+    "backend_name": "hybrid",
+    "profile": {
+     "target_style": "photo",
+     "target_category": "identity",
+     "target_backend": "sdxl"
+    },
+    "version": 1
+   },
+   "explain": {
+    "buckets": {
+     "tags": {
+      "identity": [],
+      "wardrobe": [
+       "trench coat"
+      ],
+      "pose_composition": [
+       "standing"
+      ],
+      "setting": [
+       "rain",
+       "street",
+       "city",
+       "outdoors"
+      ],
+      "lighting": [],
+      "action": [
+       "holding umbrella"
+      ],
+      "unclassified": [
+       "umbrella",
+       "blue hour"
+      ]
+     },
+     "prose": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": []
+     }
+    },
+    "compaction_notes": [
+     "Stripped rating/meta tags that have no training value.",
+     "Removed prose clauses that duplicated tag content.",
+     "Trimmed lower-priority fragments to keep captions compact.",
+     "Repaired disjointed fragments in assembled captions."
+    ],
+    "subjects": {
+     "count": 1,
+     "multiple": false,
+     "tag_count": 1,
+     "prose_count": 1,
+     "agree": true,
+     "evidence": [
+      "1girl",
+      "solo",
+      "a woman"
+     ]
+    },
+    "drift": false
+   },
+   "compare": {
+    "tags": {
+     "final_caption": "blue hour, standing, holding umbrella, trench coat, rain",
+     "caption_variants": {
+      "identity": "blue hour, standing, holding umbrella, trench coat, rain",
+      "wardrobe": "trench coat, blue hour, standing, holding umbrella, rain",
+      "pose_composition": "standing, blue hour, holding umbrella, trench coat, rain",
+      "setting": "rain, street, city, outdoors, umbrella, blue hour, standing",
+      "lighting": "blue hour, standing, holding umbrella, trench coat, rain",
+      "action": "holding umbrella, blue hour, standing, trench coat, rain",
+      "training": "standing, holding umbrella, trench coat, street, rain, blue hour",
+      "training_prose": "standing, holding umbrella, trench coat, street, rain, blue hour",
+      "zeroshot": "blue hour, 1girl, solo, standing, holding umbrella, trench coat, rain, street, city"
+     }
+    },
+    "prose": {
+     "final_caption": "a woman in a beige trench coat stands holding an umbrella on a rainy street during the blue hour",
+     "caption_variants": {
+      "identity": "a woman in a beige trench coat stands holding an umbrella on a rainy street during the blue hour",
+      "wardrobe": "a woman in a beige trench coat stands holding an umbrella on a rainy street during the blue hour",
+      "pose_composition": "a woman in a beige trench coat stands holding an umbrella on a rainy street during the blue hour",
+      "setting": "a woman in a beige trench coat stands holding an umbrella on a rainy street during the blue hour",
+      "lighting": "a woman in a beige trench coat stands holding an umbrella on a rainy street during the blue hour",
+      "action": "a woman in a beige trench coat stands holding an umbrella on a rainy street during the blue hour",
+      "training": "trench_coat, rainy_street",
+      "training_prose": "A woman in a beige trench coat stands holding an umbrella on a rainy street during the blue hour.",
+      "zeroshot": "a woman in a beige trench coat stands holding an umbrella on a rainy street during the blue hour"
+     }
+    },
+    "hybrid": {
+     "final_caption": "blue hour, standing, holding umbrella, trench coat, rain",
+     "caption_variants": {
+      "identity": "blue hour, standing, holding umbrella, trench coat, rain",
+      "wardrobe": "trench coat, blue hour, standing, holding umbrella, rain",
+      "pose_composition": "standing, blue hour, holding umbrella, trench coat, rain",
+      "setting": "rain, street, city, outdoors, umbrella, blue hour, standing",
+      "lighting": "blue hour, standing, holding umbrella, trench coat, rain",
+      "action": "holding umbrella, blue hour, standing, trench coat, rain",
+      "training": "standing, holding umbrella, street, rain, city, blue hour",
+      "training_prose": "A woman in a beige trench coat stands holding an umbrella on a rainy street during the blue hour.",
+      "zeroshot": "blue hour, 1girl, solo, standing, holding umbrella, trench coat, rain, street, city"
+     }
+    }
+   },
+   "facets": {
+    "wardrobe": [
+     "trench coat"
+    ],
+    "pose_composition": [
+     "standing"
+    ],
+    "setting": [
+     "rain",
+     "street",
+     "city",
+     "outdoors"
+    ],
+    "action": [
+     "holding umbrella"
+    ],
+    "people": [
+     "one person"
+    ]
+   },
+   "exif": {
+    "camera": "OM-1MarkII",
+    "focal_length_mm": 25.0,
+    "aperture": 1.2,
+    "exposure_s": 0.02,
+    "shutter": "1/50s",
+    "iso": 3200,
+    "taken_at": "2025-10-30T18:04:26",
+    "software": "argus-lightbox fixture"
+   },
+   "provenance": {
+    "source": "synthetic fixture",
+    "license": "CC0-1.0",
+    "title": "blue hour umbrella"
+   }
+  }
+ ]
+}
