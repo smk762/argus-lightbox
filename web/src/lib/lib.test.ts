@@ -8,6 +8,7 @@ import { traceVariant } from "./explain";
 import { activeCount, facetCounts, filterPhotos, matchesQuery, toggleTerm } from "./filter";
 import type { GalleryIndex, Photo } from "./types";
 import { parseView, serializeView } from "./urlState";
+import { estimateTokens, tokenBudget } from "./tokens";
 import { histogramCsv, wordHistogram } from "./words";
 
 const index = checkIndex(
@@ -140,6 +141,22 @@ describe("word cloud", () => {
       { word: "a, b", count: 1 },
     ]);
     expect(csv).toBe('word,count,share\nred dress,3,0.7500\n"a, b",1,0.2500\n');
+  });
+});
+
+describe("token budget", () => {
+  it("matches lens's CLIP and T5 estimates, and the backend budgets", () => {
+    expect(estimateTokens("")).toBe(0);
+    expect(estimateTokens("red dress")).toBe(2);
+    expect(estimateTokens("a, b_c d")).toBe(5);
+    expect(estimateTokens("a, b", "flux")).toBe(3);
+    expect(tokenBudget("sdxl")).toBe(60);
+    expect(tokenBudget("flux")).toBe(200);
+    expect(tokenBudget(undefined)).toBe(60);
+    const prose =
+      "A wooden stool with a ladder-back design, made of light-brown, grain-textured planks, rests on a tiled floor beside a dark green mat. The stool's legs and horizontal supports are bolted together, casting a sharp shadow on the white tiles.";
+    expect(estimateTokens(prose, "sdxl")).toBe(54);
+    expect(estimateTokens(`${"word ".repeat(50).trim()}`, "sdxl")).toBe(65);
   });
 });
 
