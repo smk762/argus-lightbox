@@ -81,6 +81,40 @@ def test_unclassified_ordinary_tags_are_filterable_and_sexual_tags_are_not() -> 
     assert "photorealistic" not in listed
 
 
+def test_facet_lists_json_overrides_and_a_missing_file_uses_the_example(tmp_path, monkeypatch) -> None:
+    caption = {
+        "final_caption": "",
+        "raw_tags": "carpet, wet ground, photorealistic, pussy, loli",
+        "raw_prose": "",
+        "backend_name": "wd14",
+    }
+    custom = tmp_path / "lists.json"
+    custom.write_text(
+        json.dumps(
+            {
+                "meta_tags": ["carpet"],
+                "blocked_tags": [],
+                "blocked_parts": ["pussy", "loli"],
+                "extra_category": {"wet_ground": "lighting"},
+            }
+        ),
+        encoding="utf-8",
+    )
+    monkeypatch.setenv("FACET_LISTS_JSON", str(custom))
+    facets = explain(caption)["facets"]
+    listed = {term for terms in facets.values() for term in terms}
+    assert "wet ground" in facets["lighting"]
+    assert "carpet" not in listed
+    assert "photorealistic" in facets["detail"]
+    assert "pussy" not in listed and "loli" not in listed
+
+    monkeypatch.setenv("FACET_LISTS_JSON", str(tmp_path / "missing.json"))
+    fallback = explain(caption)["facets"]
+    assert "carpet" in fallback["setting"]
+    assert "wet ground" in fallback["detail"]
+    assert "photorealistic" not in {term for terms in fallback.values() for term in terms}
+
+
 def test_single_source_backend_has_no_compare() -> None:
     by_backend = {r.caption["backend_name"]: r for r in fixture_records()}
     assert explain(by_backend["wd14"].caption)["compare"] == {}

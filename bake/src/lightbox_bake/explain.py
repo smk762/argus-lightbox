@@ -11,7 +11,8 @@ deterministically from the raw tags/prose, which gives the demo:
 * **facets** — the classified tag fragments the gallery filters on, plus
   unclassified tags that are not rating, sexual, or minor-related. Known
   gaps in the hint list are filed under the matching category; the rest
-  go to a ``detail`` group.
+  go to a ``detail`` group. Those lists live in ``facet_lists.example.json``.
+  ``FACET_LISTS_JSON`` replaces them; a missing file keeps the example.
 
 The *recorded* caption stays the source of truth for what is displayed; if the
 pinned lens version would now assemble a different ``final_caption``, the photo
@@ -20,6 +21,10 @@ is flagged with ``explain.drift`` rather than silently re-captioned.
 
 from __future__ import annotations
 
+import json
+import os
+from dataclasses import dataclass
+from pathlib import Path
 from typing import Any
 
 from argus_lens.assembly.composer import compose_caption_result
@@ -39,129 +44,94 @@ def _compose(tags: str, prose: str, profile: CaptionTargetProfile, backend: str)
     return compose_caption_result(trigger_word="", tags=tags, prose=prose, target_profile=profile, backend_name=backend)
 
 
-# Quality and source markers. They describe the file, not the photo.
-_META_TAGS = frozenset(
-    {
-        "photorealistic",
-        "photo",
-        "anime",
-        "sketch",
-        "monochrome",
-        "greyscale",
-        "grayscale",
-        "watermark",
-        "signature",
-        "username",
-        "highres",
-        "absurdres",
-        "commentary",
-    }
-)
+# Shipped with the package. Applied when FACET_LISTS_JSON is unset or the file is missing.
+_EXAMPLE_LISTS = Path(__file__).with_name("facet_lists.example.json")
+_LIST_FIELDS = ("meta_tags", "blocked_tags", "blocked_parts")
 
-# Whole tags whose individual words would otherwise look ordinary.
-_BLOCKED_TAGS = frozenset(
-    {
-        "spread_legs",
-        "all_fours",
-        "flat_chest",
-        "sex_toy",
-        "object_insertion",
-        "female_masturbation",
-        "completely_nude",
-        "vaginal_object_insertion",
-    }
-)
 
-# A tag is dropped when any of its words is in this set.
-_BLOCKED_PARTS = frozenset(
-    {
-        "loli",
-        "shota",
-        "nude",
-        "nudity",
-        "topless",
-        "bottomless",
-        "nipple",
-        "nipples",
-        "areola",
-        "breast",
-        "breasts",
-        "pussy",
-        "vagina",
-        "vaginal",
-        "penis",
-        "anus",
-        "anal",
-        "clitoris",
-        "labia",
-        "testicles",
-        "scrotum",
-        "pubic",
-        "genital",
-        "genitals",
-        "sex",
-        "sexual",
-        "masturbation",
-        "dildo",
-        "vibrator",
-        "uncensored",
-        "censored",
-        "penetration",
-        "insertion",
-        "cum",
-        "semen",
-        "erection",
-        "orgasm",
-    }
-)
+@dataclass(frozen=True)
+class FacetLists:
+    """Which unclassified tags become filters, and which are left out."""
 
-# Non-sexual gaps in lens's hint lists. The key is the tag with spaces as underscores.
-_EXTRA_CATEGORY = {
-    "open_mouth": "identity",
-    "scar": "identity",
-    "wrinkles": "identity",
-    "asian": "identity",
-    "navel": "identity",
-    "feet": "identity",
-    "toes": "identity",
-    "teen": "identity",
-    "barefoot": "pose_composition",
-    "kneehighs": "wardrobe",
-    "underwear": "wardrobe",
-    "panties": "wardrobe",
-    "midriff": "wardrobe",
-    "carpet": "setting",
-    "scenery": "setting",
-    "reflection": "setting",
-    "water": "setting",
-    "shadow": "lighting",
-    "golden_hour": "lighting",
-}
+    meta_tags: frozenset[str]
+    blocked_tags: frozenset[str]
+    blocked_parts: frozenset[str]
+    extra_category: dict[str, str]
 
 
 def _tag_key(fragment: str) -> str:
     return fragment.strip().lower().replace(" ", "_")
 
 
-def _blocked_tag(key: str) -> bool:
-    if not key or key in _META_TAGS or key in _BLOCKED_TAGS:
+def _tag_list(value: object, field: str, source: Path) -> frozenset[str]:
+    if not isinstance(value, list) or not all(isinstance(item, str) for item in value):
+        raise SystemExit(f"{source}: {field} must be a list of strings")
+    return frozenset(key for item in value if (key := _tag_key(item)))
+
+
+def load_facet_lists(path: Path | None = None) -> FacetLists:
+    """Read facet lists from *path* or ``FACET_LISTS_JSON``.
+
+    A missing file uses ``facet_lists.example.json`` beside this module.
+    """
+    chosen = path
+    if chosen is None:
+        env = os.environ.get("FACET_LISTS_JSON", "").strip()
+        chosen = Path(env) if env else None
+    if chosen is None or not chosen.is_file():
+        chosen = _EXAMPLE_LISTS
+    try:
+        payload = json.loads(chosen.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise SystemExit(f"could not read facet lists {chosen}: {exc}") from exc
+    if not isinstance(payload, dict):
+        raise SystemExit(f"{chosen}: facet lists must be a JSON object")
+    missing = [field for field in (*_LIST_FIELDS, "extra_category") if field not in payload]
+    if missing:
+        raise SystemExit(f"{chosen}: missing {', '.join(missing)}")
+    extra = payload["extra_category"]
+    if not isinstance(extra, dict):
+        raise SystemExit(f"{chosen}: extra_category must be an object")
+    allowed = {*CATEGORIES, "detail"}
+    mapped: dict[str, str] = {}
+    for raw_key, group in extra.items():
+        if not isinstance(raw_key, str) or not isinstance(group, str):
+            raise SystemExit(f"{chosen}: extra_category entries must be strings")
+        key = _tag_key(raw_key)
+        if not key:
+            continue
+        if group not in allowed:
+            raise SystemExit(f"{chosen}: {raw_key} maps to unknown category {group!r}")
+        mapped[key] = group
+    return FacetLists(
+        meta_tags=_tag_list(payload["meta_tags"], "meta_tags", chosen),
+        blocked_tags=_tag_list(payload["blocked_tags"], "blocked_tags", chosen),
+        blocked_parts=_tag_list(payload["blocked_parts"], "blocked_parts", chosen),
+        extra_category=mapped,
+    )
+
+
+def _blocked_tag(key: str, lists: FacetLists) -> bool:
+    if not key or key in lists.meta_tags or key in lists.blocked_tags:
         return True
-    return any(part in _BLOCKED_PARTS for part in key.split("_"))
+    return any(part in lists.blocked_parts for part in key.split("_"))
 
 
-def promote_unclassified(tags: list[str]) -> dict[str, list[str]]:
+def promote_unclassified(tags: list[str], lists: FacetLists | None = None) -> dict[str, list[str]]:
     """File unclassified tags into facet groups.
 
     Tags that fill a known gap in the hint list join that category. Other
     ordinary tags are collected under ``detail``. Rating, sexual, and
-    minor-related tags are left out.
+    minor-related tags are left out. *lists* defaults to the example file,
+    or to ``FACET_LISTS_JSON`` when that file exists.
     """
+    chosen = lists if lists is not None else load_facet_lists()
     grouped: dict[str, list[str]] = {}
     for fragment in tags:
         key = _tag_key(fragment)
-        if _blocked_tag(key):
+        if _blocked_tag(key, chosen):
             continue
-        group = _EXTRA_CATEGORY.get(key, "detail")
+        group = chosen.extra_category.get(key, "detail")
         term = key.replace("_", " ")
         bucket = grouped.setdefault(group, [])
         if term not in bucket:

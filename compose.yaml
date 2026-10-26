@@ -97,10 +97,13 @@ services:
       RECAPTION: ${RECAPTION:-}
       # "ram" unless a backend is named, so a prose-only or WD14 caption is not reused.
       CAPTION_CACHE_KEY: ${CAPTION_CACHE_KEY:-${ARGUS_BACKEND:-ram}${OLLAMA_MODEL:-}${OLLAMA_REFINE_MODEL:-}${COMFYUI_MODEL:-}}
+      # The mount below is the example file unless FACET_LISTS_JSON names another one.
+      FACET_LISTS_JSON: /facet_lists.json
     volumes:
       # :z keeps the bind mount readable under SELinux (Fedora). Ignored when SELinux is off.
       # HOME is Linux/macOS; USERPROFILE is Windows when HOME is unset.
       - ${PHOTOS_DIR:-${HOME:-${USERPROFILE}}/Pictures}:/photos:ro,z
+      - ${FACET_LISTS_JSON:-./bake/src/lightbox_bake/facet_lists.example.json}:/facet_lists.json:ro,z
       - lightbox-cache:/var/lib/lightbox
     depends_on:
       lens:

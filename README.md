@@ -81,6 +81,8 @@ The caption is hybrid. RAM++ tags the photo in the lens container, and Florence 
 docker compose -f compose.yaml -f compose.gpu.yaml up --build
 ```
 
+Facet lists (which ordinary tags become filters, and which are left out) are `bake/src/lightbox_bake/facet_lists.example.json`. Set `FACET_LISTS_JSON` to a copy to replace them. A missing file keeps the example.
+
 The Compose file pins [argus-lens 0.9.0](https://pypi.org/project/argus-lens/0.9.0/). `LENS_TAG` overrides that pin. A vocabulary pack can be added with `RAM_VOCAB_PACKS`. `ARGUS_BACKEND=florence2` or `openai-compat` drops the tags, and the Compare tab then has nothing to show. WD14 stays available for a booru or anime checkpoint: `ARGUS_BACKEND=hybrid`, or `ARGUS_BACKEND=hybrid:wd14+openai-compat` to keep those tags and still send the sentence to Ollama.
 
 For a stronger description, copy `.env.example` to `.env` in this directory and fill in the hosts (Compose reads `.env`; it is not committed). Lens asks that server to describe the photo. A URL with no `/v1` gets one added. `COMFYUI_MODEL` has to be set as well, or the Ollama vision model keeps the caption.
