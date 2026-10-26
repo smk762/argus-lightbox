@@ -6,8 +6,8 @@ import { groupStyle } from "@/lib/categories";
 import type { Photo } from "@/lib/types";
 
 const MODES = [
-  { key: "tags", label: "Tags only", blurb: "WD14-style tagger output alone" },
-  { key: "prose", label: "Prose only", blurb: "Florence-style description alone" },
+  { key: "tags", label: "Tags only", blurb: "Tagger output alone" },
+  { key: "prose", label: "Prose only", blurb: "The written description alone" },
   { key: "hybrid", label: "Hybrid", blurb: "Both, fused by lens" },
 ] as const;
 
