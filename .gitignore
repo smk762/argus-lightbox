@@ -6,6 +6,7 @@ __pycache__/
 .ruff_cache/
 .pytest_cache/
 .env
+facet_lists.json
 
 # Node (web/)
 node_modules/
