@@ -89,7 +89,7 @@ export function FacetSidebar({
         )}
       </div>
       <p className="mb-1 text-caption text-text-muted">
-        Facets come from lens&apos;s category buckets, not keyword matching.
+        Category hints claim a tag when they can. Other ordinary tags are listed below.
       </p>
       {groups.map((group) => (
         <FacetGroup key={group} group={group} terms={facets[group] ?? []} onToggle={onToggle} />
