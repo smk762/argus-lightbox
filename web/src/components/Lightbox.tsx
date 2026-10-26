@@ -19,8 +19,9 @@ import { type ViewState, parseView, serializeView } from "@/lib/urlState";
 import { FacetSidebar } from "./FacetSidebar";
 import { PhotoDetail } from "./PhotoDetail";
 import { PhotoGrid } from "./PhotoGrid";
+import { WordCloud } from "./WordCloud";
 
-const EMPTY: ViewState = { query: "", selection: {}, photo: null };
+const EMPTY: ViewState = { query: "", selection: {}, photo: null, cloud: false, words: "caption", scope: "subset" };
 const PAGE_SIZE = 48;
 
 function sourceBadge(source: string): { label: string; title: string; tone: string } {
@@ -238,7 +239,7 @@ export function Lightbox() {
           />
         </div>
 
-        <main className="min-w-0 flex-1">
+        <main className="@container min-w-0 flex-1">
           <div className="sticky top-0 z-10 -mx-1 mb-4 bg-base-900/90 px-1 py-2 backdrop-blur">
             <input
               type="search"
@@ -255,6 +256,16 @@ export function Lightbox() {
               <span className="tabular-nums">
                 {index ? `${filtered.length} of ${photos.length} photos` : "Loading…"}
               </span>
+              {index && (
+                <button
+                  type="button"
+                  aria-pressed={view.cloud}
+                  onClick={() => update({ ...view, cloud: !view.cloud })}
+                  className={`rounded-full px-2.5 py-1 ${view.cloud ? "bg-accent-primary font-medium text-base-900" : "border border-base-600 hover:bg-base-700"}`}
+                >
+                  Word cloud
+                </button>
+              )}
               {queue > 0 && (
                 <span className="rounded-full bg-warning/15 px-2.5 py-1 text-warning tabular-nums">
                   {queue} {queue === 1 ? "caption" : "captions"} in queue
@@ -286,6 +297,22 @@ export function Lightbox() {
               )}
             </div>
           </div>
+
+          {view.cloud && (
+            <WordCloud
+              photos={view.scope === "source" ? photos : filtered}
+              field={view.words}
+              scope={view.scope}
+              subsetCount={filtered.length}
+              sourceCount={photos.length}
+              onField={(words) => update({ ...view, words })}
+              onScope={(scope) => update({ ...view, scope })}
+              onSearch={(query) => {
+                setPage(0);
+                update({ ...view, query });
+              }}
+            />
+          )}
 
           {index && filtered.length === 0 ? (
             <p className="py-16 text-center text-text-secondary">
