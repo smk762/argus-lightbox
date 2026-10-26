@@ -17,6 +17,7 @@ rm -f /var/lib/lightbox/data/error.txt
 python -m lightbox_bake.serve \
   --html /usr/share/lightbox/html \
   --data /var/lib/lightbox/data \
+  --cache /var/lib/lightbox/cache \
   --host 0.0.0.0 \
   --port 3000 &
 server_pid=$!

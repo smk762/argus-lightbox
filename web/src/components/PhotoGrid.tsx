@@ -14,18 +14,30 @@ function matchedTerms(photo: Photo, selection: Selection): { group: string; term
 export function PhotoGrid({
   photos,
   selection,
+  picked,
   onOpen,
+  onToggle,
 }: {
   photos: Photo[];
   selection: Selection;
+  picked: ReadonlySet<string>;
   onOpen: (id: string) => void;
+  onToggle: (id: string) => void;
 }) {
   return (
     <ul className="columns-2 gap-3 sm:columns-3 2xl:columns-4">
       {photos.map((photo) => {
         const matches = matchedTerms(photo, selection);
+        const label = photo.provenance.title || "photo";
         return (
-          <li key={photo.id} className="mb-3 break-inside-avoid">
+          <li key={photo.id} className="relative mb-3 break-inside-avoid">
+            <input
+              type="checkbox"
+              checked={picked.has(photo.id)}
+              onChange={() => onToggle(photo.id)}
+              aria-label={`Select ${label}`}
+              className="absolute right-2 top-2 z-10 size-4"
+            />
             <button
               type="button"
               onClick={() => onOpen(photo.id)}

@@ -7,14 +7,15 @@ import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.error import HTTPError
-from urllib.request import urlopen
+from urllib.request import Request, urlopen
 
 from PIL import Image
 
 import lightbox_bake.folder as folder_mod
 from lightbox_bake.cli import main
 from lightbox_bake.fixture import fixture_records
-from lightbox_bake.folder import caption_record, iter_images
+from lightbox_bake.folder import caption_record, iter_images, remember_caption_choice
+from lightbox_bake.index import write_gallery
 from lightbox_bake.serve import _resolve, make_handler
 
 
@@ -279,3 +280,59 @@ def test_serve_uses_baked_data_and_refuses_traversal(tmp_path) -> None:
     finally:
         server.shutdown()
         server.server_close()
+
+
+def test_caption_choice_updates_the_index_and_cache(tmp_path, monkeypatch) -> None:
+    monkeypatch.delenv("CAPTION_CACHE_KEY", raising=False)
+    record = next(item for item in fixture_records() if item.caption["caption_variants"].get("pose_composition"))
+    photo_id = "abc123def4567890"
+    sha = photo_id + ("ab" * 24)
+    pose = record.caption["caption_variants"]["pose_composition"]
+    photo = {
+        "id": photo_id,
+        "sha256": sha,
+        "image": f"images/{photo_id}.webp",
+        "thumb": f"thumbs/{photo_id}.webp",
+        "xmp": f"xmp/{photo_id}.xmp",
+        "width": 4,
+        "height": 3,
+        "color": "#000000",
+        "caption": record.caption,
+        "explain": {},
+        "compare": {},
+        "facets": {},
+        "exif": {},
+        "provenance": {},
+    }
+    html = tmp_path / "html"
+    data = tmp_path / "data"
+    cache = tmp_path / "cache"
+    html.mkdir()
+    cache.mkdir()
+    (html / "index.html").write_text("gallery", encoding="utf-8")
+    write_gallery(data, [photo], source="folder", queue=0)
+    (cache / f"{sha}.json").write_text(
+        json.dumps({"final_caption": "old", "selected_category": "identity"}),
+        encoding="utf-8",
+    )
+
+    server = ThreadingHTTPServer(("127.0.0.1", 0), make_handler(html, data, cache))
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    port = server.server_address[1]
+    _wait_for(f"http://127.0.0.1:{port}/")
+    body = json.dumps({"ids": [photo_id], "category": "pose_composition"}).encode()
+    try:
+        opened = urlopen(Request(f"http://127.0.0.1:{port}/api/caption-choice", data=body, method="POST"))
+        payload = json.loads(opened.read())
+    finally:
+        server.shutdown()
+        server.server_close()
+
+    assert payload["updated"] == [photo_id]
+    saved = json.loads((data / "index.json").read_text(encoding="utf-8"))
+    assert saved["photos"][0]["caption"]["final_caption"] == pose
+    cached = json.loads((cache / f"{sha}.json").read_text(encoding="utf-8"))
+    assert cached["final_caption"] == pose
+    assert cached["selected_category"] == "pose_composition"
+    assert remember_caption_choice(cache, "f" * 64, final_caption="x", selected_category="setting") is False
