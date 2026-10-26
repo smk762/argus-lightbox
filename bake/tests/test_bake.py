@@ -56,10 +56,63 @@ def test_explain_facets_compare_and_drift() -> None:
     assert derived["compare"]["hybrid"]["final_caption"] == record.caption["final_caption"]
     assert "red dress" in derived["facets"]["wardrobe"]
     assert derived["facets"]["people"] == ["one person"]
-    assert set(derived["facets"]) <= {*CATEGORIES, "people"}
+    assert set(derived["facets"]) <= {*CATEGORIES, "people", "detail"}
 
     drifted = explain({**record.caption, "final_caption": "an older lens wrote this"})
     assert drifted["explain"]["drift"] is True
+
+
+def test_unclassified_ordinary_tags_are_filterable_and_sexual_tags_are_not() -> None:
+    caption = {
+        "final_caption": "",
+        "raw_tags": "1girl, solo, carpet, barefoot, open_mouth, kneehighs, pussy, loli, photorealistic, wet ground",
+        "raw_prose": "",
+        "backend_name": "wd14",
+    }
+    facets = explain(caption)["facets"]
+    assert "carpet" in facets["setting"]
+    assert "barefoot" in facets["pose_composition"]
+    assert "open mouth" in facets["identity"]
+    assert "kneehighs" in facets["wardrobe"]
+    assert "wet ground" in facets["detail"]
+    listed = {term for terms in facets.values() for term in terms}
+    assert "pussy" not in listed
+    assert "loli" not in listed
+    assert "photorealistic" not in listed
+
+
+def test_facet_lists_json_overrides_and_a_missing_file_uses_the_example(tmp_path, monkeypatch) -> None:
+    caption = {
+        "final_caption": "",
+        "raw_tags": "carpet, wet ground, photorealistic, pussy, loli",
+        "raw_prose": "",
+        "backend_name": "wd14",
+    }
+    custom = tmp_path / "lists.json"
+    custom.write_text(
+        json.dumps(
+            {
+                "meta_tags": ["carpet"],
+                "blocked_tags": [],
+                "blocked_parts": ["pussy", "loli"],
+                "extra_category": {"wet_ground": "lighting"},
+            }
+        ),
+        encoding="utf-8",
+    )
+    monkeypatch.setenv("FACET_LISTS_JSON", str(custom))
+    facets = explain(caption)["facets"]
+    listed = {term for terms in facets.values() for term in terms}
+    assert "wet ground" in facets["lighting"]
+    assert "carpet" not in listed
+    assert "photorealistic" in facets["detail"]
+    assert "pussy" not in listed and "loli" not in listed
+
+    monkeypatch.setenv("FACET_LISTS_JSON", str(tmp_path / "missing.json"))
+    fallback = explain(caption)["facets"]
+    assert "carpet" in fallback["setting"]
+    assert "wet ground" in fallback["detail"]
+    assert "photorealistic" not in {term for terms in fallback.values() for term in terms}
 
 
 def test_single_source_backend_has_no_compare() -> None:

@@ -1,0 +1,115 @@
+# Lightbox plus the lens server that captions it.
+#
+# With PHOTOS_DIR unset, the gallery reads the signed-in user's Pictures folder:
+# ~/Pictures on Linux and macOS, %USERPROFILE%\Pictures on Windows.
+# Set PHOTOS_DIR to use another local directory, a NAS share, or a USB drive:
+#
+#   docker compose up --build
+#   PHOTOS_DIR=/mnt/nas/library docker compose up --build
+#   PHOTOS_DIR=/run/media/$USER/USB/DCIM docker compose up --build
+#
+# The folder is mounted read-only. Captions are not written back beside the
+# files. A volume remembers captions, so a later start only sends new photos
+# to lens (RECAPTION=1 ignores that cache). Changing PHOTOS_DIR and running
+# `docker compose up -d` mounts the new folder and rebuilds the gallery from
+# it. When that bake finishes, captions and renditions for files that are not
+# in the new folder are deleted. `make purge` wipes the gallery and every
+# cached caption immediately, then starts the current folder from scratch.
+# Lens's downloaded models stay in the lens-models volume either way.
+#
+# Default caption is hybrid. RAM++ supplies photo tags in this container, and
+# the sentence comes from Florence, or from Ollama / ComfyUI when a model is
+# named. WD14 is not loaded. The image is pinned to argus-lens 0.9.0
+# (LENS_TAG overrides it). WD14 remains the booru / anime opt-in:
+#   ARGUS_BACKEND=hybrid
+#   ARGUS_BACKEND=hybrid:wd14+openai-compat
+#   OLLAMA_URL=http://host.docker.internal:11434 OLLAMA_MODEL=qwen3-vl:8b-instruct \
+#     docker compose up --build
+#   COMFYUI_URL=http://host.docker.internal:8188 COMFYUI_MODEL=joycaption \
+#     docker compose up --build
+# OLLAMA_REFINE_MODEL=qwen3:8b rewrites finished captions and does not replace Florence.
+# Add RECAPTION=1 the first time the backend changes, or an older caption is kept.
+# A cloud backend still works: ARGUS_BACKEND=openai OPENAI_API_KEY=...
+#
+# PHOTOS_LIMIT=20 caps how many images are captioned (sorted path order).
+
+name: argus-lightbox
+
+services:
+  lens:
+    image: ghcr.io/smk762/argus-lens:${LENS_TAG:-0.9.0}
+    environment:
+      ARGUS_BACKEND: ${ARGUS_BACKEND:-}
+      OLLAMA_URL: ${OLLAMA_URL:-}
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-}
+      OLLAMA_REFINE_MODEL: ${OLLAMA_REFINE_MODEL:-}
+      COMFYUI_URL: ${COMFYUI_URL:-}
+      COMFYUI_MODEL: ${COMFYUI_MODEL:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      REPLICATE_API_TOKEN: ${REPLICATE_API_TOKEN:-}
+      HF_TOKEN: ${HF_TOKEN:-}
+      NVIDIA_API_KEY: ${NVIDIA_API_KEY:-}
+      ARGUS_OPENAI_COMPAT_BASE_URL: ${ARGUS_OPENAI_COMPAT_BASE_URL:-}
+      ARGUS_OPENAI_COMPAT_MODEL: ${ARGUS_OPENAI_COMPAT_MODEL:-}
+      ARGUS_OPENAI_COMPAT_API_KEY: ${ARGUS_OPENAI_COMPAT_API_KEY:-}
+      ARGUS_OPENAI_COMPAT_PROMPT: ${ARGUS_OPENAI_COMPAT_PROMPT:-}
+      ARGUS_REFINE_BASE_URL: ${ARGUS_REFINE_BASE_URL:-}
+      ARGUS_REFINE_MODEL: ${ARGUS_REFINE_MODEL:-}
+      ARGUS_REFINE_API_KEY: ${ARGUS_REFINE_API_KEY:-}
+      ARGUS_REFINE_VARIANTS: ${ARGUS_REFINE_VARIANTS:-}
+      ARGUS_REFINE_IMAGE: ${ARGUS_REFINE_IMAGE:-}
+      WD14_MODEL_REPO: ${WD14_MODEL_REPO:-}
+      RAM_MODEL_DIR: /cache/ram_plus
+      RAM_VOCAB_PACKS: ${RAM_VOCAB_PACKS:-}
+      HF_HOME: /cache/huggingface
+      WD14_MODEL_DIR: /cache/wd14
+      HF_TRUST_REMOTE_CODE: ${HF_TRUST_REMOTE_CODE:-false}
+    entrypoint: ["/bin/sh", "/lens-backend.sh"]
+    ports:
+      - "${LENS_PORT:-8100}:8100"
+    volumes:
+      - lens-models:/cache
+      - ./docker/lens-backend.sh:/lens-backend.sh:ro,z
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8100/health', timeout=5)",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 90s
+    restart: unless-stopped
+
+  lightbox:
+    build: .
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      LENS_URL: http://lens:8100
+      PHOTOS_DIR: /photos
+      PHOTOS_LIMIT: ${PHOTOS_LIMIT:-}
+      RECAPTION: ${RECAPTION:-}
+      # "ram" unless a backend is named, so a prose-only or WD14 caption is not reused.
+      CAPTION_CACHE_KEY: ${CAPTION_CACHE_KEY:-${ARGUS_BACKEND:-ram}${OLLAMA_MODEL:-}${OLLAMA_REFINE_MODEL:-}${COMFYUI_MODEL:-}}
+      # The mount below is the example file unless FACET_LISTS_JSON names another one.
+      FACET_LISTS_JSON: /facet_lists.json
+    volumes:
+      # :z keeps the bind mount readable under SELinux (Fedora). Ignored when SELinux is off.
+      # HOME is Linux/macOS; USERPROFILE is Windows when HOME is unset.
+      - ${PHOTOS_DIR:-${HOME:-${USERPROFILE}}/Pictures}:/photos:ro,z
+      - ${FACET_LISTS_JSON:-./bake/src/lightbox_bake/facet_lists.example.json}:/facet_lists.json:ro,z
+      - lightbox-cache:/var/lib/lightbox
+    depends_on:
+      lens:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  lens-models:
+  lightbox-cache:

@@ -18,6 +18,11 @@ const STYLES: Record<string, GroupStyle> = {
   setting: { label: "Setting", color: "var(--color-success)", blurb: "Where the photo was taken." },
   lighting: { label: "Lighting", color: "var(--color-warning)", blurb: "Time of day and quality of light." },
   action: { label: "Action", color: "var(--color-accent-tertiary)", blurb: "What the subject is doing." },
+  detail: {
+    label: "Other details",
+    color: "var(--color-text-muted)",
+    blurb: "Ordinary tags that matched no category hint.",
+  },
   people: { label: "People", color: "var(--color-warm-secondary)", blurb: "Lens's headcount estimate." },
   camera: { label: "Camera", color: "var(--color-text-secondary)", blurb: "From the photo's EXIF." },
   training: { label: "Training", color: "var(--color-info)", blurb: "Identity-suppressed variant for LoRA training." },
