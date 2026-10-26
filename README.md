@@ -83,7 +83,7 @@ docker compose -f compose.yaml -f compose.gpu.yaml up --build
 
 Facet lists (which ordinary tags become filters, and which are left out) are `bake/src/lightbox_bake/facet_lists.example.json`. Set `FACET_LISTS_JSON` to a copy to replace them. A missing file keeps the example.
 
-The Compose file pins [argus-lens 0.9.0](https://pypi.org/project/argus-lens/0.9.0/). `LENS_TAG` overrides that pin. A vocabulary pack can be added with `RAM_VOCAB_PACKS`. `ARGUS_BACKEND=florence2` or `openai-compat` drops the tags, and the Compare tab then has nothing to show. WD14 stays available for a booru or anime checkpoint: `ARGUS_BACKEND=hybrid`, or `ARGUS_BACKEND=hybrid:wd14+openai-compat` to keep those tags and still send the sentence to Ollama.
+The Compose file pins [argus-lens 0.10.0](https://pypi.org/project/argus-lens/0.10.0/). `LENS_TAG` overrides that pin. A vocabulary pack can be added with `RAM_VOCAB_PACKS`. `ARGUS_BACKEND=florence2` or `openai-compat` drops the tags, and the Compare tab then has nothing to show. WD14 stays available for a booru or anime checkpoint: `ARGUS_BACKEND=hybrid`, or `ARGUS_BACKEND=hybrid:wd14+openai-compat` to keep those tags and still send the sentence to Ollama.
 
 For a stronger description, copy `.env.example` to `.env` in this directory and fill in the hosts (Compose reads `.env`; it is not committed). Lens asks that server to describe the photo. A URL with no `/v1` gets one added. `COMFYUI_MODEL` has to be set as well, or the Ollama vision model keeps the caption.
 
@@ -94,7 +94,7 @@ COMFYUI_URL=http://host.docker.internal:8188 COMFYUI_MODEL=joycaption docker com
 
 ComfyUI's own workflow port does not caption anything until a vision model is served there in that OpenAI shape. When both URLs are set, ComfyUI writes the prose and Ollama is left for the optional rewrite below.
 
-`OLLAMA_REFINE_MODEL=qwen3:8b` asks Ollama to rewrite the finished captions. Florence still writes the prose unless `OLLAMA_MODEL` is set too. A rewrite is kept only when lens's own checks accept it. `RECAPTION=1` is needed the first time the model changes, otherwise captions already in the cache stay as they are. `ARGUS_BACKEND=openai` and `OPENAI_API_KEY` still select the cloud backend instead.
+With `OLLAMA_URL` set, lens 0.10 rewrites every finished caption with `qwen3:8b` on that server. A rewrite is kept only when lens's own checks accept it. `OLLAMA_REFINE_MODEL` names a different rewriter and does not replace Florence. `ARGUS_REFINE=off` leaves the assembled caption. With no Ollama URL, refinement stays off. Captions cached before this rewrite are kept until the cache key changes or `RECAPTION=1` is set. `ARGUS_BACKEND=openai` and `OPENAI_API_KEY` still select the cloud backend instead.
 
 The container has to be able to read the mount. On a NAS export that squashes root, the files need to be world-readable.
 

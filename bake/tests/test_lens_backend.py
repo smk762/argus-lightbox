@@ -35,6 +35,7 @@ def test_nothing_set_uses_ram_tags_and_florence_prose(tmp_path) -> None:
     chosen = _resolve(tmp_path)
     assert chosen["ARGUS_BACKEND"] == "hybrid:ram+florence2"
     assert "ARGUS_OPENAI_COMPAT_BASE_URL" not in chosen
+    assert chosen["ARGUS_REFINE"] == "off"
     assert "ARGUS_REFINE_MODEL" not in chosen
 
 
@@ -44,6 +45,9 @@ def test_ollama_vision_model_supplies_prose_beside_ram_tags(tmp_path) -> None:
     assert chosen["ARGUS_OPENAI_COMPAT_BASE_URL"] == "http://host.docker.internal:11434/v1"
     assert chosen["ARGUS_OPENAI_COMPAT_MODEL"] == "qwen3-vl:8b-instruct"
     assert chosen["ARGUS_OPENAI_COMPAT_PROMPT"] == "straightforward"
+    assert chosen["ARGUS_REFINE_MODEL"] == "qwen3:8b"
+    assert chosen["ARGUS_REFINE_BASE_URL"] == "http://host.docker.internal:11434/v1"
+    assert "ARGUS_REFINE" not in chosen
 
 
 def test_a_url_that_already_ends_in_v1_is_not_doubled(tmp_path) -> None:
@@ -85,6 +89,18 @@ def test_comfyui_url_without_a_model_leaves_ollama_as_prose(tmp_path) -> None:
     assert chosen["ARGUS_BACKEND"] == "hybrid:ram+openai-compat"
     assert chosen["ARGUS_OPENAI_COMPAT_BASE_URL"] == "http://192.168.1.198:11434/v1"
     assert chosen["ARGUS_OPENAI_COMPAT_MODEL"] == "qwen3-vl:8b-instruct"
+
+
+def test_refine_off_keeps_the_assembled_caption(tmp_path) -> None:
+    chosen = _resolve(
+        tmp_path,
+        OLLAMA_URL="http://host:11434",
+        OLLAMA_MODEL="qwen3-vl:8b-instruct",
+        ARGUS_REFINE="off",
+    )
+    assert chosen["ARGUS_BACKEND"] == "hybrid:ram+openai-compat"
+    assert chosen["ARGUS_REFINE"] == "off"
+    assert "ARGUS_REFINE_MODEL" not in chosen
 
 
 def test_an_explicit_backend_is_left_alone(tmp_path) -> None:

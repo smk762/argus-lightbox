@@ -19,15 +19,17 @@
 #
 # Default caption is hybrid. RAM++ supplies photo tags in this container, and
 # the sentence comes from Florence, or from Ollama / ComfyUI when a model is
-# named. WD14 is not loaded. The image is pinned to argus-lens 0.9.0
-# (LENS_TAG overrides it). WD14 remains the booru / anime opt-in:
+# named. WD14 is not loaded. The image is pinned to argus-lens 0.10.0
+# (LENS_TAG overrides it). Finished captions are rewritten with qwen3:8b on
+# OLLAMA_URL. ARGUS_REFINE=off keeps the assembled caption. With no Ollama
+# URL, refinement stays off. WD14 remains the booru / anime opt-in:
 #   ARGUS_BACKEND=hybrid
 #   ARGUS_BACKEND=hybrid:wd14+openai-compat
 #   OLLAMA_URL=http://host.docker.internal:11434 OLLAMA_MODEL=qwen3-vl:8b-instruct \
 #     docker compose up --build
 #   COMFYUI_URL=http://host.docker.internal:8188 COMFYUI_MODEL=joycaption \
 #     docker compose up --build
-# OLLAMA_REFINE_MODEL=qwen3:8b rewrites finished captions and does not replace Florence.
+# OLLAMA_REFINE_MODEL names a rewriter other than qwen3:8b. It does not replace Florence.
 # Add RECAPTION=1 the first time the backend changes, or an older caption is kept.
 # A cloud backend still works: ARGUS_BACKEND=openai OPENAI_API_KEY=...
 #
@@ -37,9 +39,10 @@ name: argus-lightbox
 
 services:
   lens:
-    image: ghcr.io/smk762/argus-lens:${LENS_TAG:-0.9.0}
+    image: ghcr.io/smk762/argus-lens:${LENS_TAG:-0.10.0}
     environment:
       ARGUS_BACKEND: ${ARGUS_BACKEND:-}
+      ARGUS_REFINE: ${ARGUS_REFINE:-}
       OLLAMA_URL: ${OLLAMA_URL:-}
       OLLAMA_MODEL: ${OLLAMA_MODEL:-}
       OLLAMA_REFINE_MODEL: ${OLLAMA_REFINE_MODEL:-}
@@ -96,7 +99,9 @@ services:
       PHOTOS_LIMIT: ${PHOTOS_LIMIT:-}
       RECAPTION: ${RECAPTION:-}
       # "ram" unless a backend is named, so a prose-only or WD14 caption is not reused.
-      CAPTION_CACHE_KEY: ${CAPTION_CACHE_KEY:-${ARGUS_BACKEND:-ram}${OLLAMA_MODEL:-}${OLLAMA_REFINE_MODEL:-}${COMFYUI_MODEL:-}}
+      # qwen3-8b is appended when OLLAMA_URL is set, so a 0.9 caption is not reused
+      # as a 0.10 rewrite. ARGUS_REFINE=off is its own suffix.
+      CAPTION_CACHE_KEY: ${CAPTION_CACHE_KEY:-${ARGUS_BACKEND:-ram}${OLLAMA_MODEL:-}${OLLAMA_REFINE_MODEL:-}${COMFYUI_MODEL:-}${OLLAMA_URL:+qwen3-8b}${ARGUS_REFINE:-}}
       # The mount below is the example file unless FACET_LISTS_JSON names another one.
       FACET_LISTS_JSON: /facet_lists.json
     volumes:

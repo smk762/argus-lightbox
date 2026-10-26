@@ -9,7 +9,8 @@ Shape (``version`` 1.x)::
       "photos": [{
         "id", "sha256", "image", "thumb", "xmp", "width", "height", "color",
         "caption":  CaptionResult fields (final_caption, caption_variants, raw_tags, raw_prose,
-                    backend_name, selected_category) + profile, version   # as recorded
+                    backend_name, selected_category) + profile, version,
+                    optional refine {model, accepted, skipped}             # as recorded
         "explain":  {buckets, compaction_notes, subjects, drift},          # recomposed
         "compare":  {tags|prose|hybrid: {final_caption, caption_variants}} # when both raw outputs exist
         "facets":   {category: [terms], "people": [...]},

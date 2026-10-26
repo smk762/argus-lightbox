@@ -16,7 +16,9 @@ deterministically from the raw tags/prose, which gives the demo:
 
 The *recorded* caption stays the source of truth for what is displayed; if the
 pinned lens version would now assemble a different ``final_caption``, the photo
-is flagged with ``explain.drift`` rather than silently re-captioned.
+is flagged with ``explain.drift`` rather than silently re-captioned. A checked
+rewrite (``caption.refine``) is that assembly plus a later edit, so it is not
+drift.
 """
 
 from __future__ import annotations
@@ -28,7 +30,7 @@ from pathlib import Path
 from typing import Any
 
 from argus_lens.assembly.composer import compose_caption_result
-from argus_lens.types import DEFAULT_CATEGORY_CONFIGS, CaptionTargetProfile
+from argus_lens.types import DEFAULT_CATEGORY_CONFIGS, CaptionResult, CaptionTargetProfile
 
 CATEGORIES: list[str] = [c.name for c in DEFAULT_CATEGORY_CONFIGS]
 _PROFILE_FIELDS = ("target_style", "target_category", "target_backend", "checkpoint")
@@ -148,6 +150,39 @@ def _subjects_facet(subjects: dict[str, Any] | None) -> list[str]:
     return ["one person"] if count == 1 else ["group"]
 
 
+def _accepted_rewrites(caption: dict[str, Any]) -> set[str]:
+    refine = caption.get("refine")
+    if not isinstance(refine, dict) or not isinstance(refine.get("accepted"), list):
+        return set()
+    return {name for name in refine["accepted"] if isinstance(name, str)}
+
+
+def _assembly_drift(result: CaptionResult, caption: dict[str, Any], accepted: set[str]) -> bool:
+    """True when recomposition disagrees with the recorded displayed caption.
+
+    Drift follows ``final_caption``. A checked rewrite of the selected category
+    is that sentence on purpose, so it is not a disagreement.
+    """
+    selected = caption.get("selected_category") or result.selected_category
+    if selected in accepted:
+        return False
+    return result.final_caption != caption.get("final_caption")
+
+
+def _refine_notes(caption: dict[str, Any]) -> list[str]:
+    refine = caption.get("refine")
+    if not isinstance(refine, dict):
+        return []
+    accepted = sorted(name for name in (refine.get("accepted") or []) if isinstance(name, str))
+    model = refine.get("model") if isinstance(refine.get("model"), str) else ""
+    if accepted and model:
+        return [f"Refined {', '.join(accepted)} with {model}."]
+    skipped = refine.get("skipped")
+    if isinstance(skipped, str) and skipped:
+        return ["Refinement skipped; the assembled caption is unchanged."]
+    return []
+
+
 def explain(caption: dict[str, Any]) -> dict[str, Any]:
     """Return ``{"explain", "compare", "facets"}`` for one recorded caption."""
     raw_tags = caption.get("raw_tags") or ""
@@ -156,6 +191,7 @@ def explain(caption: dict[str, Any]) -> dict[str, Any]:
     backend = caption.get("backend_name") or ""
 
     result = _compose(raw_tags, raw_prose, profile, backend)
+    accepted = _accepted_rewrites(caption)
     buckets = result.metadata.get("buckets", {})
     subjects = result.metadata.get("subjects")
 
@@ -180,9 +216,9 @@ def explain(caption: dict[str, Any]) -> dict[str, Any]:
     return {
         "explain": {
             "buckets": buckets,
-            "compaction_notes": result.compaction_notes,
+            "compaction_notes": [*result.compaction_notes, *_refine_notes(caption)],
             "subjects": subjects,
-            "drift": result.final_caption != caption.get("final_caption"),
+            "drift": _assembly_drift(result, caption, accepted),
         },
         "compare": compare,
         "facets": facets,

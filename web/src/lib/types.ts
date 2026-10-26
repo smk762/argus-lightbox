@@ -13,6 +13,8 @@ export interface CaptionRecord {
   backend_name: string;
   profile?: Record<string, unknown>;
   version?: number;
+  /** Present when lens rewrote the assembled caption, or skipped that rewrite. */
+  refine?: { model?: string; accepted?: string[]; skipped?: string };
 }
 
 export interface Subjects {

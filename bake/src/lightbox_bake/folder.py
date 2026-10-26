@@ -68,6 +68,33 @@ def iter_images(root: Path, *, recursive: bool = True) -> list[Path]:
     return sorted(found, key=lambda p: p.relative_to(root).as_posix())
 
 
+def _refine_record(payload: dict[str, Any]) -> dict[str, Any] | None:
+    """Keep the rewrite lens recorded, whether it arrived on the wire or from our cache.
+
+    A checked rewrite changes ``final_caption`` after assembly. The explain view
+    needs that fact so the difference is not reported as ``drift``.
+    """
+    raw = payload.get("refine")
+    if not isinstance(raw, dict):
+        metadata = payload.get("metadata")
+        raw = metadata.get("refine") if isinstance(metadata, dict) else None
+    if not isinstance(raw, dict):
+        return None
+    record: dict[str, Any] = {}
+    model = raw.get("model")
+    if isinstance(model, str) and model:
+        record["model"] = model
+    accepted = raw.get("accepted")
+    if isinstance(accepted, list):
+        names = [item for item in accepted if isinstance(item, str) and item]
+        if names:
+            record["accepted"] = names
+    skipped = raw.get("skipped")
+    if isinstance(skipped, str) and skipped:
+        record["skipped"] = skipped
+    return record or None
+
+
 def caption_record(payload: dict[str, Any]) -> dict[str, Any]:
     """Keep the CaptionResult fields the index stores, plus the profile we requested."""
     final = payload.get("final_caption")
@@ -79,7 +106,7 @@ def caption_record(payload: dict[str, Any]) -> dict[str, Any]:
         if isinstance(raw_variants, dict)
         else {}
     )
-    return {
+    record = {
         "final_caption": final,
         "caption_variants": variants,
         "selected_category": str(payload.get("selected_category") or "identity"),
@@ -89,6 +116,10 @@ def caption_record(payload: dict[str, Any]) -> dict[str, Any]:
         "profile": dict(_PROFILE),
         "version": 1,
     }
+    refine = _refine_record(payload)
+    if refine is not None:
+        record["refine"] = refine
+    return record
 
 
 def file_sha256(path: Path) -> str:
@@ -175,7 +206,10 @@ def _write_cache(cache: Path | None, sha256: str, caption: dict[str, Any]) -> No
     cache.mkdir(parents=True, exist_ok=True)
     dest = _cache_file(cache, sha256)
     tmp = dest.with_suffix(".json.tmp")
-    tmp.write_text(json.dumps({k: caption[k] for k in _CAPTION_FIELDS}, ensure_ascii=False), encoding="utf-8")
+    stored = {k: caption[k] for k in _CAPTION_FIELDS}
+    if isinstance(caption.get("refine"), dict):
+        stored["refine"] = caption["refine"]
+    tmp.write_text(json.dumps(stored, ensure_ascii=False), encoding="utf-8")
     tmp.replace(dest)
 
 
