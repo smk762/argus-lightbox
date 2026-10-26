@@ -24,8 +24,10 @@ can be dropped into the same shape.
 
 from __future__ import annotations
 
+import fcntl
 import hashlib
 import json
+import re
 from collections.abc import Iterable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -162,6 +164,98 @@ def finish_gallery(out_dir: Path, *, source: str) -> None:
     photos = read_photos(out_dir)
     _prune(out_dir, {str(photo["id"]) for photo in photos})
     write_gallery(out_dir, photos, source=source, queue=0)
+
+
+# Variants lens writes beside the six categories. A chosen final caption has to be one of these.
+_EXTRA_CAPTIONS = ("training", "training_prose", "zeroshot")
+_PHOTO_ID = re.compile(r"[0-9a-f]{16}")
+
+
+class CaptionChoiceError(Exception):
+    """The gallery refused a final-caption change. ``status`` is the HTTP status to report."""
+
+    def __init__(self, status: int, message: str) -> None:
+        super().__init__(message)
+        self.status = status
+
+
+def choose_final_caption(out_dir: Path, ids: list[str], category: str) -> dict[str, list]:
+    """Make an already-written variant the recorded final caption for *ids*.
+
+    Lens stores one caption per category on every photo. ``target_category`` only
+    decides which of those strings is ``final_caption``; this writes that choice
+    into the index and the XMP sidecar. It does not call the model.
+
+    Returns ``{"updated", "skipped", "cache"}``. ``cache`` is the chosen caption
+    for each updated photo, so the caption cache can be kept in step.
+    """
+    chosen = category.strip().lower().replace("-", "_").replace(" ", "_")
+    if chosen not in {*CATEGORIES, *_EXTRA_CAPTIONS}:
+        raise CaptionChoiceError(400, f"unknown caption option: {category}")
+    wanted = [photo_id for photo_id in ids if isinstance(photo_id, str) and _PHOTO_ID.fullmatch(photo_id)]
+    if not wanted:
+        raise CaptionChoiceError(400, "no photos selected")
+
+    out_dir.mkdir(parents=True, exist_ok=True)
+    lock_path = out_dir / ".index.lock"
+    with lock_path.open("a+") as lock:
+        fcntl.flock(lock.fileno(), fcntl.LOCK_EX)
+        try:
+            return _choose_locked(out_dir, wanted, chosen)
+        finally:
+            fcntl.flock(lock.fileno(), fcntl.LOCK_UN)
+
+
+def _choose_locked(out_dir: Path, ids: list[str], category: str) -> dict[str, list]:
+    path = out_dir / "index.json"
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise CaptionChoiceError(404, "gallery index is not ready") from exc
+    photos = payload.get("photos") if isinstance(payload, dict) else None
+    if not isinstance(photos, list):
+        raise CaptionChoiceError(404, "gallery index is not ready")
+    queue = payload.get("queue")
+    if isinstance(queue, int) and queue > 0:
+        raise CaptionChoiceError(409, "captions are still being written; try again when the queue is empty")
+
+    by_id = {str(photo.get("id")): photo for photo in photos if isinstance(photo, dict)}
+    updated: list[str] = []
+    skipped: list[dict[str, str]] = []
+    cache: list[dict[str, str]] = []
+    for photo_id in dict.fromkeys(ids):
+        photo = by_id.get(photo_id)
+        if photo is None:
+            skipped.append({"id": photo_id, "reason": "not in this gallery"})
+            continue
+        caption = photo.get("caption")
+        variants = caption.get("caption_variants") if isinstance(caption, dict) else None
+        text = variants.get(category) if isinstance(variants, dict) else None
+        if not isinstance(text, str) or not text.strip():
+            skipped.append({"id": photo_id, "reason": f"no {category} caption"})
+            continue
+        profile = dict(caption.get("profile") or {})
+        profile["target_category"] = category
+        caption = {**caption, "final_caption": text, "selected_category": category, "profile": profile}
+        photo["caption"] = caption
+        derived = explain(caption)
+        photo["explain"] = derived["explain"]
+        photo["compare"] = derived["compare"]
+        photo["facets"] = derived["facets"]
+        photo["xmp"] = _write_xmp(out_dir, photo_id, caption)
+        updated.append(photo_id)
+        sha = photo.get("sha256")
+        if isinstance(sha, str) and sha:
+            cache.append({"sha256": sha, "final_caption": text, "selected_category": category})
+
+    source = str(payload.get("source") or "folder")
+    write_gallery(
+        out_dir,
+        [photo for photo in photos if isinstance(photo, dict)],
+        source=source,
+        queue=queue if isinstance(queue, int) else None,
+    )
+    return {"updated": updated, "skipped": skipped, "cache": cache}
 
 
 def _write_xmp(out_dir: Path, photo_id: str, caption: dict) -> str:

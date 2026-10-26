@@ -20,7 +20,19 @@ function TokenCount({ text, backend, alert = false }: { text: string; backend?: 
 // Category variants first (in index order), then the specialised ones.
 const SPECIAL = ["training", "training_prose", "zeroshot"];
 
-export function CaptionTab({ photo, categories, terms }: { photo: Photo; categories: string[]; terms: string[] }) {
+export function CaptionTab({
+  photo,
+  categories,
+  terms,
+  applying,
+  onUse,
+}: {
+  photo: Photo;
+  categories: string[];
+  terms: string[];
+  applying: boolean;
+  onUse: (category: string) => void;
+}) {
   const { caption } = photo;
   const backend = typeof caption.profile?.target_backend === "string" ? caption.profile.target_backend : undefined;
   const finalUse = tokenUse(caption.final_caption, backend);
@@ -56,7 +68,17 @@ export function CaptionTab({ photo, categories, terms }: { photo: Photo; categor
             <li key={key} className="rounded-md bg-base-900/60 p-3">
               <div className="mb-1 flex items-center justify-between gap-2">
                 <GroupLabel group={key} className="text-caption font-medium text-text-secondary" />
-                <CopyButton text={caption.caption_variants[key]} />
+                <span className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    disabled={applying || key === caption.selected_category}
+                    onClick={() => onUse(key)}
+                    className="text-caption text-accent-tertiary hover:underline disabled:text-text-muted disabled:no-underline"
+                  >
+                    {key === caption.selected_category ? "Final caption" : "Use as final"}
+                  </button>
+                  <CopyButton text={caption.caption_variants[key]} />
+                </span>
               </div>
               <p className="text-small leading-relaxed">
                 <Highlight text={caption.caption_variants[key]} terms={terms} />

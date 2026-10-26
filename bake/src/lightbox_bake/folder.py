@@ -150,6 +150,25 @@ def purge_store(root: Path) -> None:
         target.mkdir(parents=True, exist_ok=True)
 
 
+def remember_caption_choice(cache: Path, sha256: str, *, final_caption: str, selected_category: str) -> bool:
+    """Keep a chosen final caption in the cache file, when that file already exists."""
+    path = _cache_file(cache, sha256)
+    if not path.is_file():
+        return False
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return False
+    if not isinstance(payload, dict):
+        return False
+    payload["final_caption"] = final_caption
+    payload["selected_category"] = selected_category
+    tmp = path.with_suffix(".json.tmp")
+    tmp.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+    tmp.replace(path)
+    return True
+
+
 def _write_cache(cache: Path | None, sha256: str, caption: dict[str, Any]) -> None:
     if cache is None:
         return

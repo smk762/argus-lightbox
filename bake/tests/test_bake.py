@@ -12,7 +12,7 @@ from lightbox_bake.exif import read_exif
 from lightbox_bake.explain import CATEGORIES, explain
 from lightbox_bake.fixture import SCENES, fixture_records
 from lightbox_bake.images import THUMB_MAX, render
-from lightbox_bake.index import build_index
+from lightbox_bake.index import CaptionChoiceError, build_index, choose_final_caption, write_gallery
 from lightbox_bake.sources import SourceRecord, tape_records
 
 
@@ -198,6 +198,74 @@ def test_tape_records_maps_lineage_rows(monkeypatch, tmp_path) -> None:
     assert record.caption["selected_category"] == "wardrobe"
     assert record.caption["caption_variants"] == {"identity": "final"}
     assert record.load_bytes() == img.read_bytes()  # blob store miss falls back to the local uri
+
+
+def _gallery_photo(photo_id: str, caption: dict) -> dict:
+    return {
+        "id": photo_id,
+        "sha256": photo_id + ("ab" * 24),
+        "image": f"images/{photo_id}.webp",
+        "thumb": f"thumbs/{photo_id}.webp",
+        "xmp": f"xmp/{photo_id}.xmp",
+        "width": 4,
+        "height": 3,
+        "color": "#000000",
+        "caption": caption,
+        "explain": {},
+        "compare": {},
+        "facets": {},
+        "exif": {},
+        "provenance": {},
+    }
+
+
+def test_choose_final_caption_promotes_an_existing_variant(tmp_path) -> None:
+    record = next(item for item in fixture_records() if item.caption["caption_variants"].get("pose_composition"))
+    pose = record.caption["caption_variants"]["pose_composition"]
+    chosen_id = "abc123def4567890"
+    other_id = "0123456789abcdef"
+    other = {**record.caption, "final_caption": "leave this", "selected_category": "identity"}
+    write_gallery(
+        tmp_path,
+        [_gallery_photo(chosen_id, record.caption), _gallery_photo(other_id, other)],
+        source="folder",
+        queue=0,
+    )
+
+    result = choose_final_caption(tmp_path, [chosen_id, "deadbeefdeadbeef"], "pose_composition")
+
+    assert result["updated"] == [chosen_id]
+    assert result["skipped"] == [{"id": "deadbeefdeadbeef", "reason": "not in this gallery"}]
+    saved = json.loads((tmp_path / "index.json").read_text(encoding="utf-8"))
+    updated = next(photo for photo in saved["photos"] if photo["id"] == chosen_id)
+    untouched = next(photo for photo in saved["photos"] if photo["id"] == other_id)
+    assert updated["caption"]["final_caption"] == pose
+    assert updated["caption"]["selected_category"] == "pose_composition"
+    assert updated["caption"]["profile"]["target_category"] == "pose_composition"
+    assert untouched["caption"]["final_caption"] == "leave this"
+    assert pose in (tmp_path / "xmp" / f"{chosen_id}.xmp").read_text(encoding="utf-8")
+
+
+def test_choose_final_caption_refuses_a_live_bake_and_an_unknown_option(tmp_path) -> None:
+    record = next(iter(fixture_records()))
+    photo_id = "abc123def4567890"
+    write_gallery(tmp_path, [_gallery_photo(photo_id, record.caption)], source="folder", queue=2)
+    try:
+        choose_final_caption(tmp_path, [photo_id], "setting")
+    except CaptionChoiceError as exc:
+        assert exc.status == 409
+    else:
+        raise AssertionError("expected the live bake to refuse the change")
+    saved = json.loads((tmp_path / "index.json").read_text(encoding="utf-8"))
+    assert saved["photos"][0]["caption"]["final_caption"] == record.caption["final_caption"]
+
+    write_gallery(tmp_path, [_gallery_photo(photo_id, record.caption)], source="folder", queue=0)
+    try:
+        choose_final_caption(tmp_path, [photo_id], "not-a-category")
+    except CaptionChoiceError as exc:
+        assert exc.status == 400
+    else:
+        raise AssertionError("expected an unknown option to be refused")
 
 
 def test_cli_fixture(tmp_path, capsys) -> None:

@@ -7,10 +7,14 @@ bake can replace the committed fixture without rebuilding the HTML.
 from __future__ import annotations
 
 import argparse
+import json
 import mimetypes
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
+
+from lightbox_bake.folder import remember_caption_choice
+from lightbox_bake.index import CaptionChoiceError, choose_final_caption
 
 mimetypes.add_type("image/webp", ".webp")
 mimetypes.add_type("application/javascript", ".js")
@@ -77,7 +81,7 @@ def _status_page(data_root: Path) -> bytes:
     return _PAGE.format(refresh=refresh, message=message).encode()
 
 
-def make_handler(html_root: Path, data_root: Path) -> type[BaseHTTPRequestHandler]:
+def make_handler(html_root: Path, data_root: Path, cache_root: Path | None = None) -> type[BaseHTTPRequestHandler]:
     """Build a request handler closed over the two roots."""
 
     class Handler(BaseHTTPRequestHandler):
@@ -110,15 +114,58 @@ def make_handler(html_root: Path, data_root: Path) -> type[BaseHTTPRequestHandle
             cache = "no-store" if path.suffix == ".json" else None
             self._send(200, mime, path.read_bytes(), cache=cache)
 
+        def do_POST(self) -> None:
+            # Choosing a variant rewrites the index. It is not a static file.
+            if urlsplit(self.path).path != "/api/caption-choice":
+                self._send(404, "text/plain; charset=utf-8", b"not found\n")
+                return
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+            except ValueError:
+                length = 0
+            if length <= 0 or length > 64_000:
+                self._json(400, {"error": "expected a small JSON body"})
+                return
+            try:
+                body = json.loads(self.rfile.read(length))
+            except json.JSONDecodeError:
+                self._json(400, {"error": "expected JSON"})
+                return
+            if not isinstance(body, dict):
+                self._json(400, {"error": "expected a JSON object"})
+                return
+            ids = body.get("ids")
+            category = body.get("category")
+            if not isinstance(ids, list) or not isinstance(category, str):
+                self._json(400, {"error": "expected ids and category"})
+                return
+            try:
+                result = choose_final_caption(data_root, ids, category)
+            except CaptionChoiceError as exc:
+                self._json(exc.status, {"error": str(exc)})
+                return
+            if cache_root is not None:
+                for choice in result["cache"]:
+                    remember_caption_choice(
+                        cache_root,
+                        choice["sha256"],
+                        final_caption=choice["final_caption"],
+                        selected_category=choice["selected_category"],
+                    )
+            self._json(200, {"updated": result["updated"], "skipped": result["skipped"]})
+
+        def _json(self, status: int, payload: dict) -> None:
+            self._send(status, "application/json", json.dumps(payload).encode(), cache="no-store")
+
         def log_message(self, fmt: str, *args: object) -> None:
             print(f"{self.address_string()} {fmt % args}", flush=True)
 
     return Handler
 
 
-def serve(html_root: Path, data_root: Path, host: str, port: int) -> None:
+def serve(html_root: Path, data_root: Path, host: str, port: int, cache_root: Path | None = None) -> None:
     """Serve until the process is killed."""
-    server = ThreadingHTTPServer((host, port), make_handler(html_root, data_root))
+    server = ThreadingHTTPServer((host, port), make_handler(html_root, data_root, cache_root))
     print(f"gallery at http://{host}:{port}/  (data from {data_root})", flush=True)
     try:
         server.serve_forever()
@@ -131,13 +178,14 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Serve a baked lightbox gallery")
     parser.add_argument("--html", type=Path, required=True, help="Next static export (web/out)")
     parser.add_argument("--data", type=Path, required=True, help="Baked data directory (index.json, images, thumbs)")
+    parser.add_argument("--cache", type=Path, help="caption cache, updated when a final caption is chosen")
     parser.add_argument("--host", default="0.0.0.0")
     parser.add_argument("--port", type=int, default=3000)
     args = parser.parse_args(argv)
     if not (args.html / "index.html").is_file():
         parser.error(f"no index.html in {args.html}")
     args.data.mkdir(parents=True, exist_ok=True)
-    serve(args.html, args.data, args.host, args.port)
+    serve(args.html, args.data, args.host, args.port, args.cache)
     return 0
 
 

@@ -55,6 +55,10 @@ export function Lightbox() {
   const [pending, setPending] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
   const [page, setPage] = useState(0);
+  const [picked, setPicked] = useState<Set<string>>(new Set());
+  const [choice, setChoice] = useState("pose_composition");
+  const [applying, setApplying] = useState(false);
+  const [choiceNote, setChoiceNote] = useState<string | null>(null);
   // Whether the open photo pushed its own history entry (opened by click) or
   // arrived by deep link; closing pops the former and replaces the latter.
   const pushedPhoto = useRef(false);
@@ -140,6 +144,33 @@ export function Lightbox() {
   const safePage = filtered.length === 0 ? 0 : Math.min(page, pageCount - 1);
   const pageStart = safePage * PAGE_SIZE;
   const visible = filtered.slice(pageStart, pageStart + PAGE_SIZE);
+
+  const applyCaption = useCallback(async (ids: string[], category: string) => {
+    setApplying(true);
+    setChoiceNote(null);
+    try {
+      const res = await fetch("/api/caption-choice", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids, category }),
+      });
+      const body = (await res.json().catch(() => ({}))) as { error?: string; updated?: string[]; skipped?: { reason: string }[] };
+      if (!res.ok) throw new Error(body.error || `HTTP ${res.status}`);
+      const next = await loadIndex();
+      shownCount.current = next.photos.length;
+      setIndex(next);
+      setQueue(next.queue ?? 0);
+      const skipped = body.skipped?.length ?? 0;
+      const updated = body.updated?.length ?? 0;
+      if (skipped > 0) {
+        setChoiceNote(`Updated ${updated}. ${skipped} ${skipped === 1 ? "photo has" : "photos have"} no ${groupStyle(category).label} caption.`);
+      }
+    } catch (e) {
+      setChoiceNote(e instanceof Error ? e.message : "Could not update the caption");
+    } finally {
+      setApplying(false);
+    }
+  }, []);
 
   const reveal = useCallback(async () => {
     setRefreshing(true);
@@ -266,6 +297,54 @@ export function Lightbox() {
                   Word cloud
                 </button>
               )}
+              {index && index.categories.length > 0 && (
+                <>
+                  <label className="flex items-center gap-1">
+                    <span className="text-text-muted">Caption option</span>
+                    <select
+                      aria-label="Caption option"
+                      value={index.categories.includes(choice) ? choice : index.categories[0]}
+                      onChange={(e) => setChoice(e.target.value)}
+                      className="rounded-md border border-base-600 bg-base-800 px-2 py-1 text-text-primary"
+                    >
+                      {index.categories.map((category) => (
+                        <option key={category} value={category}>
+                          {groupStyle(category).label}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <button
+                    type="button"
+                    disabled={applying || picked.size === 0}
+                    onClick={() =>
+                      void applyCaption([...picked], index.categories.includes(choice) ? choice : index.categories[0])
+                    }
+                    className="rounded-full bg-accent-primary px-3 py-1 font-medium text-base-900 disabled:opacity-40"
+                  >
+                    {applying ? "Updating captions…" : `Use for selected (${picked.size})`}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const pageIds = visible.map((photo) => photo.id);
+                      const allPicked = pageIds.length > 0 && pageIds.every((id) => picked.has(id));
+                      setPicked((current) => {
+                        const next = new Set(current);
+                        for (const id of pageIds) {
+                          if (allPicked) next.delete(id);
+                          else next.add(id);
+                        }
+                        return next;
+                      });
+                    }}
+                    className="rounded-full border border-base-600 px-2.5 py-1 hover:bg-base-700"
+                  >
+                    {visible.length > 0 && visible.every((photo) => picked.has(photo.id)) ? "Clear page" : "Select page"}
+                  </button>
+                </>
+              )}
+              {choiceNote && <span className="text-warning">{choiceNote}</span>}
               {queue > 0 && (
                 <span className="rounded-full bg-warning/15 px-2.5 py-1 text-warning tabular-nums">
                   {queue} {queue === 1 ? "caption" : "captions"} in queue
@@ -322,10 +401,22 @@ export function Lightbox() {
             </p>
           ) : (
             <div id="gallery-grid">
-              <PhotoGrid photos={visible} selection={view.selection} onOpen={(id) => {
+              <PhotoGrid
+                photos={visible}
+                selection={view.selection}
+                picked={picked}
+                onOpen={(id) => {
                   pushedPhoto.current = true;
                   update({ ...view, photo: id }, true);
                 }}
+                onToggle={(id) =>
+                  setPicked((current) => {
+                    const next = new Set(current);
+                    if (next.has(id)) next.delete(id);
+                    else next.add(id);
+                    return next;
+                  })
+                }
               />
               {filtered.length > PAGE_SIZE && (
                 <nav className="mt-6 flex items-center justify-center gap-3 text-small" aria-label="Photo pages">
@@ -367,11 +458,13 @@ export function Lightbox() {
           position={{ index: Math.max(openIndex, 0), total: Math.max(filtered.length, 1) }}
           categories={index.categories}
           terms={terms}
+          applying={applying}
           onClose={() => {
             if (pushedPhoto.current) window.history.back();
             else update({ ...view, photo: null });
           }}
           onStep={step}
+          onUseCaption={(category) => void applyCaption([openPhoto.id], category)}
         />
       )}
     </div>
