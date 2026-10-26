@@ -77,6 +77,19 @@ def test_caption_cache_keeps_hybrid_names_and_separates_another_profile(tmp_path
     assert _cache_file(tmp_path, "abc").name == "abc.qwen3-vl_8b-instruct.json"
 
 
+def test_caption_record_keeps_a_checked_rewrite_and_the_cache_round_trips_it(tmp_path, monkeypatch) -> None:
+    from lightbox_bake.folder import _read_cache, _write_cache
+
+    payload = _lens_payload()
+    payload["metadata"] = {"refine": {"model": "qwen3:8b", "accepted": ["identity"], "skipped": ""}}
+    recorded = caption_record(payload)
+    assert recorded["refine"] == {"model": "qwen3:8b", "accepted": ["identity"]}
+    monkeypatch.delenv("CAPTION_CACHE_KEY", raising=False)
+    sha = "ab" * 32
+    _write_cache(tmp_path, sha, recorded)
+    assert _read_cache(tmp_path, sha)["refine"] == recorded["refine"]
+
+
 def test_iter_images_skips_non_images_and_dot_paths(tmp_path) -> None:
     (tmp_path / "a.jpg").write_bytes(b"x")
     (tmp_path / "note.txt").write_bytes(b"x")

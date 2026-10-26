@@ -9,7 +9,7 @@ description = "Bake an argus-lightbox gallery index (captions, explain data, EXI
 requires-python = ">=3.11"
 license = "MIT"
 dependencies = [
-    "argus-lens>=0.9.0",
+    "argus-lens>=0.10.0",
     "Pillow>=10.0",
 ]
 

@@ -61,6 +61,18 @@ def test_explain_facets_compare_and_drift() -> None:
     drifted = explain({**record.caption, "final_caption": "an older lens wrote this"})
     assert drifted["explain"]["drift"] is True
 
+    rewritten = explain(
+        {
+            **record.caption,
+            "final_caption": "a checked rewrite of the assembled caption",
+            "refine": {"model": "qwen3:8b", "accepted": [record.caption["selected_category"]]},
+        }
+    )
+    assert rewritten["explain"]["drift"] is False
+    assert rewritten["explain"]["compaction_notes"][-1] == (
+        f"Refined {record.caption['selected_category']} with qwen3:8b."
+    )
+
 
 def test_unclassified_ordinary_tags_are_filterable_and_sexual_tags_are_not() -> None:
     caption = {
