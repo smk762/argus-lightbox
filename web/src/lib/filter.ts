@@ -10,7 +10,7 @@ import type { Photo } from "./types";
 export type Selection = Record<string, string[]>;
 
 /** Facet groups beyond lens's caption categories. */
-export const EXTRA_GROUPS = ["people", "camera"] as const;
+export const EXTRA_GROUPS = ["detail", "people", "camera"] as const;
 
 /** The facet terms *photo* carries for *group*. */
 export function photoTerms(photo: Photo, group: string): string[] {

@@ -56,10 +56,29 @@ def test_explain_facets_compare_and_drift() -> None:
     assert derived["compare"]["hybrid"]["final_caption"] == record.caption["final_caption"]
     assert "red dress" in derived["facets"]["wardrobe"]
     assert derived["facets"]["people"] == ["one person"]
-    assert set(derived["facets"]) <= {*CATEGORIES, "people"}
+    assert set(derived["facets"]) <= {*CATEGORIES, "people", "detail"}
 
     drifted = explain({**record.caption, "final_caption": "an older lens wrote this"})
     assert drifted["explain"]["drift"] is True
+
+
+def test_unclassified_ordinary_tags_are_filterable_and_sexual_tags_are_not() -> None:
+    caption = {
+        "final_caption": "",
+        "raw_tags": "1girl, solo, carpet, barefoot, open_mouth, kneehighs, pussy, loli, photorealistic, wet ground",
+        "raw_prose": "",
+        "backend_name": "wd14",
+    }
+    facets = explain(caption)["facets"]
+    assert "carpet" in facets["setting"]
+    assert "barefoot" in facets["pose_composition"]
+    assert "open mouth" in facets["identity"]
+    assert "kneehighs" in facets["wardrobe"]
+    assert "wet ground" in facets["detail"]
+    listed = {term for terms in facets.values() for term in terms}
+    assert "pussy" not in listed
+    assert "loli" not in listed
+    assert "photorealistic" not in listed
 
 
 def test_single_source_backend_has_no_compare() -> None:
