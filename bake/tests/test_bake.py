@@ -11,6 +11,7 @@ from lightbox_bake.cli import main
 from lightbox_bake.exif import read_exif
 from lightbox_bake.explain import CATEGORIES, explain
 from lightbox_bake.fixture import SCENES, fixture_records
+from lightbox_bake.images import THUMB_MAX, render
 from lightbox_bake.index import build_index
 from lightbox_bake.sources import SourceRecord, tape_records
 
@@ -89,7 +90,18 @@ def test_build_index_writes_renditions_and_prunes(tmp_path) -> None:
     xmp = (tmp_path / photo["xmp"]).read_text()
     assert "red dress" in xmp and photo["caption"]["final_caption"] in xmp
     assert max(photo["width"], photo["height"]) <= 2048
+    assert "queue" not in index and not (tmp_path / "status.json").exists()
     assert not stale.exists()
+
+
+def test_thumbnail_long_side_is_capped_below_the_detail_image(tmp_path) -> None:
+    buf = io.BytesIO()
+    Image.new("RGB", (1600, 900), "#224466").save(buf, "JPEG")
+    rendition = render(buf.getvalue(), tmp_path, "abcdabcdabcdabcd")
+    with Image.open(tmp_path / rendition.thumb) as thumb:
+        assert max(thumb.size) <= THUMB_MAX < 1600
+    with Image.open(tmp_path / rendition.image) as full:
+        assert max(full.size) == 1600
 
 
 def test_tape_records_maps_lineage_rows(monkeypatch, tmp_path) -> None:

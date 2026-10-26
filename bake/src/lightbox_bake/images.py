@@ -10,8 +10,8 @@ from PIL import Image, ImageOps
 
 from lightbox_bake.exif import read_exif
 
-FULL_MAX = 2048  # long side of the detail-view image
-THUMB_MAX = 640  # long side of the grid thumbnail
+FULL_MAX = 2048  # long side of the detail-view image, loaded only when a photo is opened
+THUMB_MAX = 480  # long side of the grid thumbnail; the gallery pages these and does not mount the full rendition
 
 
 @dataclass
@@ -26,11 +26,11 @@ class Rendition:
     exif: dict
 
 
-def _save(img: Image.Image, path: Path, max_side: int, quality: int) -> tuple[int, int]:
+def _save(img: Image.Image, path: Path, max_side: int, quality: int, *, method: int = 6) -> tuple[int, int]:
     copy = img.copy()
     copy.thumbnail((max_side, max_side), Image.Resampling.LANCZOS)
     path.parent.mkdir(parents=True, exist_ok=True)
-    copy.save(path, "WEBP", quality=quality, method=6)
+    copy.save(path, "WEBP", quality=quality, method=method)
     return copy.size
 
 
@@ -44,7 +44,7 @@ def render(raw: bytes, out_dir: Path, photo_id: str) -> Rendition:
         exif = read_exif(src)
         img = ImageOps.exif_transpose(src).convert("RGB")
     width, height = _save(img, out_dir / "images" / f"{photo_id}.webp", FULL_MAX, 82)
-    _save(img, out_dir / "thumbs" / f"{photo_id}.webp", THUMB_MAX, 74)
+    _save(img, out_dir / "thumbs" / f"{photo_id}.webp", THUMB_MAX, 72, method=4)
     r, g, b = img.resize((1, 1), Image.Resampling.BOX).getpixel((0, 0))
     return Rendition(
         image=f"images/{photo_id}.webp",
