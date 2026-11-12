@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { assetUrl } from "@/lib/data";
 import type { Photo } from "@/lib/types";
@@ -36,7 +36,10 @@ export function PhotoDetail({
   const dialog = useRef<HTMLDialogElement>(null);
   const [tab, setTab] = useState<Tab>("caption");
 
-  useEffect(() => {
+  // Layout effect, not a passive one: Lightbox opens the detail inside a view
+  // transition with flushSync, and the dialog has to be showing before the
+  // transition captures the new state.
+  useLayoutEffect(() => {
     const el = dialog.current;
     if (el && !el.open) el.showModal();
   }, []);
@@ -92,7 +95,7 @@ export function PhotoDetail({
             width={photo.width}
             height={photo.height}
             className="h-auto max-h-full w-auto max-w-full rounded-md shadow-soft"
-            style={{ background: photo.color }}
+            style={{ background: photo.color, viewTransitionName: "photo-hero" }}
           />
           <div className="absolute inset-x-4 top-4 flex items-center justify-between lg:inset-x-8">
             <span className="rounded-sm bg-base-900/80 px-2 py-1 text-caption tabular-nums text-text-secondary">

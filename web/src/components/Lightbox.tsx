@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 
 import { groupStyle } from "@/lib/categories";
 import { loadIndex } from "@/lib/data";
@@ -87,6 +88,25 @@ export function Lightbox() {
     },
     [filtered, openIndex, update, view],
   );
+
+  // Open from the grid, morphing the thumbnail into the detail image where View
+  // Transitions are available. The thumbnail carries the shared name only for the
+  // old snapshot; it's dropped before the new one, where the detail <img> has it.
+  const openFromGrid = (id: string, thumb: HTMLImageElement | null) => {
+    const open = () => {
+      pushedPhoto.current = true;
+      update({ ...view, photo: id }, true);
+    };
+    if (!thumb || !("startViewTransition" in document) || matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      open();
+      return;
+    }
+    thumb.style.viewTransitionName = "photo-hero";
+    document.startViewTransition(() => {
+      thumb.style.viewTransitionName = "";
+      flushSync(open);
+    });
+  };
 
   if (error) {
     return (
@@ -188,11 +208,7 @@ export function Lightbox() {
               No photos match. Try removing a filter. Terms within a category widen the search, categories narrow it.
             </p>
           ) : (
-            <PhotoGrid photos={filtered} selection={view.selection} onOpen={(id) => {
-                pushedPhoto.current = true;
-                update({ ...view, photo: id }, true);
-              }}
-            />
+            <PhotoGrid photos={filtered} selection={view.selection} onOpen={openFromGrid} />
           )}
         </main>
       </div>

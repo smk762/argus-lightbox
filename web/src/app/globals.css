@@ -141,11 +141,23 @@ dialog.photo-detail:is([open]):where(:not([data-closing])) {
   }
 }
 
+/* Grid -> detail morph (Lightbox.openFromGrid). Snapshots are the same aspect ratio. */
+::view-transition-group(photo-hero) {
+  animation-duration: 320ms;
+  animation-timing-function: var(--ease-out);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
     transition-duration: 0ms !important;
     animation-duration: 0ms !important;
+  }
+
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
   }
 }

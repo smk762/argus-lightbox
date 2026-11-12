@@ -18,7 +18,8 @@ export function PhotoGrid({
 }: {
   photos: Photo[];
   selection: Selection;
-  onOpen: (id: string) => void;
+  /** `thumb` is the clicked thumbnail, for the grid -> detail view transition. */
+  onOpen: (id: string, thumb: HTMLImageElement | null) => void;
 }) {
   return (
     <ul className="columns-2 gap-3 sm:columns-3 2xl:columns-4">
@@ -28,7 +29,7 @@ export function PhotoGrid({
           <li key={photo.id} className="mb-3 break-inside-avoid">
             <button
               type="button"
-              onClick={() => onOpen(photo.id)}
+              onClick={(e) => onOpen(photo.id, e.currentTarget.querySelector("img"))}
               className="group relative block w-full overflow-hidden rounded-md shadow-soft transition-shadow duration-200 hover:shadow-glow"
               style={{ aspectRatio: `${photo.width} / ${photo.height}`, background: photo.color }}
               aria-label={photo.caption.final_caption}
