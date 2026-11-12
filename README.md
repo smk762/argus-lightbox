@@ -74,6 +74,8 @@ NEXT_PUBLIC_DATA_URL=/data-tape make dev
 
 These are build-time variables (inlined by Next.js), so rebuild after changing them.
 
+`npm run build` also gives every page a strict, hash-based Content-Security-Policy (`web/scripts/csp.mjs`). It adds a `<meta>` that lists the sha256 of each inline script Next emitted and allows `NEXT_PUBLIC_DATA_URL`'s origin for fetches and images. It also writes `out/_headers` (Cloudflare Pages / Netlify format) for what a `<meta>` can't set: `frame-ancestors 'none'`, `X-Frame-Options`, `nosniff`, `Referrer-Policy` and `Permissions-Policy`. On another host, send those headers yourself.
+
 ## Develop
 
 ```bash
