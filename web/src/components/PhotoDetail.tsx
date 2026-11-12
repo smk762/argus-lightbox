@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { assetUrl } from "@/lib/data";
 import type { Photo } from "@/lib/types";
@@ -41,6 +41,23 @@ export function PhotoDetail({
     if (el && !el.open) el.showModal();
   }, []);
 
+  // Play the exit transition (globals.css, `data-closing`) before closing: once
+  // the dialog closes, Lightbox unmounts it and there's nothing left to animate.
+  const requestClose = useCallback(async () => {
+    const el = dialog.current;
+    if (!el?.open || el.hasAttribute("data-closing")) return;
+    el.setAttribute("data-closing", "");
+    const running = el.getAnimations({ subtree: true });
+    if (running.length > 0) {
+      await Promise.race([
+        Promise.allSettled(running.map((a) => a.finished)),
+        new Promise((resolve) => setTimeout(resolve, 1000)),
+      ]);
+    }
+    el.removeAttribute("data-closing");
+    el.close();
+  }, []);
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement | null;
@@ -56,9 +73,14 @@ export function PhotoDetail({
     <dialog
       ref={dialog}
       onClose={onClose}
-      onClick={(e) => e.target === dialog.current && dialog.current?.close()}
+      onCancel={(e) => {
+        // Esc (or the platform back gesture): route through the exit transition.
+        e.preventDefault();
+        void requestClose();
+      }}
+      onClick={(e) => e.target === dialog.current && void requestClose()}
       aria-label={photo.caption.final_caption}
-      className="m-0 h-dvh max-h-none w-screen max-w-none bg-transparent p-0 text-text-primary"
+      className="photo-detail m-0 h-dvh max-h-none w-screen max-w-none bg-transparent p-0 text-text-primary"
     >
       <div className="flex h-full flex-col lg:flex-row">
         <figure className="relative flex min-h-0 flex-1 items-center justify-center p-4 lg:p-8">
@@ -83,7 +105,7 @@ export function PhotoDetail({
               <NavButton label="Next photo" onClick={() => onStep(1)}>
                 →
               </NavButton>
-              <NavButton label="Close" onClick={() => dialog.current?.close()}>
+              <NavButton label="Close" onClick={() => void requestClose()}>
                 ✕
               </NavButton>
             </div>
