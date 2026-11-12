@@ -9,7 +9,17 @@ The standalone **demo for argus-lens**: a static photo gallery navigated by lens
 - `bake/` (Python, `lightbox_bake`): reads the recorded pipeline run (cortex lineage store + blob store) or the synthetic fixture, re-runs lens's assembly on the raw output, and writes `web/public/data/` (`index.json`, `images/`, `thumbs/`, `xmp/`).
 - `web/` (Next.js 16 static export, React 19, Tailwind v4): loads `index.json` and does all filtering and rendering client-side. **No server, no API routes.**
 
-This is not part of argus-studio (the suite UI) and is not a pip package. The suite runs quarry → curator → lens → forge → proof; this repo only consumes lens and cortex output.
+This is not part of argus-studio (the suite UI) and is not a pip package. This repo only consumes lens and cortex output.
+
+## Argus suite
+<!-- argus-suite: keep this block; argus-ci checks for it -->
+This repo is part of the Argus suite. The suite map below lists every sibling and what it owns; check it before
+building something a sibling may already do. **On every release, update this repo's row and capabilities in
+argus-cortex's SUITE.md** (a PR to argus-cortex in the same release).
+
+@../argus-core/SUITE.md
+
+Not checked out? Read https://github.com/smk762/argus-cortex/blob/main/SUITE.md
 
 ## Layout
 
