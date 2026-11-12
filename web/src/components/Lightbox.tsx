@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 
 import { groupStyle } from "@/lib/categories";
 import { loadIndex, loadStatus } from "@/lib/data";
@@ -213,6 +214,25 @@ export function Lightbox() {
     [filtered, openIndex, update, view],
   );
 
+  // Open from the grid, morphing the thumbnail into the detail image where View
+  // Transitions are available. The thumbnail carries the shared name only for the
+  // old snapshot; it's dropped before the new one, where the detail <img> has it.
+  const openFromGrid = (id: string, thumb: HTMLImageElement | null) => {
+    const open = () => {
+      pushedPhoto.current = true;
+      update({ ...view, photo: id }, true);
+    };
+    if (!thumb || !("startViewTransition" in document) || matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      open();
+      return;
+    }
+    thumb.style.viewTransitionName = "photo-hero";
+    document.startViewTransition(() => {
+      thumb.style.viewTransitionName = "";
+      flushSync(open);
+    });
+  };
+
   const badge = index ? sourceBadge(index.source) : null;
 
   if (error) {
@@ -405,10 +425,7 @@ export function Lightbox() {
                 photos={visible}
                 selection={view.selection}
                 picked={picked}
-                onOpen={(id) => {
-                  pushedPhoto.current = true;
-                  update({ ...view, photo: id }, true);
-                }}
+                onOpen={openFromGrid}
                 onToggle={(id) =>
                   setPicked((current) => {
                     const next = new Set(current);

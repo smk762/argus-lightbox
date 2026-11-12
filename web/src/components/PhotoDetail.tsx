@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { assetUrl } from "@/lib/data";
+import { swipeStep } from "@/lib/gesture";
 import type { Photo } from "@/lib/types";
 
 import { CaptionTab } from "./detail/CaptionTab";
@@ -40,9 +41,31 @@ export function PhotoDetail({
   const dialog = useRef<HTMLDialogElement>(null);
   const [tab, setTab] = useState<Tab>("caption");
 
-  useEffect(() => {
+  const swipeStart = useRef<{ id: number; x: number; y: number } | null>(null);
+
+  // Layout effect, not a passive one: Lightbox opens the detail inside a view
+  // transition with flushSync, and the dialog has to be showing before the
+  // transition captures the new state.
+  useLayoutEffect(() => {
     const el = dialog.current;
     if (el && !el.open) el.showModal();
+  }, []);
+
+  // Play the exit transition (globals.css, `data-closing`) before closing: once
+  // the dialog closes, Lightbox unmounts it and there's nothing left to animate.
+  const requestClose = useCallback(async () => {
+    const el = dialog.current;
+    if (!el?.open || el.hasAttribute("data-closing")) return;
+    el.setAttribute("data-closing", "");
+    const running = el.getAnimations({ subtree: true });
+    if (running.length > 0) {
+      await Promise.race([
+        Promise.allSettled(running.map((a) => a.finished)),
+        new Promise((resolve) => setTimeout(resolve, 1000)),
+      ]);
+    }
+    el.removeAttribute("data-closing");
+    el.close();
   }, []);
 
   useEffect(() => {
@@ -60,12 +83,34 @@ export function PhotoDetail({
     <dialog
       ref={dialog}
       onClose={onClose}
-      onClick={(e) => e.target === dialog.current && dialog.current?.close()}
+      onCancel={(e) => {
+        // Esc (or the platform back gesture): route through the exit transition.
+        e.preventDefault();
+        void requestClose();
+      }}
+      onClick={(e) => e.target === dialog.current && void requestClose()}
       aria-label={photo.caption.final_caption}
-      className="m-0 h-dvh max-h-none w-screen max-w-none bg-transparent p-0 text-text-primary"
+      className="photo-detail m-0 h-dvh max-h-none w-screen max-w-none bg-transparent p-0 text-text-primary"
     >
       <div className="flex h-full flex-col lg:flex-row">
-        <figure className="relative flex min-h-0 flex-1 items-center justify-center p-4 lg:p-8">
+        {/* Touch swipe steps between photos; pan-y keeps vertical scrolling and pinch-zoom native. */}
+        <figure
+          className="relative flex min-h-0 flex-1 touch-pan-y touch-pinch-zoom items-center justify-center p-4 lg:p-8"
+          onPointerDown={(e) => {
+            if (e.pointerType !== "touch" || (e.target as HTMLElement).closest("button")) return;
+            swipeStart.current = { id: e.pointerId, x: e.clientX, y: e.clientY };
+          }}
+          onPointerUp={(e) => {
+            const start = swipeStart.current;
+            swipeStart.current = null;
+            if (!start || start.id !== e.pointerId) return;
+            const delta = swipeStep(e.clientX - start.x, e.clientY - start.y);
+            if (delta) onStep(delta);
+          }}
+          onPointerCancel={() => {
+            swipeStart.current = null;
+          }}
+        >
           {/* eslint-disable-next-line @next/next/no-img-element -- static export */}
           <img
             key={photo.id}
@@ -73,8 +118,9 @@ export function PhotoDetail({
             alt={photo.caption.final_caption}
             width={photo.width}
             height={photo.height}
+            fetchPriority="high"
             className="h-auto max-h-full w-auto max-w-full rounded-md shadow-soft"
-            style={{ background: photo.color }}
+            style={{ background: photo.color, viewTransitionName: "photo-hero" }}
           />
           <div className="absolute inset-x-4 top-4 flex items-center justify-between lg:inset-x-8">
             <span className="rounded-sm bg-base-900/80 px-2 py-1 text-caption tabular-nums text-text-secondary">
@@ -87,7 +133,7 @@ export function PhotoDetail({
               <NavButton label="Next photo" onClick={() => onStep(1)}>
                 →
               </NavButton>
-              <NavButton label="Close" onClick={() => dialog.current?.close()}>
+              <NavButton label="Close" onClick={() => void requestClose()}>
                 ✕
               </NavButton>
             </div>
