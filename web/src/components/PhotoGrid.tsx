@@ -5,6 +5,13 @@ import { assetUrl } from "@/lib/data";
 import { type Selection, photoTerms } from "@/lib/filter";
 import type { Photo } from "@/lib/types";
 
+/**
+ * Thumbnails that load eagerly. The grid is CSS columns, so DOM order runs down
+ * the first column before the second and the "first row" isn't the first N items;
+ * this is enough to cover the first screen at up to 4 columns.
+ */
+const EAGER_THUMBS = 8;
+
 function matchedTerms(photo: Photo, selection: Selection): { group: string; term: string }[] {
   return Object.entries(selection).flatMap(([group, terms]) =>
     terms.filter((t) => photoTerms(photo, group).includes(t)).map((term) => ({ group, term })),
@@ -23,7 +30,7 @@ export function PhotoGrid({
 }) {
   return (
     <ul className="columns-2 gap-3 sm:columns-3 2xl:columns-4">
-      {photos.map((photo) => {
+      {photos.map((photo, i) => {
         const matches = matchedTerms(photo, selection);
         return (
           <li key={photo.id} className="mb-3 break-inside-avoid">
@@ -38,7 +45,9 @@ export function PhotoGrid({
               <img
                 src={assetUrl(photo.thumb)}
                 alt=""
-                loading="lazy"
+                // The top of the first column is the likeliest LCP element; never lazy-load it.
+                loading={i < EAGER_THUMBS ? undefined : "lazy"}
+                fetchPriority={i === 0 ? "high" : undefined}
                 decoding="async"
                 width={photo.width}
                 height={photo.height}

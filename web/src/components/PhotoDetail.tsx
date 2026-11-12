@@ -114,6 +114,7 @@ export function PhotoDetail({
             alt={photo.caption.final_caption}
             width={photo.width}
             height={photo.height}
+            fetchPriority="high"
             className="h-auto max-h-full w-auto max-w-full rounded-md shadow-soft"
             style={{ background: photo.color, viewTransitionName: "photo-hero" }}
           />
