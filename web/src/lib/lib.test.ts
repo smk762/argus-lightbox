@@ -5,6 +5,7 @@ import { describe, expect, it } from "vitest";
 
 import { checkIndex, IndexVersionError } from "./data";
 import { traceVariant } from "./explain";
+import { swipeStep } from "./gesture";
 import { activeCount, facetCounts, filterPhotos, matchesQuery, toggleTerm } from "./filter";
 import type { GalleryIndex, Photo } from "./types";
 import { parseView, serializeView } from "./urlState";
@@ -115,5 +116,17 @@ describe("highlight", () => {
       { text: "(b)", match: true },
       { text: " c", match: false },
     ]);
+  });
+});
+
+describe("swipe", () => {
+  it("steps forward on a left swipe and back on a right swipe", () => {
+    expect(swipeStep(-80, 5)).toBe(1);
+    expect(swipeStep(80, -5)).toBe(-1);
+  });
+
+  it("ignores short drags and mostly-vertical scrolls", () => {
+    expect(swipeStep(-30, 0)).toBe(0);
+    expect(swipeStep(-80, 70)).toBe(0);
   });
 });
