@@ -19,7 +19,7 @@ It's the standalone demo for argus-lens, the way argus-realms is for argus-atlas
 - **Compare.** The same raw output assembled tags-only, prose-only and hybrid. No model is re-run, which shows that the value is in the assembly, not the model.
 - **Metadata and sidecars.** EXIF (camera, lens, exposure; **never GPS**), provenance and licence, and the two sidecars lens writes: the `.txt` caption trainers read, and an XMP file (keywords + description) for Lightroom, digiKam and Immich.
 
-Face grouping and NudeNet content rating are deliberately left out. They belong to curation, in [argus-curator](https://github.com/smk762/argus-curator), and the gallery links there.
+Face grouping and content rating are left out. They are the curator demo, [argus-cull](https://github.com/smk762/argus-cull). This gallery only links there.
 
 ## How it works
 
@@ -61,6 +61,43 @@ NEXT_PUBLIC_DATA_URL=/data-tape make dev
 
 `lightbox-bake tape --dataset <name>` restricts the bake to one curated dataset, and `--limit N` caps it.
 
+### A folder of your own photos
+
+Docker Compose runs the gallery and a lens server. Nothing else has to be installed on the host. With no path set, it captions the Pictures folder in your home directory (`~/Pictures` on Linux and macOS, `%USERPROFILE%\Pictures` on Windows). `PHOTOS_DIR` points somewhere else: another local directory, a NAS share already mounted on this machine, or a USB drive.
+
+```bash
+docker compose up --build
+# PHOTOS_DIR=/mnt/nas/library docker compose up --build
+# PHOTOS_DIR=/run/media/$USER/USB/DCIM docker compose up --build
+```
+
+The site comes up at http://localhost:3000 as soon as the folder is counted. Photos already captioned are on the page; a “Click here to show new images” button loads the ones that have finished since, and the rest are counted as captions in queue. The grid shows thumbnails, 48 per page. The folder is mounted read-only, and no caption sidecars are written next to the originals. The first start downloads the models into a Docker volume. Later starts only send photos that are not already captioned. `RECAPTION=1` ignores that cache. `PHOTOS_LIMIT=20` captions the first 20 images in sorted path order and the gallery then lists only those, until a run without the limit. `make up` is the same command. `make purge` deletes the gallery and the caption cache, then starts the current folder again. It does not touch the photo folder or the downloaded lens models.
+
+Changing the folder means setting `PHOTOS_DIR` and running `docker compose up -d` again. Compose only applies a new mount when it recreates the container. The gallery is then rebuilt from that folder. A photo whose bytes were captioned before is not sent to lens again. When the new bake finishes, renditions and cached captions for files that are not in this folder are removed. A limited run does not drop captions for files it never opened.
+
+The caption is hybrid. RAM++ tags the photo in the lens container, and Florence writes the sentence. An Ollama or ComfyUI vision model, named in `.env`, replaces Florence and leaves the tags in place. The first start downloads both models into a Docker volume. RAM++ uses a GPU when `compose.gpu.yaml` passes one through, and the CPU otherwise. The WD14 tagger is not loaded. For an NVIDIA GPU, add the override:
+
+```bash
+docker compose -f compose.yaml -f compose.gpu.yaml up --build
+```
+
+Facet lists (which ordinary tags become filters, and which are left out) are `bake/src/lightbox_bake/facet_lists.example.json`. Set `FACET_LISTS_JSON` to a copy to replace them. A missing file keeps the example.
+
+The Compose file pins [argus-lens 0.10.0](https://pypi.org/project/argus-lens/0.10.0/). `LENS_TAG` overrides that pin. A vocabulary pack can be added with `RAM_VOCAB_PACKS`. `ARGUS_BACKEND=florence2` or `openai-compat` drops the tags, and the Compare tab then has nothing to show. WD14 stays available for a booru or anime checkpoint: `ARGUS_BACKEND=hybrid`, or `ARGUS_BACKEND=hybrid:wd14+openai-compat` to keep those tags and still send the sentence to Ollama.
+
+For a stronger description, copy `.env.example` to `.env` in this directory and fill in the hosts (Compose reads `.env`; it is not committed). Lens asks that server to describe the photo. A URL with no `/v1` gets one added. `COMFYUI_MODEL` has to be set as well, or the Ollama vision model keeps the caption.
+
+```bash
+OLLAMA_URL=http://host.docker.internal:11434 OLLAMA_MODEL=qwen3-vl:8b-instruct docker compose up --build
+COMFYUI_URL=http://host.docker.internal:8188 COMFYUI_MODEL=joycaption docker compose up --build
+```
+
+ComfyUI's own workflow port does not caption anything until a vision model is served there in that OpenAI shape. When both URLs are set, ComfyUI writes the prose and Ollama is left for the optional rewrite below.
+
+With `OLLAMA_URL` set, lens 0.10 rewrites every finished caption with `qwen3:8b` on that server. A rewrite is kept only when lens's own checks accept it. `OLLAMA_REFINE_MODEL` names a different rewriter and does not replace Florence. `ARGUS_REFINE=off` leaves the assembled caption. With no Ollama URL, refinement stays off. Captions cached before this rewrite are kept until the cache key changes or `RECAPTION=1` is set. `ARGUS_BACKEND=openai` and `OPENAI_API_KEY` still select the cloud backend instead.
+
+The container has to be able to read the mount. On a NAS export that squashes root, the files need to be world-readable.
+
 ## Deploying
 
 `make build` writes a static site to `web/out/`. Serve it from anything.
@@ -70,7 +107,7 @@ NEXT_PUBLIC_DATA_URL=/data-tape make dev
 | `NEXT_PUBLIC_DATA_URL` | `<basePath>/data` | Where `index.json` and the renditions live. Point it at an R2/CDN URL to host the data separately from the app; that origin must send CORS headers for `index.json`. |
 | `NEXT_PUBLIC_BASE_PATH` | (none) | Serve the app under a sub-path. |
 | `NEXT_PUBLIC_SUITE_URL` | argus-studio repo | The "see the whole pipeline" link. |
-| `NEXT_PUBLIC_CURATOR_URL` | argus-curator repo | The faces / content-rating cross-link. Switch it to the curator demo once that exists. |
+| `NEXT_PUBLIC_CURATOR_URL` | argus-cull repo | The faces / content-rating cross-link. |
 
 These are build-time variables (inlined by Next.js), so rebuild after changing them.
 
@@ -87,9 +124,7 @@ make fixture     # re-bake the fixture after changing bake/ or bumping lens
 
 ## Roadmap
 
-- **Live mode:** caption your own photo against a lens server you run, rendered with the same UI. The `caption` record already uses lens's `CaptionResult` field names, so a `/caption` response fits it directly.
 - Bake the halo tape and publish it, with the app on Cloudflare Pages and the data on R2.
-- Link to the curator demo once it exists ([argus-curator#17](https://github.com/smk762/argus-curator/issues/17), [#18](https://github.com/smk762/argus-curator/issues/18)).
 
 ## License
 

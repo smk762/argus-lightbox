@@ -7,7 +7,7 @@ NPM_DEV ?= $(if $(HOST_NPM),npm,$(call DOCKER_NPM,-p $(PORT):$(PORT)))
 PORT ?= 3000
 BAKE := bake/.venv/bin/lightbox-bake
 
-.PHONY: help install fixture tape dev build test lint check clean
+.PHONY: help install fixture tape dev build test lint check clean up purge
 
 help:  ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-10s\033[0m %s\n", $$1, $$2}'
@@ -21,6 +21,14 @@ fixture:  ## Re-bake the committed synthetic fixture into web/public/data
 
 tape:  ## Bake the recorded pipeline run (needs CORTEX_PG_URL, CORTEX_S3_*) into web/public/data-tape
 	$(BAKE) tape --out web/public/data-tape
+
+up:  ## Caption ~/Pictures (or PHOTOS_DIR) via Docker and serve the gallery
+	PHOTOS_DIR="$(PHOTOS_DIR)" PORT="$(PORT)" docker compose up --build
+
+purge:  ## Wipe the gallery and caption cache, then caption the current folder again
+	docker compose stop lightbox
+	docker compose run --rm --build --no-deps --entrypoint lightbox-bake lightbox purge --root /var/lib/lightbox
+	docker compose up -d --no-deps lightbox
 
 dev:  ## next dev on :$(PORT) (serves web/public/data)
 	cd web && $(NPM_DEV) run dev -- --hostname 0.0.0.0 --port $(PORT)

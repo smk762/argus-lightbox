@@ -24,15 +24,19 @@ export function PhotoDetail({
   position,
   categories,
   terms,
+  applying,
   onClose,
   onStep,
+  onUseCaption,
 }: {
   photo: Photo;
   position: { index: number; total: number };
   categories: string[];
   terms: string[];
+  applying: boolean;
   onClose: () => void;
   onStep: (delta: 1 | -1) => void;
+  onUseCaption: (category: string) => void;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const [tab, setTab] = useState<Tab>("caption");
@@ -157,7 +161,9 @@ export function PhotoDetail({
             ))}
           </div>
           <div role="tabpanel" id={`panel-${tab}`} className="min-h-0 flex-1 overflow-y-auto p-5">
-            {tab === "caption" && <CaptionTab photo={photo} categories={categories} terms={terms} />}
+            {tab === "caption" && (
+              <CaptionTab photo={photo} categories={categories} terms={terms} applying={applying} onUse={onUseCaption} />
+            )}
             {tab === "explain" && <ExplainTab key={photo.id} photo={photo} categories={categories} />}
             {tab === "compare" && <CompareTab photo={photo} />}
             {tab === "metadata" && <MetadataTab photo={photo} />}

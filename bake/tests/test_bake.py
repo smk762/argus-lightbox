@@ -11,7 +11,8 @@ from lightbox_bake.cli import main
 from lightbox_bake.exif import read_exif
 from lightbox_bake.explain import CATEGORIES, explain
 from lightbox_bake.fixture import SCENES, fixture_records
-from lightbox_bake.index import build_index
+from lightbox_bake.images import THUMB_MAX, render
+from lightbox_bake.index import CaptionChoiceError, build_index, choose_final_caption, write_gallery
 from lightbox_bake.sources import SourceRecord, tape_records
 
 
@@ -55,10 +56,75 @@ def test_explain_facets_compare_and_drift() -> None:
     assert derived["compare"]["hybrid"]["final_caption"] == record.caption["final_caption"]
     assert "red dress" in derived["facets"]["wardrobe"]
     assert derived["facets"]["people"] == ["one person"]
-    assert set(derived["facets"]) <= {*CATEGORIES, "people"}
+    assert set(derived["facets"]) <= {*CATEGORIES, "people", "detail"}
 
     drifted = explain({**record.caption, "final_caption": "an older lens wrote this"})
     assert drifted["explain"]["drift"] is True
+
+    rewritten = explain(
+        {
+            **record.caption,
+            "final_caption": "a checked rewrite of the assembled caption",
+            "refine": {"model": "qwen3:8b", "accepted": [record.caption["selected_category"]]},
+        }
+    )
+    assert rewritten["explain"]["drift"] is False
+    assert rewritten["explain"]["compaction_notes"][-1] == (
+        f"Refined {record.caption['selected_category']} with qwen3:8b."
+    )
+
+
+def test_unclassified_ordinary_tags_are_filterable_and_sexual_tags_are_not() -> None:
+    caption = {
+        "final_caption": "",
+        "raw_tags": "1girl, solo, carpet, barefoot, open_mouth, kneehighs, pussy, loli, photorealistic, wet ground",
+        "raw_prose": "",
+        "backend_name": "wd14",
+    }
+    facets = explain(caption)["facets"]
+    assert "carpet" in facets["setting"]
+    assert "barefoot" in facets["pose_composition"]
+    assert "open mouth" in facets["identity"]
+    assert "kneehighs" in facets["wardrobe"]
+    assert "wet ground" in facets["detail"]
+    listed = {term for terms in facets.values() for term in terms}
+    assert "pussy" not in listed
+    assert "loli" not in listed
+    assert "photorealistic" not in listed
+
+
+def test_facet_lists_json_overrides_and_a_missing_file_uses_the_example(tmp_path, monkeypatch) -> None:
+    caption = {
+        "final_caption": "",
+        "raw_tags": "carpet, wet ground, photorealistic, pussy, loli",
+        "raw_prose": "",
+        "backend_name": "wd14",
+    }
+    custom = tmp_path / "lists.json"
+    custom.write_text(
+        json.dumps(
+            {
+                "meta_tags": ["carpet"],
+                "blocked_tags": [],
+                "blocked_parts": ["pussy", "loli"],
+                "extra_category": {"wet_ground": "lighting"},
+            }
+        ),
+        encoding="utf-8",
+    )
+    monkeypatch.setenv("FACET_LISTS_JSON", str(custom))
+    facets = explain(caption)["facets"]
+    listed = {term for terms in facets.values() for term in terms}
+    assert "wet ground" in facets["lighting"]
+    assert "carpet" not in listed
+    assert "photorealistic" in facets["detail"]
+    assert "pussy" not in listed and "loli" not in listed
+
+    monkeypatch.setenv("FACET_LISTS_JSON", str(tmp_path / "missing.json"))
+    fallback = explain(caption)["facets"]
+    assert "carpet" in fallback["setting"]
+    assert "wet ground" in fallback["detail"]
+    assert "photorealistic" not in {term for terms in fallback.values() for term in terms}
 
 
 def test_single_source_backend_has_no_compare() -> None:
@@ -89,7 +155,18 @@ def test_build_index_writes_renditions_and_prunes(tmp_path) -> None:
     xmp = (tmp_path / photo["xmp"]).read_text()
     assert "red dress" in xmp and photo["caption"]["final_caption"] in xmp
     assert max(photo["width"], photo["height"]) <= 2048
+    assert "queue" not in index and not (tmp_path / "status.json").exists()
     assert not stale.exists()
+
+
+def test_thumbnail_long_side_is_capped_below_the_detail_image(tmp_path) -> None:
+    buf = io.BytesIO()
+    Image.new("RGB", (1600, 900), "#224466").save(buf, "JPEG")
+    rendition = render(buf.getvalue(), tmp_path, "abcdabcdabcdabcd")
+    with Image.open(tmp_path / rendition.thumb) as thumb:
+        assert max(thumb.size) <= THUMB_MAX < 1600
+    with Image.open(tmp_path / rendition.image) as full:
+        assert max(full.size) == 1600
 
 
 def test_tape_records_maps_lineage_rows(monkeypatch, tmp_path) -> None:
@@ -133,6 +210,74 @@ def test_tape_records_maps_lineage_rows(monkeypatch, tmp_path) -> None:
     assert record.caption["selected_category"] == "wardrobe"
     assert record.caption["caption_variants"] == {"identity": "final"}
     assert record.load_bytes() == img.read_bytes()  # blob store miss falls back to the local uri
+
+
+def _gallery_photo(photo_id: str, caption: dict) -> dict:
+    return {
+        "id": photo_id,
+        "sha256": photo_id + ("ab" * 24),
+        "image": f"images/{photo_id}.webp",
+        "thumb": f"thumbs/{photo_id}.webp",
+        "xmp": f"xmp/{photo_id}.xmp",
+        "width": 4,
+        "height": 3,
+        "color": "#000000",
+        "caption": caption,
+        "explain": {},
+        "compare": {},
+        "facets": {},
+        "exif": {},
+        "provenance": {},
+    }
+
+
+def test_choose_final_caption_promotes_an_existing_variant(tmp_path) -> None:
+    record = next(item for item in fixture_records() if item.caption["caption_variants"].get("pose_composition"))
+    pose = record.caption["caption_variants"]["pose_composition"]
+    chosen_id = "abc123def4567890"
+    other_id = "0123456789abcdef"
+    other = {**record.caption, "final_caption": "leave this", "selected_category": "identity"}
+    write_gallery(
+        tmp_path,
+        [_gallery_photo(chosen_id, record.caption), _gallery_photo(other_id, other)],
+        source="folder",
+        queue=0,
+    )
+
+    result = choose_final_caption(tmp_path, [chosen_id, "deadbeefdeadbeef"], "pose_composition")
+
+    assert result["updated"] == [chosen_id]
+    assert result["skipped"] == [{"id": "deadbeefdeadbeef", "reason": "not in this gallery"}]
+    saved = json.loads((tmp_path / "index.json").read_text(encoding="utf-8"))
+    updated = next(photo for photo in saved["photos"] if photo["id"] == chosen_id)
+    untouched = next(photo for photo in saved["photos"] if photo["id"] == other_id)
+    assert updated["caption"]["final_caption"] == pose
+    assert updated["caption"]["selected_category"] == "pose_composition"
+    assert updated["caption"]["profile"]["target_category"] == "pose_composition"
+    assert untouched["caption"]["final_caption"] == "leave this"
+    assert pose in (tmp_path / "xmp" / f"{chosen_id}.xmp").read_text(encoding="utf-8")
+
+
+def test_choose_final_caption_refuses_a_live_bake_and_an_unknown_option(tmp_path) -> None:
+    record = next(iter(fixture_records()))
+    photo_id = "abc123def4567890"
+    write_gallery(tmp_path, [_gallery_photo(photo_id, record.caption)], source="folder", queue=2)
+    try:
+        choose_final_caption(tmp_path, [photo_id], "setting")
+    except CaptionChoiceError as exc:
+        assert exc.status == 409
+    else:
+        raise AssertionError("expected the live bake to refuse the change")
+    saved = json.loads((tmp_path / "index.json").read_text(encoding="utf-8"))
+    assert saved["photos"][0]["caption"]["final_caption"] == record.caption["final_caption"]
+
+    write_gallery(tmp_path, [_gallery_photo(photo_id, record.caption)], source="folder", queue=0)
+    try:
+        choose_final_caption(tmp_path, [photo_id], "not-a-category")
+    except CaptionChoiceError as exc:
+        assert exc.status == 400
+    else:
+        raise AssertionError("expected an unknown option to be refused")
 
 
 def test_cli_fixture(tmp_path, capsys) -> None:

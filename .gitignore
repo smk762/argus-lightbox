@@ -6,6 +6,7 @@ __pycache__/
 .ruff_cache/
 .pytest_cache/
 .env
+facet_lists.json
 
 # Node (web/)
 node_modules/
@@ -16,4 +17,6 @@ web/next-env.d.ts
 
 # Baked data: the committed fixture lives in web/public/data/; a real tape bake
 # goes to web/public/data-tape/ (or straight to R2) and is never committed.
+# A folder bake (lightbox-bake folder) goes to web/public/data-folder/.
 web/public/data-tape/
+web/public/data-folder/

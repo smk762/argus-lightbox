@@ -1,0 +1,11 @@
+# Give the lens container the host NVIDIA GPUs.
+#   docker compose -f compose.yaml -f compose.gpu.yaml up --build
+services:
+  lens:
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]

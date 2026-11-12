@@ -23,8 +23,26 @@ export function checkIndex(index: GalleryIndex): GalleryIndex {
   return index;
 }
 
+export interface GalleryStatus {
+  queue: number;
+  count: number;
+  generated_at: string;
+}
+
 export async function loadIndex(signal?: AbortSignal): Promise<GalleryIndex> {
-  const res = await fetch(`${dataUrl()}/index.json`, { signal });
+  const res = await fetch(`${dataUrl()}/index.json`, { signal, cache: "no-store" });
   if (!res.ok) throw new Error(`could not load ${dataUrl()}/index.json (HTTP ${res.status})`);
   return checkIndex((await res.json()) as GalleryIndex);
+}
+
+/** Queue and photo count, without the photo list. Folder bakes rewrite this as captions finish. */
+export async function loadStatus(signal?: AbortSignal): Promise<GalleryStatus> {
+  const res = await fetch(`${dataUrl()}/status.json`, { signal, cache: "no-store" });
+  if (!res.ok) throw new Error(`could not load ${dataUrl()}/status.json (HTTP ${res.status})`);
+  const body = (await res.json()) as Partial<GalleryStatus>;
+  return {
+    queue: typeof body.queue === "number" ? body.queue : 0,
+    count: typeof body.count === "number" ? body.count : 0,
+    generated_at: typeof body.generated_at === "string" ? body.generated_at : "",
+  };
 }

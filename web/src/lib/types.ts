@@ -13,6 +13,8 @@ export interface CaptionRecord {
   backend_name: string;
   profile?: Record<string, unknown>;
   version?: number;
+  /** Present when lens rewrote the assembled caption, or skipped that rewrite. */
+  refine?: { model?: string; accepted?: string[]; skipped?: string };
 }
 
 export interface Subjects {
@@ -67,10 +69,12 @@ export interface Photo {
 export interface GalleryIndex {
   version: string;
   generated_at: string;
-  source: "fixture" | "tape" | string;
+  source: "fixture" | "tape" | "folder" | string;
   lens_version: string;
   categories: Category[];
   photos: Photo[];
+  /** Folder bakes: images not in `photos` yet. Absent once a fixture or tape bake is written. */
+  queue?: number;
 }
 
 export const SUPPORTED_INDEX_MAJOR = "1";
