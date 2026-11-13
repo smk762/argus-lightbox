@@ -19,7 +19,7 @@ function Row({ label, children }: { label: string; children: React.ReactNode }) 
 
 function Link({ href, children }: { href?: string; children: React.ReactNode }) {
   return href ? (
-    <ExternalLink href={href} className="text-accent-tertiary hover:underline">
+    <ExternalLink href={href} className="text-accent-tertiary underline underline-offset-2 hover:decoration-2">
       {children}
     </ExternalLink>
   ) : (
