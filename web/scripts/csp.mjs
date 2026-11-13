@@ -96,6 +96,7 @@ export const headers = (basePath = "") => `/*
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), geolocation=(), microphone=()
   Cross-Origin-Opener-Policy: same-origin-allow-popups
+  Strict-Transport-Security: max-age=31536000
 
 ${basePath.replace(/\/+$/, "")}/_next/static/*
   Cache-Control: public, max-age=31536000, immutable
