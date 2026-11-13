@@ -13,6 +13,11 @@ const DESCRIPTION =
   "A photo gallery navigated by argus-lens structured captions: filter by wardrobe, setting, lighting and more, and see how each caption was assembled.";
 // Absolute origin for og:image and the canonical URL; unset, Next falls back to localhost.
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL;
+// The hosted demo's devtools easter egg. Same-origin file, so the CSP's script-src 'self' allows it,
+// and it is server-rendered markup (no script-src set from JS, which Trusted Types would block).
+const CONSOLE_EGG = process.env.NEXT_PUBLIC_DEMO_BANNER
+  ? `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/dragonhound-console.js`
+  : null;
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -34,6 +39,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className="min-h-dvh">
         <DemoBanner />
         {children}
+        {CONSOLE_EGG && <script src={CONSOLE_EGG} async />}
       </body>
     </html>
   );
