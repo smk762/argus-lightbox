@@ -29,7 +29,7 @@ Not checked out? Read https://github.com/smk762/argus-cortex/blob/main/SUITE.md
 - `web/src/components/`: `Lightbox.tsx` (root: load, URL state, layout), `FacetSidebar`, `PhotoGrid`, `PhotoDetail` (native `<dialog>`) + `detail/{Caption,Explain,Compare,Metadata}Tab`, `SuiteLinks`, `DemoBanner` (opt-in via `NEXT_PUBLIC_DEMO_BANNER`), `ui.tsx`.
 - `web/scripts/csp.mjs`: post-build CSP (runs as part of `npm run build`).
 - `web/public/data/`: the **committed fixture bake**. Web tests read it, so it doubles as a contract test between bake and web.
-- `web/public/data-tape/`: the committed **tape bake** (29 PD/CC0 Commons photos) that the hosted demo serves. `make pages` builds it with `NEXT_PUBLIC_DATA_URL=/data-tape`, the `DemoBanner` and OG metadata; `.github/workflows/pages.yml` deploys `web/out/` to Cloudflare Pages. Re-bake it with `make tape` after a bake change or lens bump.
+- `web/public/data-tape/`: the committed **tape bake** (205 CC0/PD photos, mostly Flickr via quarry's Megalith archive; about 30 MB) that the hosted demo serves. `make pages` builds it with `NEXT_PUBLIC_DATA_URL=/data-tape`, the `DemoBanner` and OG metadata; `.github/workflows/pages.yml` deploys `web/out/` to Cloudflare Pages. Re-bake it with `make tape` after a bake change or lens bump.
 
 ## Commands
 
