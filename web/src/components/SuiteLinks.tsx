@@ -12,18 +12,18 @@ export function SuiteLinks() {
       <p className="font-display font-semibold">Looking for faces or content filters?</p>
       <p className="text-text-secondary">
         Face grouping and content rating are{" "}
-        <a className="text-accent-tertiary hover:underline" href={CURATOR_URL}>
+        <a className="text-accent-tertiary underline underline-offset-2 hover:decoration-2" href={CURATOR_URL}>
           argus-cull
         </a>
         , the curator demo. Its XMP output merges into the same sidecars lens writes.
       </p>
       <p className="text-text-secondary">
         See the whole pipeline (acquire, curate, caption, train, validate) in{" "}
-        <a className="text-accent-tertiary hover:underline" href={SUITE_URL}>
+        <a className="text-accent-tertiary underline underline-offset-2 hover:decoration-2" href={SUITE_URL}>
           Argus Studio
         </a>
         , or caption your own library with{" "}
-        <a className="text-accent-tertiary hover:underline" href={LENS_URL}>
+        <a className="text-accent-tertiary underline underline-offset-2 hover:decoration-2" href={LENS_URL}>
           <code>pip install argus-lens</code>
         </a>
         .

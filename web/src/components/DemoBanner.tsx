@@ -12,11 +12,11 @@ export function DemoBanner() {
       <span className="text-text-primary">Argus Lightbox</span>
       <span className="hidden sm:inline"> — demo on recorded data</span>
       <span className="sm:hidden"> demo</span> ·{" "}
-      <a className="text-accent-tertiary hover:underline" href={ORG_URL}>
+      <a className="text-accent-tertiary underline underline-offset-2 hover:decoration-2" href={ORG_URL}>
         Dragonhound Labs
       </a>{" "}
       ·{" "}
-      <a className="text-accent-tertiary hover:underline" href={REPO_URL}>
+      <a className="text-accent-tertiary underline underline-offset-2 hover:decoration-2" href={REPO_URL}>
         GitHub
       </a>
     </div>

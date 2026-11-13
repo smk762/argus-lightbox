@@ -19,7 +19,7 @@
 
   --color-text-primary: #e5e7eb;
   --color-text-secondary: #9ca3af;
-  --color-text-muted: #6b7280;
+  --color-text-muted: #878f9e; /* 4.5:1 or better on base-900, base-800 and base-700 */
 
   --color-success: #22c55e;
   --color-warning: #facc15;

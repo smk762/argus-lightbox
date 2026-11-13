@@ -8,7 +8,7 @@ export default function NotFound() {
       <h1 className="mb-2 font-display text-heading font-semibold">Page not found</h1>
       <p className="text-text-secondary">
         The gallery lives on one page; filters and the open photo are in its URL.{" "}
-        <Link href="/" className="text-accent-tertiary hover:underline">
+        <Link href="/" className="text-accent-tertiary underline underline-offset-2 hover:decoration-2">
           Back to the gallery
         </Link>
       </p>

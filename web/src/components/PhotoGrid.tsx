@@ -44,7 +44,7 @@ export function PhotoGrid({
               checked={picked.has(photo.id)}
               onChange={() => onToggle(photo.id)}
               aria-label={`Select ${label}`}
-              className="absolute right-2 top-2 z-10 size-4"
+              className="absolute right-2 top-2 z-10 size-6"
             />
             <button
               type="button"
