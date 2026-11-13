@@ -1,8 +1,10 @@
 # Argus Lightbox
 
+<!-- Live demo: https://lightbox.dragonhound.dev -->
+
 A photo gallery you navigate by **structured captions**. Every photo is captioned by [argus-lens](https://github.com/smk762/argus-lens). Instead of one flat string, lens produces category-bucketed captions (identity, wardrobe, pose, setting, lighting, action), and Lightbox turns those buckets into filters. You can pick "red dress" under *Wardrobe* and "sunset" under *Lighting*, open a photo, and see how lens assembled its caption from the raw model output.
 
-It's the standalone demo for argus-lens, the way argus-realms is for argus-atlas. The full pipeline UI is [Argus Studio](https://github.com/smk762/argus-studio).
+It's the standalone demo for argus-lens. The full pipeline UI is [Argus Studio](https://github.com/smk762/argus-studio).
 
 ![Filtering by lighting](docs/images/gallery-filtered.png)
 
