@@ -42,6 +42,18 @@ _TAPE_SQL = """
 
 # Provenance keys worth showing (quarry records licence/source/author on the asset).
 _PROVENANCE_KEYS = ("license", "license_url", "source", "source_url", "author", "author_url", "title", "dataset")
+# argus-quarry writes British "licence" and "attribution"; map them onto the keys the web app reads.
+_PROVENANCE_ALIASES = {"licence": "license", "licence_url": "license_url", "attribution": "author"}
+
+
+def _provenance(asset_meta: dict[str, Any] | None, uri: str) -> dict[str, Any]:
+    meta = dict(asset_meta or {})
+    for alias, key in _PROVENANCE_ALIASES.items():
+        if meta.get(alias) and not meta.get(key):
+            meta[key] = meta[alias]
+    if not meta.get("source_url") and urlparse(uri).scheme in ("http", "https"):
+        meta["source_url"] = uri  # e.g. the Wikimedia Commons file page quarry fetched it from
+    return {k: meta[k] for k in _PROVENANCE_KEYS if meta.get(k)}
 
 
 def _local_path(uri: str) -> Path | None:
@@ -83,7 +95,7 @@ def tape_records(pg_url: str, *, dataset: str | None = None, limit: int | None =
         yield SourceRecord(
             uri=uri,
             sha256=sha256,
-            provenance={k: asset_meta[k] for k in _PROVENANCE_KEYS if (asset_meta or {}).get(k)},
+            provenance=_provenance(asset_meta, uri),
             load_bytes=load,
             caption={
                 "final_caption": final,

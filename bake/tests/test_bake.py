@@ -212,6 +212,20 @@ def test_tape_records_maps_lineage_rows(monkeypatch, tmp_path) -> None:
     assert record.load_bytes() == img.read_bytes()  # blob store miss falls back to the local uri
 
 
+def test_provenance_maps_quarry_spelling() -> None:
+    from lightbox_bake.sources import _provenance
+
+    meta = {"licence": "PD", "attribution": "F. Schmutzer", "title": "Einstein.jpg", "rel_path": "x/y.jpg"}
+    uri = "https://commons.wikimedia.org/wiki/File:Einstein.jpg"
+    assert _provenance(meta, uri) == {
+        "license": "PD",
+        "author": "F. Schmutzer",
+        "source_url": uri,
+        "title": "Einstein.jpg",
+    }
+    assert _provenance({"license": "CC0", "licence": "PD"}, "/local/a.jpg") == {"license": "CC0"}
+
+
 def _gallery_photo(photo_id: str, caption: dict) -> dict:
     return {
         "id": photo_id,
