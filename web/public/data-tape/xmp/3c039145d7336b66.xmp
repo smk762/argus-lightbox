@@ -4,19 +4,22 @@
   <rdf:Description rdf:about="">
    <dc:subject>
     <rdf:Bag>
-     <rdf:li>smile</rdf:li>
-     <rdf:li>long_sleeves</rdf:li>
-     <rdf:li>closed_mouth</rdf:li>
-     <rdf:li>standing</rdf:li>
-     <rdf:li>holding</rdf:li>
-     <rdf:li>holding_weapon</rdf:li>
-     <rdf:li>hat</rdf:li>
-     <rdf:li>jacket</rdf:li>
+     <rdf:li>soldier</rdf:li>
+     <rdf:li>army</rdf:li>
+     <rdf:li>cartoon</rdf:li>
+     <rdf:li>uniform</rdf:li>
+     <rdf:li>illustration</rdf:li>
+     <rdf:li>man</rdf:li>
+     <rdf:li>officer</rdf:li>
+     <rdf:li>troop</rdf:li>
+     <rdf:li>conflict</rdf:li>
+     <rdf:li>weapon</rdf:li>
+     <rdf:li>rifle</rdf:li>
     </rdf:Bag>
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">smile, long_sleeves, closed_mouth, standing, holding, holding_weapon, hat, jacket</rdf:li>
+     <rdf:li xml:lang="x-default">soldier, army, uniform, officer, troop</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>

@@ -4,16 +4,21 @@
   <rdf:Description rdf:about="">
    <dc:subject>
     <rdf:Bag>
-     <rdf:li>english_text</rdf:li>
-     <rdf:li>no_humans</rdf:li>
-     <rdf:li>border</rdf:li>
-     <rdf:li>plant</rdf:li>
-     <rdf:li>text_focus</rdf:li>
+     <rdf:li>certificate</rdf:li>
+     <rdf:li>frame</rdf:li>
+     <rdf:li>text</rdf:li>
+     <rdf:li>award</rdf:li>
+     <rdf:li>diploma</rdf:li>
+     <rdf:li>plaque</rdf:li>
+     <rdf:li>folder</rdf:li>
+     <rdf:li>crest</rdf:li>
+     <rdf:li>manuscript</rdf:li>
+     <rdf:li>scroll</rdf:li>
     </rdf:Bag>
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">english_text, no_humans, border, plant, text_focus</rdf:li>
+     <rdf:li xml:lang="x-default">certificate, frame, text, award, diploma, plaque, crest</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>

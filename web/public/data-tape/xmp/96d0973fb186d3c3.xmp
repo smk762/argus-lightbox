@@ -4,17 +4,22 @@
   <rdf:Description rdf:about="">
    <dc:subject>
     <rdf:Bag>
-     <rdf:li>long_hair</rdf:li>
-     <rdf:li>black_hair</rdf:li>
-     <rdf:li>closed_eyes</rdf:li>
-     <rdf:li>holding</rdf:li>
-     <rdf:li>painting_(medium)</rdf:li>
-     <rdf:li>outdoors</rdf:li>
+     <rdf:li>woman</rdf:li>
+     <rdf:li>drawing</rdf:li>
+     <rdf:li>catch</rdf:li>
+     <rdf:li>kimono</rdf:li>
+     <rdf:li>stand</rdf:li>
+     <rdf:li>dress</rdf:li>
+     <rdf:li>art</rdf:li>
+     <rdf:li>girl</rdf:li>
+     <rdf:li>geisha</rdf:li>
+     <rdf:li>ink</rdf:li>
+     <rdf:li>sunshade</rdf:li>
     </rdf:Bag>
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">long_hair, black_hair, closed_eyes, holding, painting_(medium), outdoors</rdf:li>
+     <rdf:li xml:lang="x-default">woman, geisha, girl</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>

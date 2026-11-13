@@ -4,19 +4,23 @@
   <rdf:Description rdf:about="">
    <dc:subject>
     <rdf:Bag>
-     <rdf:li>looking_at_viewer</rdf:li>
-     <rdf:li>bow</rdf:li>
-     <rdf:li>upper_body</rdf:li>
-     <rdf:li>monochrome</rdf:li>
-     <rdf:li>male_focus</rdf:li>
-     <rdf:li>greyscale</rdf:li>
-     <rdf:li>artist_name</rdf:li>
-     <rdf:li>facial_hair</rdf:li>
+     <rdf:li>man</rdf:li>
+     <rdf:li>portrait</rdf:li>
+     <rdf:li>photo</rdf:li>
+     <rdf:li>black</rdf:li>
+     <rdf:li>white</rdf:li>
+     <rdf:li>suit</rdf:li>
+     <rdf:li>beard</rdf:li>
+     <rdf:li>wear</rdf:li>
+     <rdf:li>tie</rdf:li>
+     <rdf:li>hair</rdf:li>
+     <rdf:li>cocktail dress</rdf:li>
+     <rdf:li>bow tie</rdf:li>
     </rdf:Bag>
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">looking_at_viewer, bow, upper_body, monochrome, male_focus, greyscale, artist_name, facial_hair</rdf:li>
+     <rdf:li xml:lang="x-default">man, beard, hair</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>

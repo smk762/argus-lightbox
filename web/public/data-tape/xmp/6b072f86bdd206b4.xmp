@@ -4,19 +4,24 @@
   <rdf:Description rdf:about="">
    <dc:subject>
     <rdf:Bag>
-     <rdf:li>weapon</rdf:li>
-     <rdf:li>multiple_boys</rdf:li>
-     <rdf:li>sword</rdf:li>
-     <rdf:li>gloves</rdf:li>
-     <rdf:li>hat</rdf:li>
+     <rdf:li>army</rdf:li>
+     <rdf:li>soldier</rdf:li>
+     <rdf:li>horse</rdf:li>
      <rdf:li>uniform</rdf:li>
-     <rdf:li>military_uniform</rdf:li>
-     <rdf:li>shako_cap</rdf:li>
+     <rdf:li>officer</rdf:li>
+     <rdf:li>man</rdf:li>
+     <rdf:li>cartoon</rdf:li>
+     <rdf:li>illustration</rdf:li>
+     <rdf:li>troop</rdf:li>
+     <rdf:li>war</rdf:li>
+     <rdf:li>horseback</rdf:li>
+     <rdf:li>conflict</rdf:li>
+     <rdf:li>rifle</rdf:li>
     </rdf:Bag>
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">weapon, multiple_boys, sword, gloves, hat, uniform, military_uniform, shako_cap</rdf:li>
+     <rdf:li xml:lang="x-default">army soldier horse officer man</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>

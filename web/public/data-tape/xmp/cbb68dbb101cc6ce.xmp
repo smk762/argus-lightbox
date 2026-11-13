@@ -4,15 +4,24 @@
   <rdf:Description rdf:about="">
    <dc:subject>
     <rdf:Bag>
-     <rdf:li>black_hair</rdf:li>
-     <rdf:li>long_sleeves</rdf:li>
-     <rdf:li>full_body</rdf:li>
-     <rdf:li>standing</rdf:li>
+     <rdf:li>woman</rdf:li>
+     <rdf:li>drawing</rdf:li>
+     <rdf:li>kimono</rdf:li>
+     <rdf:li>flower</rdf:li>
+     <rdf:li>catch</rdf:li>
+     <rdf:li>geisha</rdf:li>
+     <rdf:li>dress</rdf:li>
+     <rdf:li>robe</rdf:li>
+     <rdf:li>carpet</rdf:li>
+     <rdf:li>samurai</rdf:li>
+     <rdf:li>tapestry</rdf:li>
+     <rdf:li>scroll</rdf:li>
+     <rdf:li>writing</rdf:li>
     </rdf:Bag>
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">black_hair, long_sleeves, full_body, standing</rdf:li>
+     <rdf:li xml:lang="x-default">woman geisha kimono</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>

@@ -4,17 +4,20 @@
   <rdf:Description rdf:about="">
    <dc:subject>
     <rdf:Bag>
-     <rdf:li>day</rdf:li>
-     <rdf:li>water</rdf:li>
-     <rdf:li>tree</rdf:li>
-     <rdf:li>hat</rdf:li>
-     <rdf:li>outdoors</rdf:li>
-     <rdf:li>forest</rdf:li>
+     <rdf:li>pond</rdf:li>
+     <rdf:li>gazebo</rdf:li>
+     <rdf:li>garden</rdf:li>
+     <rdf:li>bridge</rdf:li>
+     <rdf:li>person</rdf:li>
+     <rdf:li>stand</rdf:li>
+     <rdf:li>miniature</rdf:li>
+     <rdf:li>hut</rdf:li>
+     <rdf:li>postcard</rdf:li>
     </rdf:Bag>
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">day, water, tree, hat, outdoors, forest</rdf:li>
+     <rdf:li xml:lang="x-default">garden, pond, gazebo, person, stand, hut, postcard</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>

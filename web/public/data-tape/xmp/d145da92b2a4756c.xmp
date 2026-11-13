@@ -4,19 +4,25 @@
   <rdf:Description rdf:about="">
    <dc:subject>
     <rdf:Bag>
-     <rdf:li>looking_at_viewer</rdf:li>
-     <rdf:li>long_sleeves</rdf:li>
-     <rdf:li>monochrome</rdf:li>
-     <rdf:li>male_focus</rdf:li>
-     <rdf:li>greyscale</rdf:li>
-     <rdf:li>formal</rdf:li>
-     <rdf:li>rain</rdf:li>
-     <rdf:li>shirt</rdf:li>
+     <rdf:li>man</rdf:li>
+     <rdf:li>suit</rdf:li>
+     <rdf:li>blackboard</rdf:li>
+     <rdf:li>table</rdf:li>
+     <rdf:li>white</rdf:li>
+     <rdf:li>black</rdf:li>
+     <rdf:li>stand</rdf:li>
+     <rdf:li>photo</rdf:li>
+     <rdf:li>wear</rdf:li>
+     <rdf:li>tie</rdf:li>
+     <rdf:li>beard</rdf:li>
+     <rdf:li>teacher</rdf:li>
+     <rdf:li>chalk</rdf:li>
+     <rdf:li>business suit</rdf:li>
     </rdf:Bag>
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">looking_at_viewer, long_sleeves, monochrome, male_focus, greyscale, formal, rain, shirt</rdf:li>
+     <rdf:li xml:lang="x-default">man beard</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>

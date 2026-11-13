@@ -104,7 +104,7 @@ The container has to be able to read the mount. On a NAS export that squashes ro
 
 `make build` writes a static site to `web/out/`. Serve it from anything.
 
-The hosted demo at https://lightbox.dragonhound.dev is `make pages`: the same export, reading the committed tape bake in `web/public/data-tape/` (29 public-domain/CC0 Commons photos from the halo tape), with the demo banner and absolute OG URLs. `.github/workflows/pages.yml` runs it on every push to `main` and uploads `web/out/` with `wrangler pages deploy`. After a change to the bake or a lens bump, re-run `make tape` against the tape's stores and commit `web/public/data-tape/`.
+The hosted demo at https://lightbox.dragonhound.dev is `make pages`: the same export, reading the committed tape bake in `web/public/data-tape/` (29 public-domain/CC0 Commons photos from the halo tape), with the demo banner and absolute OG URLs. Those photos were re-captioned with argus-lens 0.10.0 on CPU: hybrid RAM++ tags plus `qwen3-vl:2b-instruct` prose through Ollama (`straightforward` prompt), with the identity caption refined by `qwen3:4b-instruct`. The results are recorded as version-2 `caption` rows beside the tape's original WD14 rows, so the bake displays them and recomposition agrees (no `explain.drift`). `.github/workflows/pages.yml` runs it on every push to `main` and uploads `web/out/` with `wrangler pages deploy`. After a change to the bake or a lens bump, re-run `make tape` against the tape's stores and commit `web/public/data-tape/`.
 
 | Variable | Default | Purpose |
 |---|---|---|

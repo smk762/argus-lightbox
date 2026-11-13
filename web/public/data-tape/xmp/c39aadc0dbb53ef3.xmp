@@ -4,17 +4,20 @@
   <rdf:Description rdf:about="">
    <dc:subject>
     <rdf:Bag>
+     <rdf:li>light</rdf:li>
      <rdf:li>sky</rdf:li>
-     <rdf:li>tree</rdf:li>
-     <rdf:li>no_humans</rdf:li>
-     <rdf:li>outdoors</rdf:li>
-     <rdf:li>forest</rdf:li>
-     <rdf:li>mountain</rdf:li>
+     <rdf:li>aurora</rdf:li>
+     <rdf:li>snow</rdf:li>
+     <rdf:li>road</rdf:li>
+     <rdf:li>snowy</rdf:li>
+     <rdf:li>blanket</rdf:li>
+     <rdf:li>night sky</rdf:li>
+     <rdf:li>winter</rdf:li>
     </rdf:Bag>
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">sky, tree, no_humans, outdoors, forest, mountain</rdf:li>
+     <rdf:li xml:lang="x-default">aurora, snow, night sky, winter</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>

@@ -4,16 +4,19 @@
   <rdf:Description rdf:about="">
    <dc:subject>
     <rdf:Bag>
-     <rdf:li>english_text</rdf:li>
-     <rdf:li>dated</rdf:li>
-     <rdf:li>no_humans</rdf:li>
-     <rdf:li>indoors</rdf:li>
      <rdf:li>window</rdf:li>
+     <rdf:li>wall</rdf:li>
+     <rdf:li>building</rdf:li>
+     <rdf:li>sign</rdf:li>
+     <rdf:li>plaque</rdf:li>
+     <rdf:li>writing</rdf:li>
+     <rdf:li>room</rdf:li>
+     <rdf:li>floor</rdf:li>
     </rdf:Bag>
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">english_text, dated, no_humans, indoors, window</rdf:li>
+     <rdf:li xml:lang="x-default">wall, window, plaque, writing, building, room</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>

@@ -4,14 +4,18 @@
   <rdf:Description rdf:about="">
    <dc:subject>
     <rdf:Bag>
-     <rdf:li>monochrome</rdf:li>
-     <rdf:li>cloud</rdf:li>
-     <rdf:li>no_humans</rdf:li>
+     <rdf:li>book</rdf:li>
+     <rdf:li>drawing</rdf:li>
+     <rdf:li>open</rdf:li>
+     <rdf:li>image</rdf:li>
+     <rdf:li>blanket</rdf:li>
+     <rdf:li>journal</rdf:li>
+     <rdf:li>manuscript</rdf:li>
     </rdf:Bag>
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">monochrome, cloud, no_humans</rdf:li>
+     <rdf:li xml:lang="x-default">book, drawing, open, journal, manuscript</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>

@@ -4,16 +4,23 @@
   <rdf:Description rdf:about="">
    <dc:subject>
     <rdf:Bag>
-     <rdf:li>monochrome</rdf:li>
-     <rdf:li>greyscale</rdf:li>
-     <rdf:li>english_text</rdf:li>
-     <rdf:li>indoors</rdf:li>
-     <rdf:li>window</rdf:li>
+     <rdf:li>church</rdf:li>
+     <rdf:li>drawing</rdf:li>
+     <rdf:li>building</rdf:li>
+     <rdf:li>cathedral</rdf:li>
+     <rdf:li>gothic</rdf:li>
+     <rdf:li>image</rdf:li>
+     <rdf:li>pillar</rdf:li>
+     <rdf:li>chapel</rdf:li>
+     <rdf:li>church bench</rdf:li>
+     <rdf:li>altar</rdf:li>
+     <rdf:li>ceiling</rdf:li>
+     <rdf:li>hall</rdf:li>
     </rdf:Bag>
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">monochrome, greyscale, english_text, indoors, window</rdf:li>
+     <rdf:li xml:lang="x-default">cathedral, church, gothic, drawing, pillar, altar, ceiling, chapel, hall</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>

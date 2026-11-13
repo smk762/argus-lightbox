@@ -4,19 +4,20 @@
   <rdf:Description rdf:about="">
    <dc:subject>
     <rdf:Bag>
-     <rdf:li>looking_at_viewer</rdf:li>
-     <rdf:li>closed_mouth</rdf:li>
-     <rdf:li>upper_body</rdf:li>
-     <rdf:li>monochrome</rdf:li>
-     <rdf:li>male_focus</rdf:li>
-     <rdf:li>greyscale</rdf:li>
-     <rdf:li>facial_hair</rdf:li>
+     <rdf:li>portrait</rdf:li>
+     <rdf:li>hair</rdf:li>
+     <rdf:li>man</rdf:li>
+     <rdf:li>white</rdf:li>
+     <rdf:li>black</rdf:li>
+     <rdf:li>photo</rdf:li>
+     <rdf:li>sweater</rdf:li>
      <rdf:li>beard</rdf:li>
+     <rdf:li>stare</rdf:li>
     </rdf:Bag>
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">looking_at_viewer, closed_mouth, upper_body, monochrome, male_focus, greyscale, facial_hair, beard</rdf:li>
+     <rdf:li xml:lang="x-default">man, white hair, black beard</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>
