@@ -19,7 +19,7 @@
 
   --color-text-primary: #e5e7eb;
   --color-text-secondary: #9ca3af;
-  --color-text-muted: #6b7280;
+  --color-text-muted: #878f9e; /* 4.5:1 or better on base-900, base-800 and base-700 */
 
   --color-success: #22c55e;
   --color-warning: #facc15;
@@ -94,11 +94,70 @@ dialog::backdrop {
   backdrop-filter: blur(6px);
 }
 
+/*
+ * Photo detail enter/exit. Entry is pure CSS (@starting-style). Exit is driven by
+ * a `data-closing` attribute that PhotoDetail sets before calling close(), because
+ * React unmounts the dialog as soon as it closes, and Firefox can't transition
+ * `display` out of the top layer anyway. `display`/`overlay` are still listed so
+ * browsers that can keep it in the top layer do. The global reduced-motion rule
+ * below zeroes these durations; the scale only runs with no-preference.
+ */
+dialog.photo-detail,
+dialog.photo-detail::backdrop {
+  opacity: 0;
+  transition-property: opacity, scale, display, overlay;
+  transition-duration: 220ms;
+  transition-timing-function: var(--ease-out);
+  transition-behavior: allow-discrete;
+}
+
+dialog.photo-detail:is([open]):where(:not([data-closing])) {
+  opacity: 1;
+
+  @starting-style {
+    opacity: 0;
+  }
+
+  &::backdrop {
+    opacity: 1;
+
+    @starting-style {
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    scale: 1;
+
+    @starting-style {
+      scale: 0.98;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  dialog.photo-detail[data-closing] {
+    scale: 0.98;
+  }
+}
+
+/* Grid -> detail morph (Lightbox.openFromGrid). Snapshots are the same aspect ratio. */
+::view-transition-group(photo-hero) {
+  animation-duration: 320ms;
+  animation-timing-function: var(--ease-out);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
     transition-duration: 0ms !important;
     animation-duration: 0ms !important;
+  }
+
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
   }
 }

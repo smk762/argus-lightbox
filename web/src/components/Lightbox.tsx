@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 
 import { groupStyle } from "@/lib/categories";
 import { loadIndex, loadStatus } from "@/lib/data";
@@ -213,6 +214,25 @@ export function Lightbox() {
     [filtered, openIndex, update, view],
   );
 
+  // Open from the grid, morphing the thumbnail into the detail image where View
+  // Transitions are available. The thumbnail carries the shared name only for the
+  // old snapshot; it's dropped before the new one, where the detail <img> has it.
+  const openFromGrid = (id: string, thumb: HTMLImageElement | null) => {
+    const open = () => {
+      pushedPhoto.current = true;
+      update({ ...view, photo: id }, true);
+    };
+    if (!thumb || !("startViewTransition" in document) || matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      open();
+      return;
+    }
+    thumb.style.viewTransitionName = "photo-hero";
+    document.startViewTransition(() => {
+      thumb.style.viewTransitionName = "";
+      flushSync(open);
+    });
+  };
+
   const badge = index ? sourceBadge(index.source) : null;
 
   if (error) {
@@ -226,12 +246,24 @@ export function Lightbox() {
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-[1800px] flex-col px-4 sm:px-6">
+      {/* The facet sidebar puts dozens of checkboxes ahead of the photos in tab order. Focus moves
+          without a fragment navigation, which would fire popstate and add a history entry. */}
+      <a
+        href="#gallery"
+        onClick={(e) => {
+          e.preventDefault();
+          document.getElementById("gallery")?.focus();
+        }}
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-base-800 focus:px-3 focus:py-2 focus:text-small"
+      >
+        Skip to photos
+      </a>
       <header className="flex flex-wrap items-end justify-between gap-4 py-6">
         <div>
           <h1 className="font-display text-display font-semibold tracking-tight">Lightbox</h1>
           <p className="text-small text-text-secondary">
             Every photo here is navigated by its{" "}
-            <a href="https://github.com/smk762/argus-lens" className="text-accent-tertiary hover:underline">
+            <a href="https://github.com/smk762/argus-lens" className="text-accent-tertiary underline underline-offset-2 hover:decoration-2">
               argus-lens
             </a>{" "}
             structured caption.
@@ -270,7 +302,7 @@ export function Lightbox() {
           />
         </div>
 
-        <main className="@container min-w-0 flex-1">
+        <main id="gallery" tabIndex={-1} className="@container min-w-0 flex-1">
           <div className="sticky top-0 z-10 -mx-1 mb-4 bg-base-900/90 px-1 py-2 backdrop-blur">
             <input
               type="search"
@@ -284,7 +316,7 @@ export function Lightbox() {
               className="w-full rounded-md border border-base-600 bg-base-800 px-4 py-2.5 text-body placeholder:text-text-muted focus:border-accent-primary focus:outline-none"
             />
             <div className="mt-2 flex flex-wrap items-center gap-2 text-caption text-text-secondary">
-              <span className="tabular-nums">
+              <span role="status" className="tabular-nums">
                 {index ? `${filtered.length} of ${photos.length} photos` : "Loading…"}
               </span>
               {index && (
@@ -405,10 +437,7 @@ export function Lightbox() {
                 photos={visible}
                 selection={view.selection}
                 picked={picked}
-                onOpen={(id) => {
-                  pushedPhoto.current = true;
-                  update({ ...view, photo: id }, true);
-                }}
+                onOpen={openFromGrid}
                 onToggle={(id) =>
                   setPicked((current) => {
                     const next = new Set(current);

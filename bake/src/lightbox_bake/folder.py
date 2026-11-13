@@ -21,7 +21,7 @@ from pathlib import Path
 from typing import Any
 
 from lightbox_bake.index import BakeStats, finish_gallery, read_photos, render_photo, write_gallery
-from lightbox_bake.sources import SourceRecord
+from lightbox_bake.sources import SourceRecord, refine_record
 
 # Same set lens's filesystem connector walks, plus ``.tif`` (common on cameras;
 # the upload endpoint captions bytes, so the suffix only decides what we send).
@@ -68,33 +68,6 @@ def iter_images(root: Path, *, recursive: bool = True) -> list[Path]:
     return sorted(found, key=lambda p: p.relative_to(root).as_posix())
 
 
-def _refine_record(payload: dict[str, Any]) -> dict[str, Any] | None:
-    """Keep the rewrite lens recorded, whether it arrived on the wire or from our cache.
-
-    A checked rewrite changes ``final_caption`` after assembly. The explain view
-    needs that fact so the difference is not reported as ``drift``.
-    """
-    raw = payload.get("refine")
-    if not isinstance(raw, dict):
-        metadata = payload.get("metadata")
-        raw = metadata.get("refine") if isinstance(metadata, dict) else None
-    if not isinstance(raw, dict):
-        return None
-    record: dict[str, Any] = {}
-    model = raw.get("model")
-    if isinstance(model, str) and model:
-        record["model"] = model
-    accepted = raw.get("accepted")
-    if isinstance(accepted, list):
-        names = [item for item in accepted if isinstance(item, str) and item]
-        if names:
-            record["accepted"] = names
-    skipped = raw.get("skipped")
-    if isinstance(skipped, str) and skipped:
-        record["skipped"] = skipped
-    return record or None
-
-
 def caption_record(payload: dict[str, Any]) -> dict[str, Any]:
     """Keep the CaptionResult fields the index stores, plus the profile we requested."""
     final = payload.get("final_caption")
@@ -116,7 +89,7 @@ def caption_record(payload: dict[str, Any]) -> dict[str, Any]:
         "profile": dict(_PROFILE),
         "version": 1,
     }
-    refine = _refine_record(payload)
+    refine = refine_record(payload)
     if refine is not None:
         record["refine"] = refine
     return record

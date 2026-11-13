@@ -57,7 +57,7 @@ Bake the real run from a cortex store, for example the local stores you recorded
 ```bash
 export CORTEX_PG_URL=postgresql://…                       # lineage store
 export CORTEX_S3_ENDPOINT=… CORTEX_S3_BUCKET=argus-tape   # blob store (plus credentials)
-make tape                                                 # → web/public/data-tape/ (gitignored)
+make tape                                                 # → web/public/data-tape/ (committed: the hosted demo)
 NEXT_PUBLIC_DATA_URL=/data-tape make dev
 ```
 
@@ -104,14 +104,20 @@ The container has to be able to read the mount. On a NAS export that squashes ro
 
 `make build` writes a static site to `web/out/`. Serve it from anything.
 
+The hosted demo at https://lightbox.dragonhound.dev is `make pages`: the same export, reading the committed tape bake in `web/public/data-tape/` (29 public-domain/CC0 Commons photos from the halo tape), with the demo banner and absolute OG URLs. Those photos were re-captioned with argus-lens 0.10.0 on CPU: hybrid RAM++ tags plus `qwen3-vl:2b-instruct` prose through Ollama (`straightforward` prompt), with the identity caption refined by `qwen3:4b-instruct`. The results are recorded as version-2 `caption` rows beside the tape's original WD14 rows, so the bake displays them and recomposition agrees (no `explain.drift`). `.github/workflows/pages.yml` runs it on every push to `main` and uploads `web/out/` with `wrangler pages deploy`. After a change to the bake or a lens bump, re-run `make tape` against the tape's stores and commit `web/public/data-tape/`.
+
 | Variable | Default | Purpose |
 |---|---|---|
 | `NEXT_PUBLIC_DATA_URL` | `<basePath>/data` | Where `index.json` and the renditions live. Point it at an R2/CDN URL to host the data separately from the app; that origin must send CORS headers for `index.json`. |
 | `NEXT_PUBLIC_BASE_PATH` | (none) | Serve the app under a sub-path. |
 | `NEXT_PUBLIC_SUITE_URL` | argus-studio repo | The "see the whole pipeline" link. |
 | `NEXT_PUBLIC_CURATOR_URL` | argus-cull repo | The faces / content-rating cross-link. |
+| `NEXT_PUBLIC_DEMO_BANNER` | (none) | Any value shows the "demo on recorded data" strip at the top. |
+| `NEXT_PUBLIC_SITE_URL` | (none) | Absolute origin for `og:image` and the canonical link. |
 
 These are build-time variables (inlined by Next.js), so rebuild after changing them.
+
+`npm run build` also gives every page a strict, hash-based Content-Security-Policy (`web/scripts/csp.mjs`). It adds a `<meta>` that lists the sha256 of each inline script Next emitted and allows `NEXT_PUBLIC_DATA_URL`'s origin for fetches and images. Trusted Types is enforced, with one `default` policy that lets Next load its own `/_next/static/` chunks and nothing else. It also writes `out/_headers` (Cloudflare Pages / Netlify format) for what a `<meta>` can't set: `frame-ancestors 'none'`, `X-Frame-Options`, `nosniff`, `Referrer-Policy`, `Permissions-Policy` and `Cross-Origin-Opener-Policy`, plus a year of immutable caching for the content-hashed `/_next/static/` files. On another host, send those headers yourself.
 
 ## Develop
 
@@ -124,7 +130,7 @@ make fixture     # re-bake the fixture after changing bake/ or bumping lens
 
 ## Roadmap
 
-- Bake the halo tape and publish it, with the app on Cloudflare Pages and the data on R2.
+- Move the tape bake to R2 if it outgrows the repo (`NEXT_PUBLIC_DATA_URL` already supports it).
 
 ## License
 
