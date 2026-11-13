@@ -1,5 +1,6 @@
 "use client";
 
+import { shownCaption } from "@/lib/caption";
 import { groupStyle } from "@/lib/categories";
 import { tokenUse } from "@/lib/tokens";
 import type { Photo } from "@/lib/types";
@@ -41,8 +42,23 @@ export function CaptionTab({
     ...SPECIAL.filter((c) => c in caption.caption_variants),
     ...Object.keys(caption.caption_variants).filter((c) => !categories.includes(c) && !SPECIAL.includes(c)),
   ];
+  const shown = shownCaption(caption);
   return (
     <div className="space-y-6">
+      {shown.variant !== "final" && (
+        <section>
+          <SectionTitle hint={`${groupStyle(shown.variant).label} variant, shown by default`}>Caption</SectionTitle>
+          <div className="rounded-md border border-accent-primary/60 bg-base-900 p-3">
+            <p className="text-body leading-relaxed">
+              <Highlight text={shown.text} terms={terms} />
+            </p>
+            <div className="mt-2 flex items-center justify-between gap-3">
+              <TokenCount text={shown.text} backend={backend} />
+              <CopyButton text={shown.text} />
+            </div>
+          </div>
+        </section>
+      )}
       <section>
         <SectionTitle hint={`selected variant: ${groupStyle(caption.selected_category).label}`}>
           Final caption

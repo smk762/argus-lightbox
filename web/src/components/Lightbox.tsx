@@ -312,7 +312,7 @@ export function Lightbox() {
                 setPage(0);
                 update({ ...view, query: e.target.value });
               }}
-              placeholder="Search captions: “red dress beach”, “neon”, “reading”…"
+              placeholder="Search captions: “snow mountain”, “neon night”, “harbor boats”, “typewriter”…"
               aria-label="Search captions"
               className="w-full rounded-md border border-base-600 bg-base-800 px-4 py-2.5 text-body placeholder:text-text-muted focus:border-accent-primary focus:outline-none"
             />

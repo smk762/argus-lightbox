@@ -7,7 +7,9 @@ NPM_DEV ?= $(if $(HOST_NPM),npm,$(call DOCKER_NPM,-p $(PORT):$(PORT)))
 PORT ?= 3000
 # The hosted demo (Cloudflare Pages): the committed tape bake, the demo banner, absolute OG URLs.
 SITE_URL ?= https://lightbox.dragonhound.dev
-PAGES_ENV = NEXT_PUBLIC_DATA_URL=/data-tape NEXT_PUBLIC_DEMO_BANNER=1 NEXT_PUBLIC_SITE_URL=$(SITE_URL)
+# The caption variant the grid and detail view show first (a caption_variants key, or `final`).
+NEXT_PUBLIC_DEFAULT_CAPTION ?= zeroshot
+PAGES_ENV = NEXT_PUBLIC_DATA_URL=/data-tape NEXT_PUBLIC_DEMO_BANNER=1 NEXT_PUBLIC_SITE_URL=$(SITE_URL) NEXT_PUBLIC_DEFAULT_CAPTION=$(NEXT_PUBLIC_DEFAULT_CAPTION)
 NPM_PAGES ?= $(if $(HOST_NPM),$(PAGES_ENV) npm,$(call DOCKER_NPM,$(addprefix -e ,$(PAGES_ENV))))
 BAKE := bake/.venv/bin/lightbox-bake
 
