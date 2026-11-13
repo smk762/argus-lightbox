@@ -21,3 +21,7 @@ web/next-env.d.ts
 # serves, so the Pages build needs no Python or cortex stores.
 # A folder bake (lightbox-bake folder) goes to web/public/data-folder/.
 web/public/data-folder/
+
+# Local copy from `npx modern-web-guidance install`; the plugin is enabled in .claude/settings.json
+.claude/skills/
+skills-lock.json
