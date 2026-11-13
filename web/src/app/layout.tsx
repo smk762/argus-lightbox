@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     siteName: TITLE,
     title: TITLE,
     description: DESCRIPTION,
-    ...(SITE_URL && { images: [OG_IMAGE] }),
+    ...(SITE_URL && { url: "/", images: [OG_IMAGE] }),
   },
   twitter: {
     card: SITE_URL ? "summary_large_image" : "summary",

@@ -3,6 +3,7 @@
 import { assetUrl } from "@/lib/data";
 import type { Photo } from "@/lib/types";
 
+import { ExternalLink } from "../ExternalLink";
 import { SectionTitle } from "../ui";
 
 function Row({ label, children }: { label: string; children: React.ReactNode }) {
@@ -17,9 +18,9 @@ function Row({ label, children }: { label: string; children: React.ReactNode }) 
 
 function Link({ href, children }: { href?: string; children: React.ReactNode }) {
   return href ? (
-    <a href={href} className="text-accent-tertiary hover:underline" rel="noreferrer" target="_blank">
+    <ExternalLink href={href} className="text-accent-tertiary hover:underline">
       {children}
-    </a>
+    </ExternalLink>
   ) : (
     <>{children}</>
   );

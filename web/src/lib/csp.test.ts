@@ -55,6 +55,7 @@ describe("csp post-build", () => {
     expect(headers()).toContain("/_next/static/*\n  Cache-Control: public, max-age=31536000, immutable");
     expect(headers("/gallery")).toContain("/gallery/_next/static/*\n");
     expect(headers()).toContain("frame-ancestors 'none'");
+    expect(headers()).toContain("Strict-Transport-Security: max-age=31536000");
   });
 
   it("allows a cross-origin data URL for fetches and images only", () => {
