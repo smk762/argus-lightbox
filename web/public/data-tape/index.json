@@ -1,0 +1,2732 @@
+{
+ "version": "1.0",
+ "generated_at": "2026-11-13T03:29:53+00:00",
+ "source": "tape",
+ "lens_version": "0.10.0",
+ "categories": [
+  "identity",
+  "wardrobe",
+  "pose_composition",
+  "setting",
+  "lighting",
+  "action"
+ ],
+ "photos": [
+  {
+   "id": "e2d0ebdf6206e466",
+   "sha256": "e2d0ebdf6206e466aeed357feea2f5790b5cdb17158ee6da9345b7d64405d9ee",
+   "image": "images/e2d0ebdf6206e466.webp",
+   "thumb": "thumbs/e2d0ebdf6206e466.webp",
+   "xmp": "xmp/e2d0ebdf6206e466.xmp",
+   "width": 1507,
+   "height": 2048,
+   "color": "#3b3b3b",
+   "caption": {
+    "final_caption": "looking_at_viewer, closed_mouth, upper_body, monochrome, male_focus, greyscale, formal, photorealistic",
+    "caption_variants": {},
+    "selected_category": "identity",
+    "raw_tags": "looking_at_viewer, closed_mouth, upper_body, monochrome, male_focus, greyscale, formal, photorealistic",
+    "raw_prose": "",
+    "backend_name": "wd14",
+    "profile": {
+     "checkpoint": null,
+     "target_style": "photo",
+     "target_backend": "sdxl",
+     "target_category": "identity"
+    },
+    "version": 1
+   },
+   "explain": {
+    "buckets": {
+     "tags": {
+      "identity": [],
+      "wardrobe": [
+       "formal"
+      ],
+      "pose_composition": [
+       "looking_at_viewer",
+       "upper_body"
+      ],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": [
+       "closed_mouth",
+       "monochrome",
+       "male_focus",
+       "greyscale",
+       "photorealistic"
+      ]
+     },
+     "prose": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": []
+     }
+    },
+    "compaction_notes": [
+     "Trimmed lower-priority fragments to keep captions compact.",
+     "Repaired disjointed fragments in assembled captions."
+    ],
+    "subjects": {
+     "count": null,
+     "multiple": false,
+     "tag_count": null,
+     "prose_count": null,
+     "agree": null,
+     "evidence": []
+    },
+    "drift": true
+   },
+   "compare": {},
+   "facets": {
+    "wardrobe": [
+     "formal"
+    ],
+    "pose_composition": [
+     "looking_at_viewer",
+     "upper_body"
+    ],
+    "detail": [
+     "closed mouth",
+     "male focus"
+    ]
+   },
+   "exif": {
+    "taken_at": "2022-09-05T21:49:02",
+    "software": "GIMP 2.10.8"
+   },
+   "provenance": {
+    "license": "PD",
+    "source": "commons",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Marie_Curie_c._1920s.jpg",
+    "author": "Henri Manuel",
+    "title": "Marie Curie c. 1920s.jpg"
+   }
+  },
+  {
+   "id": "eb8e8984a11fc61f",
+   "sha256": "eb8e8984a11fc61f86254d611d78b3198c9aabf99dd97eb4f2fba4d5f50a268b",
+   "image": "images/eb8e8984a11fc61f.webp",
+   "thumb": "thumbs/eb8e8984a11fc61f.webp",
+   "xmp": "xmp/eb8e8984a11fc61f.xmp",
+   "width": 1537,
+   "height": 2048,
+   "color": "#b0aaa2",
+   "caption": {
+    "final_caption": "black_hair, long_sleeves, full_body, standing, holding, holding_weapon, hat, jacket",
+    "caption_variants": {},
+    "selected_category": "identity",
+    "raw_tags": "black_hair, long_sleeves, full_body, standing, holding, holding_weapon, hat, jacket",
+    "raw_prose": "",
+    "backend_name": "wd14",
+    "profile": {
+     "checkpoint": null,
+     "target_style": "photo",
+     "target_backend": "sdxl",
+     "target_category": "identity"
+    },
+    "version": 1
+   },
+   "explain": {
+    "buckets": {
+     "tags": {
+      "identity": [
+       "black_hair"
+      ],
+      "wardrobe": [
+       "long_sleeves",
+       "hat",
+       "jacket"
+      ],
+      "pose_composition": [
+       "full_body",
+       "standing"
+      ],
+      "setting": [],
+      "lighting": [],
+      "action": [
+       "holding",
+       "holding_weapon"
+      ],
+      "unclassified": []
+     },
+     "prose": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": []
+     }
+    },
+    "compaction_notes": [
+     "Trimmed lower-priority fragments to keep captions compact.",
+     "Suppressed identity traits for training variant (learned visually).",
+     "Repaired disjointed fragments in assembled captions."
+    ],
+    "subjects": {
+     "count": null,
+     "multiple": false,
+     "tag_count": null,
+     "prose_count": null,
+     "agree": null,
+     "evidence": []
+    },
+    "drift": true
+   },
+   "compare": {},
+   "facets": {
+    "identity": [
+     "black_hair"
+    ],
+    "wardrobe": [
+     "long_sleeves",
+     "hat",
+     "jacket"
+    ],
+    "pose_composition": [
+     "full_body",
+     "standing"
+    ],
+    "action": [
+     "holding",
+     "holding_weapon"
+    ]
+   },
+   "exif": {},
+   "provenance": {
+    "license": "PD",
+    "source": "commons",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Norwegen_1863_J%C3%A4ger_Kavallerist_Musketier_Garde-Scharfsch%C3%BCtz_Artillerist._Uniformenkunde_military_uniform_plate_print_by_Richard_Kn%C3%B6tel_(1857-1914)_publ_in_1890s%3F_Norwegian_army_cavalry_guards_artillery_PD-old.jpg",
+    "author": "Richard Knötel",
+    "title": "Norwegen 1863 Jäger Kavallerist Musketier Garde-Scharfschütz Artillerist. Uniformenkunde military uniform plate print by Richard Knötel (1857-1914) publ in 1890s? Norwegian army cavalry guards artillery PD-old.jpg"
+   }
+  },
+  {
+   "id": "d145da92b2a4756c",
+   "sha256": "d145da92b2a4756c2261f7358fcd75c5271dbe7c51757e6b00dd458fa80a8d8c",
+   "image": "images/d145da92b2a4756c.webp",
+   "thumb": "thumbs/d145da92b2a4756c.webp",
+   "xmp": "xmp/d145da92b2a4756c.xmp",
+   "width": 1560,
+   "height": 2048,
+   "color": "#474747",
+   "caption": {
+    "final_caption": "looking_at_viewer, long_sleeves, monochrome, male_focus, greyscale, formal, rain, shirt",
+    "caption_variants": {},
+    "selected_category": "identity",
+    "raw_tags": "looking_at_viewer, long_sleeves, monochrome, male_focus, greyscale, formal, rain, shirt",
+    "raw_prose": "",
+    "backend_name": "wd14",
+    "profile": {
+     "checkpoint": null,
+     "target_style": "photo",
+     "target_backend": "sdxl",
+     "target_category": "identity"
+    },
+    "version": 1
+   },
+   "explain": {
+    "buckets": {
+     "tags": {
+      "identity": [],
+      "wardrobe": [
+       "long_sleeves",
+       "formal",
+       "shirt"
+      ],
+      "pose_composition": [
+       "looking_at_viewer"
+      ],
+      "setting": [
+       "rain"
+      ],
+      "lighting": [],
+      "action": [],
+      "unclassified": [
+       "monochrome",
+       "male_focus",
+       "greyscale"
+      ]
+     },
+     "prose": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": []
+     }
+    },
+    "compaction_notes": [
+     "Trimmed lower-priority fragments to keep captions compact."
+    ],
+    "subjects": {
+     "count": null,
+     "multiple": false,
+     "tag_count": null,
+     "prose_count": null,
+     "agree": null,
+     "evidence": []
+    },
+    "drift": true
+   },
+   "compare": {},
+   "facets": {
+    "wardrobe": [
+     "long_sleeves",
+     "formal",
+     "shirt"
+    ],
+    "pose_composition": [
+     "looking_at_viewer"
+    ],
+    "setting": [
+     "rain"
+    ],
+    "detail": [
+     "male focus"
+    ]
+   },
+   "exif": {
+    "taken_at": "2014-07-06T17:38:00",
+    "software": "GIMP 2.8.6"
+   },
+   "provenance": {
+    "license": "PD",
+    "source": "commons",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Albert_Einstein_1921_by_F_Schmutzer.jpg",
+    "author": "Ferdinand Schmutzer",
+    "title": "Albert Einstein 1921 by F Schmutzer.jpg"
+   }
+  },
+  {
+   "id": "9f68f1c832f9b1a3",
+   "sha256": "9f68f1c832f9b1a36b7914f08aa87492596357ea3df79a014d7fded6ae86229b",
+   "image": "images/9f68f1c832f9b1a3.webp",
+   "thumb": "thumbs/9f68f1c832f9b1a3.webp",
+   "xmp": "xmp/9f68f1c832f9b1a3.xmp",
+   "width": 1536,
+   "height": 1145,
+   "color": "#7d756c",
+   "caption": {
+    "final_caption": "day, water, tree, hat, outdoors, forest",
+    "caption_variants": {},
+    "selected_category": "identity",
+    "raw_tags": "day, water, tree, hat, outdoors, forest",
+    "raw_prose": "",
+    "backend_name": "wd14",
+    "profile": {
+     "checkpoint": null,
+     "target_style": "photo",
+     "target_backend": "sdxl",
+     "target_category": "identity"
+    },
+    "version": 1
+   },
+   "explain": {
+    "buckets": {
+     "tags": {
+      "identity": [],
+      "wardrobe": [
+       "hat"
+      ],
+      "pose_composition": [],
+      "setting": [
+       "tree",
+       "outdoors",
+       "forest"
+      ],
+      "lighting": [
+       "day"
+      ],
+      "action": [],
+      "unclassified": [
+       "water"
+      ]
+     },
+     "prose": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": []
+     }
+    },
+    "compaction_notes": [
+     "Trimmed lower-priority fragments to keep captions compact."
+    ],
+    "subjects": {
+     "count": null,
+     "multiple": false,
+     "tag_count": null,
+     "prose_count": null,
+     "agree": null,
+     "evidence": []
+    },
+    "drift": true
+   },
+   "compare": {},
+   "facets": {
+    "wardrobe": [
+     "hat"
+    ],
+    "setting": [
+     "tree",
+     "outdoors",
+     "forest",
+     "water"
+    ],
+    "lighting": [
+     "day"
+    ]
+   },
+   "exif": {},
+   "provenance": {
+    "license": "PD",
+    "source": "commons",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Detroit_Photographic_Company_(0114).jpg",
+    "author": "Unknown author Unknown author",
+    "title": "Detroit Photographic Company (0114).jpg"
+   }
+  },
+  {
+   "id": "b20f31b768ede4ad",
+   "sha256": "b20f31b768ede4adb6357bf5399681557b2769842fba4e944e78537413b418b8",
+   "image": "images/b20f31b768ede4ad.webp",
+   "thumb": "thumbs/b20f31b768ede4ad.webp",
+   "xmp": "xmp/b20f31b768ede4ad.xmp",
+   "width": 1600,
+   "height": 1200,
+   "color": "#7f7e76",
+   "caption": {
+    "final_caption": "english_text, dated, no_humans, indoors, window",
+    "caption_variants": {},
+    "selected_category": "identity",
+    "raw_tags": "english_text, dated, no_humans, indoors, window",
+    "raw_prose": "",
+    "backend_name": "wd14",
+    "profile": {
+     "checkpoint": null,
+     "target_style": "photo",
+     "target_backend": "sdxl",
+     "target_category": "identity"
+    },
+    "version": 1
+   },
+   "explain": {
+    "buckets": {
+     "tags": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [
+       "indoors",
+       "window"
+      ],
+      "lighting": [],
+      "action": [],
+      "unclassified": [
+       "english_text",
+       "dated"
+      ]
+     },
+     "prose": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": []
+     }
+    },
+    "compaction_notes": [
+     "Trimmed lower-priority fragments to keep captions compact."
+    ],
+    "subjects": {
+     "count": 0,
+     "multiple": false,
+     "tag_count": 0,
+     "prose_count": null,
+     "agree": null,
+     "evidence": [
+      "no_humans"
+     ]
+    },
+    "drift": true
+   },
+   "compare": {},
+   "facets": {
+    "setting": [
+     "indoors",
+     "window"
+    ],
+    "people": [
+     "no people"
+    ],
+    "detail": [
+     "english text",
+     "dated"
+    ]
+   },
+   "exif": {
+    "camera": "NIKON E800",
+    "focal_length_mm": 7.2,
+    "aperture": 3.5,
+    "exposure_s": 0.026881720430107527,
+    "shutter": "1/37s",
+    "iso": 100,
+    "taken_at": "2005-02-25T10:06:14",
+    "software": "v984-75"
+   },
+   "provenance": {
+    "license": "PD",
+    "source": "commons",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Donation_thanks_engraving_The_Washington_National_Cathedral.jpg",
+    "author": "AtroposTheRandom at English Wikipedia",
+    "title": "Donation thanks engraving The Washington National Cathedral.jpg"
+   }
+  },
+  {
+   "id": "2027a5a22d4432a8",
+   "sha256": "2027a5a22d4432a81ee04e89a97eb7265889801b93484a98225587c580545bca",
+   "image": "images/2027a5a22d4432a8.webp",
+   "thumb": "thumbs/2027a5a22d4432a8.webp",
+   "xmp": "xmp/2027a5a22d4432a8.xmp",
+   "width": 1603,
+   "height": 2048,
+   "color": "#5f5f5f",
+   "caption": {
+    "final_caption": "looking_at_viewer, smile, open_mouth, monochrome, male_focus, greyscale, tongue, tongue_out",
+    "caption_variants": {},
+    "selected_category": "identity",
+    "raw_tags": "looking_at_viewer, smile, open_mouth, monochrome, male_focus, greyscale, tongue, tongue_out",
+    "raw_prose": "",
+    "backend_name": "wd14",
+    "profile": {
+     "checkpoint": null,
+     "target_style": "photo",
+     "target_backend": "sdxl",
+     "target_category": "identity"
+    },
+    "version": 1
+   },
+   "explain": {
+    "buckets": {
+     "tags": {
+      "identity": [
+       "smile"
+      ],
+      "wardrobe": [],
+      "pose_composition": [
+       "looking_at_viewer"
+      ],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": [
+       "open_mouth",
+       "monochrome",
+       "male_focus",
+       "greyscale",
+       "tongue",
+       "tongue_out"
+      ]
+     },
+     "prose": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": []
+     }
+    },
+    "compaction_notes": [
+     "Trimmed lower-priority fragments to keep captions compact.",
+     "Repaired disjointed fragments in assembled captions."
+    ],
+    "subjects": {
+     "count": null,
+     "multiple": false,
+     "tag_count": null,
+     "prose_count": null,
+     "agree": null,
+     "evidence": []
+    },
+    "drift": true
+   },
+   "compare": {},
+   "facets": {
+    "identity": [
+     "smile",
+     "open mouth"
+    ],
+    "pose_composition": [
+     "looking_at_viewer"
+    ],
+    "detail": [
+     "male focus",
+     "tongue",
+     "tongue out"
+    ]
+   },
+   "exif": {},
+   "provenance": {
+    "license": "PD",
+    "source": "commons",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Albert_Einstein_sticks_his_tongue.jpg",
+    "author": "International News Service",
+    "title": "Albert Einstein sticks his tongue.jpg"
+   }
+  },
+  {
+   "id": "21cde71d47011ef1",
+   "sha256": "21cde71d47011ef1ea6c80e87a956f1bccf90ab74e80ae38d515efbf3d52ab39",
+   "image": "images/21cde71d47011ef1.webp",
+   "thumb": "thumbs/21cde71d47011ef1.webp",
+   "xmp": "xmp/21cde71d47011ef1.xmp",
+   "width": 609,
+   "height": 894,
+   "color": "#636363",
+   "caption": {
+    "final_caption": "looking_at_viewer, closed_mouth, upper_body, monochrome, male_focus, greyscale, photorealistic, portrait",
+    "caption_variants": {},
+    "selected_category": "identity",
+    "raw_tags": "looking_at_viewer, closed_mouth, upper_body, monochrome, male_focus, greyscale, photorealistic, portrait",
+    "raw_prose": "",
+    "backend_name": "wd14",
+    "profile": {
+     "checkpoint": null,
+     "target_style": "photo",
+     "target_backend": "sdxl",
+     "target_category": "identity"
+    },
+    "version": 1
+   },
+   "explain": {
+    "buckets": {
+     "tags": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [
+       "looking_at_viewer",
+       "upper_body",
+       "portrait"
+      ],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": [
+       "closed_mouth",
+       "monochrome",
+       "male_focus",
+       "greyscale",
+       "photorealistic"
+      ]
+     },
+     "prose": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": []
+     }
+    },
+    "compaction_notes": [
+     "Trimmed lower-priority fragments to keep captions compact."
+    ],
+    "subjects": {
+     "count": null,
+     "multiple": false,
+     "tag_count": null,
+     "prose_count": null,
+     "agree": null,
+     "evidence": []
+    },
+    "drift": true
+   },
+   "compare": {},
+   "facets": {
+    "pose_composition": [
+     "looking_at_viewer",
+     "upper_body",
+     "portrait"
+    ],
+    "detail": [
+     "closed mouth",
+     "male focus"
+    ]
+   },
+   "exif": {},
+   "provenance": {
+    "license": "PD",
+    "source": "commons",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Marie_Curie,_portrait,_1900.jpg",
+    "author": "Unknown author Unknown author",
+    "title": "Marie Curie, portrait, 1900.jpg"
+   }
+  },
+  {
+   "id": "95e49647950bb96b",
+   "sha256": "95e49647950bb96b30f9270e8cdbee3e5a80602ae9b267f98f00367d0e730ee1",
+   "image": "images/95e49647950bb96b.webp",
+   "thumb": "thumbs/95e49647950bb96b.webp",
+   "xmp": "xmp/95e49647950bb96b.xmp",
+   "width": 605,
+   "height": 806,
+   "color": "#767676",
+   "caption": {
+    "final_caption": "looking_at_viewer, closed_mouth, upper_body, monochrome, male_focus, greyscale, facial_hair, formal",
+    "caption_variants": {},
+    "selected_category": "identity",
+    "raw_tags": "looking_at_viewer, closed_mouth, upper_body, monochrome, male_focus, greyscale, facial_hair, formal",
+    "raw_prose": "",
+    "backend_name": "wd14",
+    "profile": {
+     "checkpoint": null,
+     "target_style": "photo",
+     "target_backend": "sdxl",
+     "target_category": "identity"
+    },
+    "version": 1
+   },
+   "explain": {
+    "buckets": {
+     "tags": {
+      "identity": [
+       "facial_hair"
+      ],
+      "wardrobe": [
+       "formal"
+      ],
+      "pose_composition": [
+       "looking_at_viewer",
+       "upper_body"
+      ],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": [
+       "closed_mouth",
+       "monochrome",
+       "male_focus",
+       "greyscale"
+      ]
+     },
+     "prose": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": []
+     }
+    },
+    "compaction_notes": [
+     "Trimmed lower-priority fragments to keep captions compact.",
+     "Repaired disjointed fragments in assembled captions."
+    ],
+    "subjects": {
+     "count": null,
+     "multiple": false,
+     "tag_count": null,
+     "prose_count": null,
+     "agree": null,
+     "evidence": []
+    },
+    "drift": true
+   },
+   "compare": {},
+   "facets": {
+    "identity": [
+     "facial_hair"
+    ],
+    "wardrobe": [
+     "formal"
+    ],
+    "pose_composition": [
+     "looking_at_viewer",
+     "upper_body"
+    ],
+    "detail": [
+     "closed mouth",
+     "male focus"
+    ]
+   },
+   "exif": {
+    "taken_at": "2011-07-20T16:38:40",
+    "software": "GIMP 2.6.11"
+   },
+   "provenance": {
+    "license": "PD",
+    "source": "commons",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Mark_Twain_by_AF_Bradley_(high_quality).jpg",
+    "author": "A.F. Bradley, New York",
+    "title": "Mark Twain by AF Bradley (high quality).jpg"
+   }
+  },
+  {
+   "id": "7b164dfbc4ab6e49",
+   "sha256": "7b164dfbc4ab6e491ce81972b8c0e076fdc4af622289d0aa3cb43ee3c2be4030",
+   "image": "images/7b164dfbc4ab6e49.webp",
+   "thumb": "thumbs/7b164dfbc4ab6e49.webp",
+   "xmp": "xmp/7b164dfbc4ab6e49.xmp",
+   "width": 2048,
+   "height": 1409,
+   "color": "#717171",
+   "caption": {
+    "final_caption": "monochrome, greyscale, multiple_boys, tree, facial_hair, formal, building, 6+boys",
+    "caption_variants": {},
+    "selected_category": "identity",
+    "raw_tags": "monochrome, greyscale, multiple_boys, tree, facial_hair, formal, building, 6+boys",
+    "raw_prose": "",
+    "backend_name": "wd14",
+    "profile": {
+     "checkpoint": null,
+     "target_style": "photo",
+     "target_backend": "sdxl",
+     "target_category": "identity"
+    },
+    "version": 1
+   },
+   "explain": {
+    "buckets": {
+     "tags": {
+      "identity": [
+       "facial_hair"
+      ],
+      "wardrobe": [
+       "formal"
+      ],
+      "pose_composition": [],
+      "setting": [
+       "tree",
+       "building"
+      ],
+      "lighting": [],
+      "action": [],
+      "unclassified": [
+       "monochrome",
+       "greyscale"
+      ]
+     },
+     "prose": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": []
+     }
+    },
+    "compaction_notes": [
+     "Trimmed lower-priority fragments to keep captions compact."
+    ],
+    "subjects": {
+     "count": 6,
+     "multiple": true,
+     "tag_count": 6,
+     "prose_count": null,
+     "agree": null,
+     "evidence": [
+      "multiple_boys",
+      "6+boys"
+     ]
+    },
+    "drift": true
+   },
+   "compare": {},
+   "facets": {
+    "identity": [
+     "facial_hair"
+    ],
+    "wardrobe": [
+     "formal"
+    ],
+    "setting": [
+     "tree",
+     "building"
+    ],
+    "people": [
+     "group"
+    ]
+   },
+   "exif": {},
+   "provenance": {
+    "license": "PD",
+    "source": "commons",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Solvay_conference_1927_Version2.jpg",
+    "author": "Benjamin Couprie",
+    "title": "Solvay conference 1927 Version2.jpg"
+   }
+  },
+  {
+   "id": "474787222160a479",
+   "sha256": "474787222160a479bc04740b71e5304b94301a9ab64426f54c2d05cc6a36a865",
+   "image": "images/474787222160a479.webp",
+   "thumb": "thumbs/474787222160a479.webp",
+   "xmp": "xmp/474787222160a479.xmp",
+   "width": 1470,
+   "height": 2048,
+   "color": "#acacac",
+   "caption": {
+    "final_caption": "long_sleeves, upper_body, monochrome, jacket, uniform, military_uniform, military_jacket, simple_background",
+    "caption_variants": {},
+    "selected_category": "identity",
+    "raw_tags": "long_sleeves, upper_body, monochrome, jacket, uniform, military_uniform, military_jacket, simple_background",
+    "raw_prose": "",
+    "backend_name": "wd14",
+    "profile": {
+     "checkpoint": null,
+     "target_style": "photo",
+     "target_backend": "sdxl",
+     "target_category": "identity"
+    },
+    "version": 1
+   },
+   "explain": {
+    "buckets": {
+     "tags": {
+      "identity": [],
+      "wardrobe": [
+       "long_sleeves",
+       "jacket",
+       "uniform",
+       "military_uniform",
+       "military_jacket"
+      ],
+      "pose_composition": [
+       "upper_body"
+      ],
+      "setting": [
+       "simple_background"
+      ],
+      "lighting": [],
+      "action": [],
+      "unclassified": [
+       "monochrome"
+      ]
+     },
+     "prose": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": []
+     }
+    },
+    "compaction_notes": [
+     "Trimmed lower-priority fragments to keep captions compact.",
+     "Repaired disjointed fragments in assembled captions."
+    ],
+    "subjects": {
+     "count": null,
+     "multiple": false,
+     "tag_count": null,
+     "prose_count": null,
+     "agree": null,
+     "evidence": []
+    },
+    "drift": true
+   },
+   "compare": {},
+   "facets": {
+    "wardrobe": [
+     "long_sleeves",
+     "jacket",
+     "uniform",
+     "military_uniform",
+     "military_jacket"
+    ],
+    "pose_composition": [
+     "upper_body"
+    ],
+    "setting": [
+     "simple_background"
+    ]
+   },
+   "exif": {},
+   "provenance": {
+    "license": "PD",
+    "source": "commons",
+    "source_url": "https://commons.wikimedia.org/wiki/File:John_Milton_Brannan_by_the_Studio_of_Mathew_Brady_-_NPG_81_M465.jpg",
+    "author": "Studio of Mathew Benjamin Brady / Adam Cuerden",
+    "title": "John Milton Brannan by the Studio of Mathew Brady - NPG 81 M465.jpg"
+   }
+  },
+  {
+   "id": "f4d5b744ee116be2",
+   "sha256": "f4d5b744ee116be26e4c4bca2cb759595158541353fb95db3e92739b31801103",
+   "image": "images/f4d5b744ee116be2.webp",
+   "thumb": "thumbs/f4d5b744ee116be2.webp",
+   "xmp": "xmp/f4d5b744ee116be2.xmp",
+   "width": 1412,
+   "height": 2048,
+   "color": "#342f2a",
+   "caption": {
+    "final_caption": "looking_at_viewer, bow, upper_body, monochrome, male_focus, greyscale, artist_name, facial_hair",
+    "caption_variants": {},
+    "selected_category": "identity",
+    "raw_tags": "looking_at_viewer, bow, upper_body, monochrome, male_focus, greyscale, artist_name, facial_hair",
+    "raw_prose": "",
+    "backend_name": "wd14",
+    "profile": {
+     "checkpoint": null,
+     "target_style": "photo",
+     "target_backend": "sdxl",
+     "target_category": "identity"
+    },
+    "version": 1
+   },
+   "explain": {
+    "buckets": {
+     "tags": {
+      "identity": [
+       "facial_hair"
+      ],
+      "wardrobe": [
+       "bow"
+      ],
+      "pose_composition": [
+       "looking_at_viewer",
+       "upper_body"
+      ],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": [
+       "monochrome",
+       "male_focus",
+       "greyscale",
+       "artist_name"
+      ]
+     },
+     "prose": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": []
+     }
+    },
+    "compaction_notes": [
+     "Trimmed lower-priority fragments to keep captions compact."
+    ],
+    "subjects": {
+     "count": null,
+     "multiple": false,
+     "tag_count": null,
+     "prose_count": null,
+     "agree": null,
+     "evidence": []
+    },
+    "drift": true
+   },
+   "compare": {},
+   "facets": {
+    "identity": [
+     "facial_hair"
+    ],
+    "wardrobe": [
+     "bow"
+    ],
+    "pose_composition": [
+     "looking_at_viewer",
+     "upper_body"
+    ],
+    "detail": [
+     "male focus",
+     "artist name"
+    ]
+   },
+   "exif": {},
+   "provenance": {
+    "license": "PD",
+    "source": "commons",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Mark_Twain_(Samuel_Langhorne_Clemens).jpg",
+    "author": "Pach Bros, NY",
+    "title": "Mark Twain (Samuel Langhorne Clemens).jpg"
+   }
+  },
+  {
+   "id": "275711e53bf5f738",
+   "sha256": "275711e53bf5f738dfdefa443db65bff69a92e59fc5bf8cf213a410af30b2f61",
+   "image": "images/275711e53bf5f738.webp",
+   "thumb": "thumbs/275711e53bf5f738.webp",
+   "xmp": "xmp/275711e53bf5f738.xmp",
+   "width": 2048,
+   "height": 1365,
+   "color": "#374e3e",
+   "caption": {
+    "final_caption": "sky, water, no_humans, landscape, outdoors, mountain",
+    "caption_variants": {},
+    "selected_category": "identity",
+    "raw_tags": "sky, water, no_humans, landscape, outdoors, mountain",
+    "raw_prose": "",
+    "backend_name": "wd14",
+    "profile": {
+     "checkpoint": null,
+     "target_style": "photo",
+     "target_backend": "sdxl",
+     "target_category": "identity"
+    },
+    "version": 1
+   },
+   "explain": {
+    "buckets": {
+     "tags": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [
+       "sky",
+       "outdoors",
+       "mountain"
+      ],
+      "lighting": [],
+      "action": [],
+      "unclassified": [
+       "water",
+       "landscape"
+      ]
+     },
+     "prose": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": []
+     }
+    },
+    "compaction_notes": [
+     "Trimmed lower-priority fragments to keep captions compact."
+    ],
+    "subjects": {
+     "count": 0,
+     "multiple": false,
+     "tag_count": 0,
+     "prose_count": null,
+     "agree": null,
+     "evidence": [
+      "no_humans"
+     ]
+    },
+    "drift": true
+   },
+   "compare": {},
+   "facets": {
+    "setting": [
+     "sky",
+     "outdoors",
+     "mountain",
+     "water"
+    ],
+    "people": [
+     "no people"
+    ],
+    "detail": [
+     "landscape"
+    ]
+   },
+   "exif": {},
+   "provenance": {
+    "license": "CC0",
+    "source": "commons",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Lofoten,_Norway_(Unsplash).jpg",
+    "author": "Johannes Groll followhansi",
+    "title": "Lofoten, Norway (Unsplash).jpg"
+   }
+  },
+  {
+   "id": "edecef56e15fe73b",
+   "sha256": "edecef56e15fe73bce41add6302a60019e199588bbe5fe100722d93213df5ac4",
+   "image": "images/edecef56e15fe73b.webp",
+   "thumb": "thumbs/edecef56e15fe73b.webp",
+   "xmp": "xmp/edecef56e15fe73b.xmp",
+   "width": 1861,
+   "height": 2048,
+   "color": "#6e604e",
+   "caption": {
+    "final_caption": "short_hair, long_sleeves, closed_mouth, holding, hat, uniform, military_uniform, military_hat",
+    "caption_variants": {},
+    "selected_category": "identity",
+    "raw_tags": "short_hair, long_sleeves, closed_mouth, holding, hat, uniform, military_uniform, military_hat",
+    "raw_prose": "",
+    "backend_name": "wd14",
+    "profile": {
+     "checkpoint": null,
+     "target_style": "photo",
+     "target_backend": "sdxl",
+     "target_category": "identity"
+    },
+    "version": 1
+   },
+   "explain": {
+    "buckets": {
+     "tags": {
+      "identity": [
+       "short_hair"
+      ],
+      "wardrobe": [
+       "long_sleeves",
+       "hat",
+       "uniform",
+       "military_uniform",
+       "military_hat"
+      ],
+      "pose_composition": [],
+      "setting": [],
+      "lighting": [],
+      "action": [
+       "holding"
+      ],
+      "unclassified": [
+       "closed_mouth"
+      ]
+     },
+     "prose": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": []
+     }
+    },
+    "compaction_notes": [
+     "Trimmed lower-priority fragments to keep captions compact.",
+     "Suppressed identity traits for training variant (learned visually).",
+     "Repaired disjointed fragments in assembled captions."
+    ],
+    "subjects": {
+     "count": null,
+     "multiple": false,
+     "tag_count": null,
+     "prose_count": null,
+     "agree": null,
+     "evidence": []
+    },
+    "drift": true
+   },
+   "compare": {},
+   "facets": {
+    "identity": [
+     "short_hair"
+    ],
+    "wardrobe": [
+     "long_sleeves",
+     "hat",
+     "uniform",
+     "military_uniform",
+     "military_hat"
+    ],
+    "action": [
+     "holding"
+    ],
+    "detail": [
+     "closed mouth"
+    ]
+   },
+   "exif": {},
+   "provenance": {
+    "license": "PD",
+    "source": "commons",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Unidentified_corporal_in_Confederate_uniform_of_Company_K,_%22Jake_Thompson_Guards,%22_19th_Mississippi_Infantry_Regiment,_with_revolver_LCCN2012646173.jpg",
+    "author": "Liljenquist Family Collection of Civil War Photographs",
+    "title": "Unidentified corporal in Confederate uniform of Company K, \"Jake Thompson Guards,\" 19th Mississippi Infantry Regiment, with revolver LCCN2012646173.jpg"
+   }
+  },
+  {
+   "id": "9b94a840fb7de35d",
+   "sha256": "9b94a840fb7de35d11b616c28b92125f3475505fd0a9bc20c6429d9987f9f096",
+   "image": "images/9b94a840fb7de35d.webp",
+   "thumb": "thumbs/9b94a840fb7de35d.webp",
+   "xmp": "xmp/9b94a840fb7de35d.xmp",
+   "width": 1074,
+   "height": 1377,
+   "color": "#353535",
+   "caption": {
+    "final_caption": "upper_body, monochrome, male_focus, greyscale, facial_hair, formal, beard, mustache",
+    "caption_variants": {},
+    "selected_category": "identity",
+    "raw_tags": "upper_body, monochrome, male_focus, greyscale, facial_hair, formal, beard, mustache",
+    "raw_prose": "",
+    "backend_name": "wd14",
+    "profile": {
+     "checkpoint": null,
+     "target_style": "photo",
+     "target_backend": "sdxl",
+     "target_category": "identity"
+    },
+    "version": 1
+   },
+   "explain": {
+    "buckets": {
+     "tags": {
+      "identity": [
+       "facial_hair",
+       "beard",
+       "mustache"
+      ],
+      "wardrobe": [
+       "formal"
+      ],
+      "pose_composition": [
+       "upper_body"
+      ],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": [
+       "monochrome",
+       "male_focus",
+       "greyscale"
+      ]
+     },
+     "prose": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": []
+     }
+    },
+    "compaction_notes": [
+     "Trimmed lower-priority fragments to keep captions compact."
+    ],
+    "subjects": {
+     "count": null,
+     "multiple": false,
+     "tag_count": null,
+     "prose_count": null,
+     "agree": null,
+     "evidence": []
+    },
+    "drift": true
+   },
+   "compare": {},
+   "facets": {
+    "identity": [
+     "facial_hair",
+     "beard",
+     "mustache"
+    ],
+    "wardrobe": [
+     "formal"
+    ],
+    "pose_composition": [
+     "upper_body"
+    ],
+    "detail": [
+     "male focus"
+    ]
+   },
+   "exif": {
+    "taken_at": "2008-02-02T01:23:21",
+    "software": "Adobe Photoshop CS Windows"
+   },
+   "provenance": {
+    "license": "PD",
+    "source": "commons",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Mark_Twain_1907.jpg",
+    "author": "Photographer: A.F. Bradley in his studio.",
+    "title": "Mark Twain 1907.jpg"
+   }
+  },
+  {
+   "id": "c39aadc0dbb53ef3",
+   "sha256": "c39aadc0dbb53ef3955c38e8d3607314731732f972a76cc675eba49c713d0fb7",
+   "image": "images/c39aadc0dbb53ef3.webp",
+   "thumb": "thumbs/c39aadc0dbb53ef3.webp",
+   "xmp": "xmp/c39aadc0dbb53ef3.xmp",
+   "width": 2048,
+   "height": 1334,
+   "color": "#6a7f8f",
+   "caption": {
+    "final_caption": "sky, tree, no_humans, outdoors, forest, mountain",
+    "caption_variants": {},
+    "selected_category": "identity",
+    "raw_tags": "sky, tree, no_humans, outdoors, forest, mountain",
+    "raw_prose": "",
+    "backend_name": "wd14",
+    "profile": {
+     "checkpoint": null,
+     "target_style": "photo",
+     "target_backend": "sdxl",
+     "target_category": "identity"
+    },
+    "version": 1
+   },
+   "explain": {
+    "buckets": {
+     "tags": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [
+       "sky",
+       "tree",
+       "outdoors",
+       "forest",
+       "mountain"
+      ],
+      "lighting": [],
+      "action": [],
+      "unclassified": []
+     },
+     "prose": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": []
+     }
+    },
+    "compaction_notes": [
+     "Trimmed lower-priority fragments to keep captions compact."
+    ],
+    "subjects": {
+     "count": 0,
+     "multiple": false,
+     "tag_count": 0,
+     "prose_count": null,
+     "agree": null,
+     "evidence": [
+      "no_humans"
+     ]
+    },
+    "drift": true
+   },
+   "compare": {},
+   "facets": {
+    "setting": [
+     "sky",
+     "tree",
+     "outdoors",
+     "forest",
+     "mountain"
+    ],
+    "people": [
+     "no people"
+    ]
+   },
+   "exif": {
+    "camera": "NIKON D1X",
+    "focal_length_mm": 16.0,
+    "focal_length_35mm": 24,
+    "aperture": 2.8,
+    "exposure_s": 25.0,
+    "shutter": "25s",
+    "taken_at": "2005-01-19T16:37:42",
+    "software": "Adobe Photoshop 7.0"
+   },
+   "provenance": {
+    "license": "PD",
+    "source": "commons",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Aurora_borealis_over_Eielson_Air_Force_Base,_Alaska.jpg",
+    "author": "United States Air Force photo by Senior Airman Joshua Strang",
+    "title": "Aurora borealis over Eielson Air Force Base, Alaska.jpg"
+   }
+  },
+  {
+   "id": "96d0973fb186d3c3",
+   "sha256": "96d0973fb186d3c39434328d4e46e66b9a58feee1cca4f50f5778aa5ef2144d2",
+   "image": "images/96d0973fb186d3c3.webp",
+   "thumb": "thumbs/96d0973fb186d3c3.webp",
+   "xmp": "xmp/96d0973fb186d3c3.xmp",
+   "width": 2048,
+   "height": 1550,
+   "color": "#89806e",
+   "caption": {
+    "final_caption": "long_hair, black_hair, closed_eyes, holding, painting_(medium), outdoors",
+    "caption_variants": {},
+    "selected_category": "identity",
+    "raw_tags": "long_hair, black_hair, closed_eyes, holding, painting_(medium), outdoors",
+    "raw_prose": "",
+    "backend_name": "wd14",
+    "profile": {
+     "checkpoint": null,
+     "target_style": "photo",
+     "target_backend": "sdxl",
+     "target_category": "identity"
+    },
+    "version": 1
+   },
+   "explain": {
+    "buckets": {
+     "tags": {
+      "identity": [
+       "long_hair",
+       "black_hair",
+       "closed_eyes"
+      ],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [
+       "outdoors"
+      ],
+      "lighting": [],
+      "action": [
+       "holding",
+       "painting_(medium)"
+      ],
+      "unclassified": []
+     },
+     "prose": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": []
+     }
+    },
+    "compaction_notes": [
+     "Suppressed identity traits for training variant (learned visually)."
+    ],
+    "subjects": {
+     "count": null,
+     "multiple": false,
+     "tag_count": null,
+     "prose_count": null,
+     "agree": null,
+     "evidence": []
+    },
+    "drift": false
+   },
+   "compare": {},
+   "facets": {
+    "identity": [
+     "long_hair",
+     "black_hair",
+     "closed_eyes"
+    ],
+    "setting": [
+     "outdoors"
+    ],
+    "action": [
+     "holding",
+     "painting_(medium)"
+    ]
+   },
+   "exif": {},
+   "provenance": {
+    "license": "PD",
+    "source": "commons",
+    "source_url": "https://commons.wikimedia.org/wiki/File:%27Lady_in_Wisteria_Kimono%27_by_Mizuno_Toshikata,_c._1900,_Honolulu_Museum_of_Art,_27488.JPG",
+    "author": "Toshikata Mizuno",
+    "title": "'Lady in Wisteria Kimono' by Mizuno Toshikata, c. 1900, Honolulu Museum of Art, 27488.JPG"
+   }
+  },
+  {
+   "id": "559b5d881cbed813",
+   "sha256": "559b5d881cbed813c20552cc441883c68d13208bddf667a9d808a4bdaff7b96d",
+   "image": "images/559b5d881cbed813.webp",
+   "thumb": "thumbs/559b5d881cbed813.webp",
+   "xmp": "xmp/559b5d881cbed813.xmp",
+   "width": 2048,
+   "height": 1377,
+   "color": "#646565",
+   "caption": {
+    "final_caption": "monochrome, greyscale, traditional_media, cape, indoors, window",
+    "caption_variants": {},
+    "selected_category": "identity",
+    "raw_tags": "monochrome, greyscale, traditional_media, cape, indoors, window",
+    "raw_prose": "",
+    "backend_name": "wd14",
+    "profile": {
+     "checkpoint": null,
+     "target_style": "photo",
+     "target_backend": "sdxl",
+     "target_category": "identity"
+    },
+    "version": 1
+   },
+   "explain": {
+    "buckets": {
+     "tags": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [
+       "indoors",
+       "window"
+      ],
+      "lighting": [],
+      "action": [],
+      "unclassified": [
+       "monochrome",
+       "greyscale",
+       "traditional_media",
+       "cape"
+      ]
+     },
+     "prose": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": []
+     }
+    },
+    "compaction_notes": [
+     "Trimmed lower-priority fragments to keep captions compact."
+    ],
+    "subjects": {
+     "count": null,
+     "multiple": false,
+     "tag_count": null,
+     "prose_count": null,
+     "agree": null,
+     "evidence": []
+    },
+    "drift": true
+   },
+   "compare": {},
+   "facets": {
+    "setting": [
+     "indoors",
+     "window"
+    ],
+    "detail": [
+     "traditional media",
+     "cape"
+    ]
+   },
+   "exif": {
+    "camera": "Panasonic DC-TZ200",
+    "focal_length_35mm": 26,
+    "iso": 1600,
+    "taken_at": "2025-04-09T14:01:01"
+   },
+   "provenance": {
+    "license": "PD",
+    "source": "commons",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Interior_of_Carlisle_Cathedral_1814.jpg",
+    "author": "Engraved by J Greig, from a painting by L Clennell",
+    "title": "Interior of Carlisle Cathedral 1814.jpg"
+   }
+  },
+  {
+   "id": "b04297bf84e58ffd",
+   "sha256": "b04297bf84e58ffd2a94cf89b9a56434c57b18086af570c0db90411d1bffd217",
+   "image": "images/b04297bf84e58ffd.webp",
+   "thumb": "thumbs/b04297bf84e58ffd.webp",
+   "xmp": "xmp/b04297bf84e58ffd.xmp",
+   "width": 1338,
+   "height": 2048,
+   "color": "#a5978e",
+   "caption": {
+    "final_caption": "monochrome, greyscale, english_text, indoors, window",
+    "caption_variants": {},
+    "selected_category": "identity",
+    "raw_tags": "monochrome, greyscale, english_text, indoors, window",
+    "raw_prose": "",
+    "backend_name": "wd14",
+    "profile": {
+     "checkpoint": null,
+     "target_style": "photo",
+     "target_backend": "sdxl",
+     "target_category": "identity"
+    },
+    "version": 1
+   },
+   "explain": {
+    "buckets": {
+     "tags": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [
+       "indoors",
+       "window"
+      ],
+      "lighting": [],
+      "action": [],
+      "unclassified": [
+       "monochrome",
+       "greyscale",
+       "english_text"
+      ]
+     },
+     "prose": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": []
+     }
+    },
+    "compaction_notes": [
+     "Trimmed lower-priority fragments to keep captions compact."
+    ],
+    "subjects": {
+     "count": null,
+     "multiple": false,
+     "tag_count": null,
+     "prose_count": null,
+     "agree": null,
+     "evidence": []
+    },
+    "drift": true
+   },
+   "compare": {},
+   "facets": {
+    "setting": [
+     "indoors",
+     "window"
+    ],
+    "detail": [
+     "english text"
+    ]
+   },
+   "exif": {
+    "camera": "Canon LiDE 400",
+    "taken_at": "2024-05-03T17:58:21",
+    "software": "1.10"
+   },
+   "provenance": {
+    "license": "PD",
+    "source": "commons",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Bristol_Cathedral_interior_1872.jpg",
+    "author": "S. D. Major",
+    "title": "Bristol Cathedral interior 1872.jpg"
+   }
+  },
+  {
+   "id": "556344c411724aaa",
+   "sha256": "556344c411724aaa9cfd4bf905bf9b67b76736240093b050db62cfc7d191077a",
+   "image": "images/556344c411724aaa.webp",
+   "thumb": "thumbs/556344c411724aaa.webp",
+   "xmp": "xmp/556344c411724aaa.xmp",
+   "width": 2048,
+   "height": 1381,
+   "color": "#aead9c",
+   "caption": {
+    "final_caption": "english_text, no_humans, border, plant, text_focus",
+    "caption_variants": {},
+    "selected_category": "identity",
+    "raw_tags": "english_text, no_humans, border, plant, text_focus",
+    "raw_prose": "",
+    "backend_name": "wd14",
+    "profile": {
+     "checkpoint": null,
+     "target_style": "photo",
+     "target_backend": "sdxl",
+     "target_category": "identity"
+    },
+    "version": 1
+   },
+   "explain": {
+    "buckets": {
+     "tags": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [
+       "plant"
+      ],
+      "lighting": [],
+      "action": [],
+      "unclassified": [
+       "english_text",
+       "border",
+       "text_focus"
+      ]
+     },
+     "prose": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": []
+     }
+    },
+    "compaction_notes": [],
+    "subjects": {
+     "count": 0,
+     "multiple": false,
+     "tag_count": 0,
+     "prose_count": null,
+     "agree": null,
+     "evidence": [
+      "no_humans"
+     ]
+    },
+    "drift": true
+   },
+   "compare": {},
+   "facets": {
+    "setting": [
+     "plant"
+    ],
+    "people": [
+     "no people"
+    ],
+    "detail": [
+     "english text",
+     "border",
+     "text focus"
+    ]
+   },
+   "exif": {},
+   "provenance": {
+    "license": "PD",
+    "source": "commons",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Nobel_Pierre_et_Marie_Curie_1.jpg",
+    "author": "Sofia Gisberg , uploaded and retouched by Jebulon",
+    "title": "Nobel Pierre et Marie Curie 1.jpg"
+   }
+  },
+  {
+   "id": "cbb68dbb101cc6ce",
+   "sha256": "cbb68dbb101cc6cecf2df4224ac4d02a1c5d7dc28b6f2a087f10f9a80fec12d4",
+   "image": "images/cbb68dbb101cc6ce.webp",
+   "thumb": "thumbs/cbb68dbb101cc6ce.webp",
+   "xmp": "xmp/cbb68dbb101cc6ce.xmp",
+   "width": 524,
+   "height": 768,
+   "color": "#6a6a62",
+   "caption": {
+    "final_caption": "black_hair, long_sleeves, full_body, standing",
+    "caption_variants": {},
+    "selected_category": "identity",
+    "raw_tags": "black_hair, long_sleeves, full_body, standing",
+    "raw_prose": "",
+    "backend_name": "wd14",
+    "profile": {
+     "checkpoint": null,
+     "target_style": "photo",
+     "target_backend": "sdxl",
+     "target_category": "identity"
+    },
+    "version": 1
+   },
+   "explain": {
+    "buckets": {
+     "tags": {
+      "identity": [
+       "black_hair"
+      ],
+      "wardrobe": [
+       "long_sleeves"
+      ],
+      "pose_composition": [
+       "full_body",
+       "standing"
+      ],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": []
+     },
+     "prose": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": []
+     }
+    },
+    "compaction_notes": [
+     "Suppressed identity traits for training variant (learned visually)."
+    ],
+    "subjects": {
+     "count": null,
+     "multiple": false,
+     "tag_count": null,
+     "prose_count": null,
+     "agree": null,
+     "evidence": []
+    },
+    "drift": true
+   },
+   "compare": {},
+   "facets": {
+    "identity": [
+     "black_hair"
+    ],
+    "wardrobe": [
+     "long_sleeves"
+    ],
+    "pose_composition": [
+     "full_body",
+     "standing"
+    ]
+   },
+   "exif": {},
+   "provenance": {
+    "license": "PD",
+    "source": "commons",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Brooklyn_Museum_-_Woodblock_Print_-_Utagawa_Kuniyoshi.jpg",
+    "author": "Utagawa Kuniyoshi",
+    "title": "Brooklyn Museum - Woodblock Print - Utagawa Kuniyoshi.jpg"
+   }
+  },
+  {
+   "id": "1a1e2c89ae3a1cba",
+   "sha256": "1a1e2c89ae3a1cba40ec64bce6171167f157cd3414d41d619a5909b0869162e5",
+   "image": "images/1a1e2c89ae3a1cba.webp",
+   "thumb": "thumbs/1a1e2c89ae3a1cba.webp",
+   "xmp": "xmp/1a1e2c89ae3a1cba.xmp",
+   "width": 1536,
+   "height": 1987,
+   "color": "#5f5c55",
+   "caption": {
+    "final_caption": "looking_at_viewer, short_hair, closed_mouth, jewelry, upper_body, monochrome, male_focus, greyscale",
+    "caption_variants": {},
+    "selected_category": "identity",
+    "raw_tags": "looking_at_viewer, short_hair, closed_mouth, jewelry, upper_body, monochrome, male_focus, greyscale",
+    "raw_prose": "",
+    "backend_name": "wd14",
+    "profile": {
+     "checkpoint": null,
+     "target_style": "photo",
+     "target_backend": "sdxl",
+     "target_category": "identity"
+    },
+    "version": 1
+   },
+   "explain": {
+    "buckets": {
+     "tags": {
+      "identity": [
+       "short_hair"
+      ],
+      "wardrobe": [
+       "jewelry"
+      ],
+      "pose_composition": [
+       "looking_at_viewer",
+       "upper_body"
+      ],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": [
+       "closed_mouth",
+       "monochrome",
+       "male_focus",
+       "greyscale"
+      ]
+     },
+     "prose": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": []
+     }
+    },
+    "compaction_notes": [
+     "Trimmed lower-priority fragments to keep captions compact.",
+     "Suppressed identity traits for training variant (learned visually).",
+     "Repaired disjointed fragments in assembled captions."
+    ],
+    "subjects": {
+     "count": null,
+     "multiple": false,
+     "tag_count": null,
+     "prose_count": null,
+     "agree": null,
+     "evidence": []
+    },
+    "drift": true
+   },
+   "compare": {},
+   "facets": {
+    "identity": [
+     "short_hair"
+    ],
+    "wardrobe": [
+     "jewelry"
+    ],
+    "pose_composition": [
+     "looking_at_viewer",
+     "upper_body"
+    ],
+    "detail": [
+     "closed mouth",
+     "male focus"
+    ]
+   },
+   "exif": {},
+   "provenance": {
+    "license": "PD",
+    "source": "commons",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Mariecurie.jpg",
+    "author": "Unknown author Unknown author",
+    "title": "Mariecurie.jpg"
+   }
+  },
+  {
+   "id": "6b072f86bdd206b4",
+   "sha256": "6b072f86bdd206b4420079c78e29d739b12757dc0c904c0398b7729c4b0a351e",
+   "image": "images/6b072f86bdd206b4.webp",
+   "thumb": "thumbs/6b072f86bdd206b4.webp",
+   "xmp": "xmp/6b072f86bdd206b4.xmp",
+   "width": 760,
+   "height": 580,
+   "color": "#8f8d74",
+   "caption": {
+    "final_caption": "weapon, multiple_boys, sword, gloves, hat, uniform, military_uniform, shako_cap",
+    "caption_variants": {},
+    "selected_category": "identity",
+    "raw_tags": "weapon, multiple_boys, sword, gloves, hat, uniform, military_uniform, shako_cap",
+    "raw_prose": "",
+    "backend_name": "wd14",
+    "profile": {
+     "checkpoint": null,
+     "target_style": "photo",
+     "target_backend": "sdxl",
+     "target_category": "identity"
+    },
+    "version": 1
+   },
+   "explain": {
+    "buckets": {
+     "tags": {
+      "identity": [],
+      "wardrobe": [
+       "gloves",
+       "hat",
+       "uniform",
+       "military_uniform",
+       "shako_cap"
+      ],
+      "pose_composition": [],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": [
+       "weapon",
+       "sword"
+      ]
+     },
+     "prose": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": []
+     }
+    },
+    "compaction_notes": [
+     "Trimmed lower-priority fragments to keep captions compact.",
+     "Repaired disjointed fragments in assembled captions."
+    ],
+    "subjects": {
+     "count": 2,
+     "multiple": true,
+     "tag_count": 2,
+     "prose_count": null,
+     "agree": null,
+     "evidence": [
+      "multiple_boys"
+     ]
+    },
+    "drift": true
+   },
+   "compare": {},
+   "facets": {
+    "wardrobe": [
+     "gloves",
+     "hat",
+     "uniform",
+     "military_uniform",
+     "shako_cap"
+    ],
+    "people": [
+     "group"
+    ],
+    "detail": [
+     "weapon",
+     "sword"
+    ]
+   },
+   "exif": {},
+   "provenance": {
+    "license": "PD",
+    "source": "commons",
+    "source_url": "https://commons.wikimedia.org/wiki/File:US_Uniform_1840.jpeg",
+    "author": "en:Henry Alexander Ogden (1856-1936)",
+    "title": "US Uniform 1840.jpeg"
+   }
+  },
+  {
+   "id": "d0c7ad3af7fbef36",
+   "sha256": "d0c7ad3af7fbef365be7167f18610a27ad9c11af950d05b9de0f7e684ffdd0ac",
+   "image": "images/d0c7ad3af7fbef36.webp",
+   "thumb": "thumbs/d0c7ad3af7fbef36.webp",
+   "xmp": "xmp/d0c7ad3af7fbef36.xmp",
+   "width": 2048,
+   "height": 1367,
+   "color": "#938c7d",
+   "caption": {
+    "final_caption": "monochrome, flower, food",
+    "caption_variants": {},
+    "selected_category": "identity",
+    "raw_tags": "monochrome, flower, food",
+    "raw_prose": "",
+    "backend_name": "wd14",
+    "profile": {
+     "checkpoint": null,
+     "target_style": "photo",
+     "target_backend": "sdxl",
+     "target_category": "identity"
+    },
+    "version": 1
+   },
+   "explain": {
+    "buckets": {
+     "tags": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": [
+       "monochrome",
+       "flower",
+       "food"
+      ]
+     },
+     "prose": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": []
+     }
+    },
+    "compaction_notes": [],
+    "subjects": {
+     "count": null,
+     "multiple": false,
+     "tag_count": null,
+     "prose_count": null,
+     "agree": null,
+     "evidence": []
+    },
+    "drift": false
+   },
+   "compare": {},
+   "facets": {
+    "detail": [
+     "flower",
+     "food"
+    ]
+   },
+   "exif": {},
+   "provenance": {
+    "license": "CC0",
+    "source": "commons",
+    "source_url": "https://commons.wikimedia.org/wiki/File:%E3%80%8E%E7%95%B6%E4%B8%96%E9%9B%9B%E5%BD%A2%E3%80%8F-Contemporary_Kimono_Patterns_(T%C5%8Dsei_hiinagata)_MET_2013_887_04.jpg",
+    "author": "Hishikawa Moronobu",
+    "title": "『當世雛形』-Contemporary Kimono Patterns (Tōsei hiinagata) MET 2013 887 04.jpg"
+   }
+  },
+  {
+   "id": "f006a14f7d9e9189",
+   "sha256": "f006a14f7d9e91891cdad7b531ae257ec4b6724743d7cdfdd9807944a224209d",
+   "image": "images/f006a14f7d9e9189.webp",
+   "thumb": "thumbs/f006a14f7d9e9189.webp",
+   "xmp": "xmp/f006a14f7d9e9189.xmp",
+   "width": 2048,
+   "height": 1367,
+   "color": "#a79f8d",
+   "caption": {
+    "final_caption": "monochrome, cloud, no_humans",
+    "caption_variants": {},
+    "selected_category": "identity",
+    "raw_tags": "monochrome, cloud, no_humans",
+    "raw_prose": "",
+    "backend_name": "wd14",
+    "profile": {
+     "checkpoint": null,
+     "target_style": "photo",
+     "target_backend": "sdxl",
+     "target_category": "identity"
+    },
+    "version": 1
+   },
+   "explain": {
+    "buckets": {
+     "tags": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [
+       "cloud"
+      ],
+      "lighting": [],
+      "action": [],
+      "unclassified": [
+       "monochrome"
+      ]
+     },
+     "prose": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": []
+     }
+    },
+    "compaction_notes": [],
+    "subjects": {
+     "count": 0,
+     "multiple": false,
+     "tag_count": 0,
+     "prose_count": null,
+     "agree": null,
+     "evidence": [
+      "no_humans"
+     ]
+    },
+    "drift": true
+   },
+   "compare": {},
+   "facets": {
+    "setting": [
+     "cloud"
+    ],
+    "people": [
+     "no people"
+    ]
+   },
+   "exif": {},
+   "provenance": {
+    "license": "CC0",
+    "source": "commons",
+    "source_url": "https://commons.wikimedia.org/wiki/File:%E3%80%8E%E7%95%B6%E4%B8%96%E9%9B%9B%E5%BD%A2%E3%80%8F-Contemporary_Kimono_Patterns_(T%C5%8Dsei_hiinagata)_MET_2013_887_05.jpg",
+    "author": "Hishikawa Moronobu",
+    "title": "『當世雛形』-Contemporary Kimono Patterns (Tōsei hiinagata) MET 2013 887 05.jpg"
+   }
+  },
+  {
+   "id": "47a51327e22d37a8",
+   "sha256": "47a51327e22d37a8855c7f9d37d88e5e0ba19a5fb4fa8cfc3eb35f4f77cfd4ce",
+   "image": "images/47a51327e22d37a8.webp",
+   "thumb": "thumbs/47a51327e22d37a8.webp",
+   "xmp": "xmp/47a51327e22d37a8.xmp",
+   "width": 1652,
+   "height": 2048,
+   "color": "#363636",
+   "caption": {
+    "final_caption": "upper_body, monochrome, male_focus, greyscale, facial_hair, formal, beard, mustache",
+    "caption_variants": {},
+    "selected_category": "identity",
+    "raw_tags": "upper_body, monochrome, male_focus, greyscale, facial_hair, formal, beard, mustache",
+    "raw_prose": "",
+    "backend_name": "wd14",
+    "profile": {
+     "checkpoint": null,
+     "target_style": "photo",
+     "target_backend": "sdxl",
+     "target_category": "identity"
+    },
+    "version": 1
+   },
+   "explain": {
+    "buckets": {
+     "tags": {
+      "identity": [
+       "facial_hair",
+       "beard",
+       "mustache"
+      ],
+      "wardrobe": [
+       "formal"
+      ],
+      "pose_composition": [
+       "upper_body"
+      ],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": [
+       "monochrome",
+       "male_focus",
+       "greyscale"
+      ]
+     },
+     "prose": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": []
+     }
+    },
+    "compaction_notes": [
+     "Trimmed lower-priority fragments to keep captions compact."
+    ],
+    "subjects": {
+     "count": null,
+     "multiple": false,
+     "tag_count": null,
+     "prose_count": null,
+     "agree": null,
+     "evidence": []
+    },
+    "drift": true
+   },
+   "compare": {},
+   "facets": {
+    "identity": [
+     "facial_hair",
+     "beard",
+     "mustache"
+    ],
+    "wardrobe": [
+     "formal"
+    ],
+    "pose_composition": [
+     "upper_body"
+    ],
+    "detail": [
+     "male focus"
+    ]
+   },
+   "exif": {},
+   "provenance": {
+    "license": "PD",
+    "source": "commons",
+    "source_url": "https://commons.wikimedia.org/wiki/File:MarkTwain.LOC.jpg",
+    "author": "Unknown author Unknown author",
+    "title": "MarkTwain.LOC.jpg"
+   }
+  },
+  {
+   "id": "3c039145d7336b66",
+   "sha256": "3c039145d7336b66f169cb7cffeeefed7ee7ef2c03a12b050da404159cb73143",
+   "image": "images/3c039145d7336b66.webp",
+   "thumb": "thumbs/3c039145d7336b66.webp",
+   "xmp": "xmp/3c039145d7336b66.xmp",
+   "width": 1488,
+   "height": 1502,
+   "color": "#c8c8c8",
+   "caption": {
+    "final_caption": "smile, long_sleeves, closed_mouth, standing, holding, holding_weapon, hat, jacket",
+    "caption_variants": {},
+    "selected_category": "identity",
+    "raw_tags": "smile, long_sleeves, closed_mouth, standing, holding, holding_weapon, hat, jacket",
+    "raw_prose": "",
+    "backend_name": "wd14",
+    "profile": {
+     "checkpoint": null,
+     "target_style": "photo",
+     "target_backend": "sdxl",
+     "target_category": "identity"
+    },
+    "version": 1
+   },
+   "explain": {
+    "buckets": {
+     "tags": {
+      "identity": [
+       "smile"
+      ],
+      "wardrobe": [
+       "long_sleeves",
+       "hat",
+       "jacket"
+      ],
+      "pose_composition": [
+       "standing"
+      ],
+      "setting": [],
+      "lighting": [],
+      "action": [
+       "holding",
+       "holding_weapon"
+      ],
+      "unclassified": [
+       "closed_mouth"
+      ]
+     },
+     "prose": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": []
+     }
+    },
+    "compaction_notes": [
+     "Trimmed lower-priority fragments to keep captions compact.",
+     "Repaired disjointed fragments in assembled captions."
+    ],
+    "subjects": {
+     "count": null,
+     "multiple": false,
+     "tag_count": null,
+     "prose_count": null,
+     "agree": null,
+     "evidence": []
+    },
+    "drift": true
+   },
+   "compare": {},
+   "facets": {
+    "identity": [
+     "smile"
+    ],
+    "wardrobe": [
+     "long_sleeves",
+     "hat",
+     "jacket"
+    ],
+    "pose_composition": [
+     "standing"
+    ],
+    "action": [
+     "holding",
+     "holding_weapon"
+    ],
+    "detail": [
+     "closed mouth"
+    ]
+   },
+   "exif": {},
+   "provenance": {
+    "license": "CC0",
+    "source": "commons",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Voltigeurs_(militaire)._French_military_skirmish_units,_19th-century_uniforms._Book_illustration_(encyclopedia_plate_line_art)_Larousse_du_XX%C3%A8me_si%C3%A8cle_1932.png",
+    "author": "EN NOIR &amp; BLANC",
+    "title": "Voltigeurs (militaire). French military skirmish units, 19th-century uniforms. Book illustration (encyclopedia plate line art) Larousse du XXème siècle 1932.png"
+   }
+  },
+  {
+   "id": "50cafee4135de2e4",
+   "sha256": "50cafee4135de2e41ce436a7ac1a5015cc46e05853b7f9b8d20ec5af10ffa42e",
+   "image": "images/50cafee4135de2e4.webp",
+   "thumb": "thumbs/50cafee4135de2e4.webp",
+   "xmp": "xmp/50cafee4135de2e4.xmp",
+   "width": 944,
+   "height": 784,
+   "color": "#645a4b",
+   "caption": {
+    "final_caption": "sky, day, tree, painting_(medium), outdoors, window",
+    "caption_variants": {},
+    "selected_category": "identity",
+    "raw_tags": "sky, day, tree, painting_(medium), outdoors, window",
+    "raw_prose": "",
+    "backend_name": "wd14",
+    "profile": {
+     "checkpoint": null,
+     "target_style": "photo",
+     "target_backend": "sdxl",
+     "target_category": "identity"
+    },
+    "version": 1
+   },
+   "explain": {
+    "buckets": {
+     "tags": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [
+       "sky",
+       "tree",
+       "outdoors",
+       "window"
+      ],
+      "lighting": [
+       "day"
+      ],
+      "action": [
+       "painting_(medium)"
+      ],
+      "unclassified": []
+     },
+     "prose": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": []
+     }
+    },
+    "compaction_notes": [
+     "Trimmed lower-priority fragments to keep captions compact."
+    ],
+    "subjects": {
+     "count": null,
+     "multiple": false,
+     "tag_count": null,
+     "prose_count": null,
+     "agree": null,
+     "evidence": []
+    },
+    "drift": true
+   },
+   "compare": {},
+   "facets": {
+    "setting": [
+     "sky",
+     "tree",
+     "outdoors",
+     "window"
+    ],
+    "lighting": [
+     "day"
+    ],
+    "action": [
+     "painting_(medium)"
+    ]
+   },
+   "exif": {},
+   "provenance": {
+    "license": "PD",
+    "source": "commons",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Interior_of_Coventry_Cathedral,_15_November_1940_-_John_Piper_-_1940.jpg",
+    "author": "John Piper",
+    "title": "Interior of Coventry Cathedral, 15 November 1940 - John Piper - 1940.jpg"
+   }
+  },
+  {
+   "id": "d7a0818312de1e9e",
+   "sha256": "d7a0818312de1e9e877c2d378c99246ae2de83ca68828e5350de4db67ff7b507",
+   "image": "images/d7a0818312de1e9e.webp",
+   "thumb": "thumbs/d7a0818312de1e9e.webp",
+   "xmp": "xmp/d7a0818312de1e9e.xmp",
+   "width": 1536,
+   "height": 2048,
+   "color": "#646464",
+   "caption": {
+    "final_caption": "looking_at_viewer, jewelry, monochrome, male_focus, greyscale, facial_hair, beard, mustache",
+    "caption_variants": {},
+    "selected_category": "identity",
+    "raw_tags": "looking_at_viewer, jewelry, monochrome, male_focus, greyscale, facial_hair, beard, mustache",
+    "raw_prose": "",
+    "backend_name": "wd14",
+    "profile": {
+     "checkpoint": null,
+     "target_style": "photo",
+     "target_backend": "sdxl",
+     "target_category": "identity"
+    },
+    "version": 1
+   },
+   "explain": {
+    "buckets": {
+     "tags": {
+      "identity": [
+       "facial_hair",
+       "beard",
+       "mustache"
+      ],
+      "wardrobe": [
+       "jewelry"
+      ],
+      "pose_composition": [
+       "looking_at_viewer"
+      ],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": [
+       "monochrome",
+       "male_focus",
+       "greyscale"
+      ]
+     },
+     "prose": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": []
+     }
+    },
+    "compaction_notes": [
+     "Trimmed lower-priority fragments to keep captions compact."
+    ],
+    "subjects": {
+     "count": null,
+     "multiple": false,
+     "tag_count": null,
+     "prose_count": null,
+     "agree": null,
+     "evidence": []
+    },
+    "drift": true
+   },
+   "compare": {},
+   "facets": {
+    "identity": [
+     "facial_hair",
+     "beard",
+     "mustache"
+    ],
+    "wardrobe": [
+     "jewelry"
+    ],
+    "pose_composition": [
+     "looking_at_viewer"
+    ],
+    "detail": [
+     "male focus"
+    ]
+   },
+   "exif": {},
+   "provenance": {
+    "license": "PD",
+    "source": "commons",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Albert_Einstein_Head.jpg",
+    "author": "Photograph by Orren Jack Turner , Princeton, N.J. Modified with Photoshop by PM_Poon and later by Dantadd .",
+    "title": "Albert Einstein Head.jpg"
+   }
+  },
+  {
+   "id": "b22c2745aae326c7",
+   "sha256": "b22c2745aae326c7e97f67c128bd8ceb335918f7852cc6222faf62a244a292d4",
+   "image": "images/b22c2745aae326c7.webp",
+   "thumb": "thumbs/b22c2745aae326c7.webp",
+   "xmp": "xmp/b22c2745aae326c7.xmp",
+   "width": 1655,
+   "height": 2048,
+   "color": "#4c4c4c",
+   "caption": {
+    "final_caption": "looking_at_viewer, closed_mouth, upper_body, monochrome, male_focus, greyscale, facial_hair, beard",
+    "caption_variants": {},
+    "selected_category": "identity",
+    "raw_tags": "looking_at_viewer, closed_mouth, upper_body, monochrome, male_focus, greyscale, facial_hair, beard",
+    "raw_prose": "",
+    "backend_name": "wd14",
+    "profile": {
+     "checkpoint": null,
+     "target_style": "photo",
+     "target_backend": "sdxl",
+     "target_category": "identity"
+    },
+    "version": 1
+   },
+   "explain": {
+    "buckets": {
+     "tags": {
+      "identity": [
+       "facial_hair",
+       "beard"
+      ],
+      "wardrobe": [],
+      "pose_composition": [
+       "looking_at_viewer",
+       "upper_body"
+      ],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": [
+       "closed_mouth",
+       "monochrome",
+       "male_focus",
+       "greyscale"
+      ]
+     },
+     "prose": {
+      "identity": [],
+      "wardrobe": [],
+      "pose_composition": [],
+      "setting": [],
+      "lighting": [],
+      "action": [],
+      "unclassified": []
+     }
+    },
+    "compaction_notes": [
+     "Trimmed lower-priority fragments to keep captions compact.",
+     "Repaired disjointed fragments in assembled captions."
+    ],
+    "subjects": {
+     "count": null,
+     "multiple": false,
+     "tag_count": null,
+     "prose_count": null,
+     "agree": null,
+     "evidence": []
+    },
+    "drift": true
+   },
+   "compare": {},
+   "facets": {
+    "identity": [
+     "facial_hair",
+     "beard"
+    ],
+    "pose_composition": [
+     "looking_at_viewer",
+     "upper_body"
+    ],
+    "detail": [
+     "closed mouth",
+     "male focus"
+    ]
+   },
+   "exif": {},
+   "provenance": {
+    "license": "PD",
+    "source": "commons",
+    "source_url": "https://commons.wikimedia.org/wiki/File:Albert_Einstein_Head_cleaned.jpg",
+    "author": "Orren Jack Turner",
+    "title": "Albert Einstein Head cleaned.jpg"
+   }
+  }
+ ]
+}
