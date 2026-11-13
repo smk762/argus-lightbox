@@ -29,6 +29,8 @@ jobs:
           cache-dependency-path: web/package-lock.json
       - run: npm ci
         working-directory: web
+      - run: npm test  # don't publish a build the contract tests reject
+        working-directory: web
       - run: make pages
       - uses: cloudflare/wrangler-action@v3
         with:

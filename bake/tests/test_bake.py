@@ -226,6 +226,7 @@ def test_provenance_maps_quarry_spelling() -> None:
         "title": "Einstein.jpg",
     }
     assert _provenance({"license": "CC0", "licence": "PD"}, "/local/a.jpg") == {"license": "CC0"}
+    assert _provenance({"attribution": "EN NOIR &amp; BLANC"}, "/a.jpg") == {"author": "EN NOIR & BLANC"}
 
 
 def _gallery_photo(photo_id: str, caption: dict) -> dict:

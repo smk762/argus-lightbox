@@ -83,6 +83,7 @@ export function PhotoDetail({
   // The ARIA tabs pattern: one tab stop for the list; arrows, Home and End move
   // between tabs and select them (automatic activation).
   const onTabKey = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.altKey || e.ctrlKey || e.metaKey) return; // Alt+Arrow is browser back/forward
     const i = TABS.findIndex((t) => t.key === tab);
     const next =
       e.key === "ArrowRight" ? (i + 1) % TABS.length

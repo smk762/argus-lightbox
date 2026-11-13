@@ -9,6 +9,7 @@ image bytes from the cortex blob store by sha256, falling back to a local
 
 from __future__ import annotations
 
+import html
 import os
 from collections.abc import Callable, Iterator
 from dataclasses import dataclass, field
@@ -53,7 +54,8 @@ def _provenance(asset_meta: dict[str, Any] | None, uri: str) -> dict[str, Any]:
             meta[key] = meta[alias]
     if not meta.get("source_url") and urlparse(uri).scheme in ("http", "https"):
         meta["source_url"] = uri  # e.g. the Wikimedia Commons file page quarry fetched it from
-    return {k: meta[k] for k in _PROVENANCE_KEYS if meta.get(k)}
+    # Commons attribution strings arrive HTML-escaped ("EN NOIR &amp; BLANC"); React escapes again.
+    return {k: html.unescape(v) if isinstance(v, str) else v for k in _PROVENANCE_KEYS if (v := meta.get(k))}
 
 
 def refine_record(payload: dict[str, Any]) -> dict[str, Any] | None:
