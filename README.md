@@ -55,7 +55,7 @@ Bake the real run from a cortex store, for example the local stores you recorded
 ```bash
 export CORTEX_PG_URL=postgresql://…                       # lineage store
 export CORTEX_S3_ENDPOINT=… CORTEX_S3_BUCKET=argus-tape   # blob store (plus credentials)
-make tape                                                 # → web/public/data-tape/ (gitignored)
+make tape                                                 # → web/public/data-tape/ (committed: the hosted demo)
 NEXT_PUBLIC_DATA_URL=/data-tape make dev
 ```
 
@@ -102,12 +102,16 @@ The container has to be able to read the mount. On a NAS export that squashes ro
 
 `make build` writes a static site to `web/out/`. Serve it from anything.
 
+The hosted demo at https://lightbox.dragonhound.dev is `make pages`: the same export, reading the committed tape bake in `web/public/data-tape/` (29 public-domain/CC0 Commons photos from the halo tape), with the demo banner and absolute OG URLs. `.github/workflows/pages.yml` runs it on every push to `main` and uploads `web/out/` with `wrangler pages deploy`. After a change to the bake or a lens bump, re-run `make tape` against the tape's stores and commit `web/public/data-tape/`.
+
 | Variable | Default | Purpose |
 |---|---|---|
 | `NEXT_PUBLIC_DATA_URL` | `<basePath>/data` | Where `index.json` and the renditions live. Point it at an R2/CDN URL to host the data separately from the app; that origin must send CORS headers for `index.json`. |
 | `NEXT_PUBLIC_BASE_PATH` | (none) | Serve the app under a sub-path. |
 | `NEXT_PUBLIC_SUITE_URL` | argus-studio repo | The "see the whole pipeline" link. |
 | `NEXT_PUBLIC_CURATOR_URL` | argus-cull repo | The faces / content-rating cross-link. |
+| `NEXT_PUBLIC_DEMO_BANNER` | (none) | Any value shows the "demo on recorded data" strip at the top. |
+| `NEXT_PUBLIC_SITE_URL` | (none) | Absolute origin for `og:image` and the canonical link. |
 
 These are build-time variables (inlined by Next.js), so rebuild after changing them.
 
@@ -124,7 +128,7 @@ make fixture     # re-bake the fixture after changing bake/ or bumping lens
 
 ## Roadmap
 
-- Bake the halo tape and publish it, with the app on Cloudflare Pages and the data on R2.
+- Move the tape bake to R2 if it outgrows the repo (`NEXT_PUBLIC_DATA_URL` already supports it).
 
 ## License
 

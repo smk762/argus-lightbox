@@ -5,9 +5,13 @@ DOCKER_NPM = docker run --rm -u $$(id -u):$$(id -g) -e HOME=/tmp -v $(CURDIR)/we
 NPM ?= $(if $(HOST_NPM),npm,$(call DOCKER_NPM,))
 NPM_DEV ?= $(if $(HOST_NPM),npm,$(call DOCKER_NPM,-p $(PORT):$(PORT)))
 PORT ?= 3000
+# The hosted demo (Cloudflare Pages): the committed tape bake, the demo banner, absolute OG URLs.
+SITE_URL ?= https://lightbox.dragonhound.dev
+PAGES_ENV = NEXT_PUBLIC_DATA_URL=/data-tape NEXT_PUBLIC_DEMO_BANNER=1 NEXT_PUBLIC_SITE_URL=$(SITE_URL)
+NPM_PAGES ?= $(if $(HOST_NPM),$(PAGES_ENV) npm,$(call DOCKER_NPM,$(addprefix -e ,$(PAGES_ENV))))
 BAKE := bake/.venv/bin/lightbox-bake
 
-.PHONY: help install fixture tape dev build test lint check clean up purge
+.PHONY: help install fixture tape dev build pages test lint check clean up purge
 
 help:  ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-10s\033[0m %s\n", $$1, $$2}'
@@ -35,6 +39,10 @@ dev:  ## next dev on :$(PORT) (serves web/public/data)
 
 build:  ## Static export to web/out/
 	cd web && $(NPM) run build
+
+pages:  ## Static export of the hosted demo (tape bake, banner) to web/out/, for Cloudflare Pages
+	cd web && $(NPM_PAGES) run build
+	rm -rf web/out/data  # the synthetic fixture; the demo reads /data-tape
 
 test:  ## Bake pytest + web vitest
 	cd bake && .venv/bin/pytest -q

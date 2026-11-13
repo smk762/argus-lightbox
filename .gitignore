@@ -12,11 +12,12 @@ facet_lists.json
 node_modules/
 web/.next/
 web/out/
+web/.wrangler/
 web/next-env.d.ts
 *.tsbuildinfo
 
-# Baked data: the committed fixture lives in web/public/data/; a real tape bake
-# goes to web/public/data-tape/ (or straight to R2) and is never committed.
+# Baked data: the committed fixture lives in web/public/data/. The tape bake in
+# web/public/data-tape/ is committed too: it is what the hosted demo (make pages)
+# serves, so the Pages build needs no Python or cortex stores.
 # A folder bake (lightbox-bake folder) goes to web/public/data-folder/.
-web/public/data-tape/
 web/public/data-folder/
