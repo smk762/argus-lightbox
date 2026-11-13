@@ -24,6 +24,7 @@ export function PhotoDetail({
   photo,
   position,
   categories,
+  lensVersion,
   terms,
   applying,
   onClose,
@@ -33,6 +34,7 @@ export function PhotoDetail({
   photo: Photo;
   position: { index: number; total: number };
   categories: string[];
+  lensVersion: string;
   terms: string[];
   applying: boolean;
   onClose: () => void;
@@ -193,11 +195,20 @@ export function PhotoDetail({
             className="min-h-0 flex-1 overflow-y-auto p-5"
           >
             {tab === "caption" && (
-              <CaptionTab photo={photo} categories={categories} terms={terms} applying={applying} onUse={onUseCaption} />
+              <CaptionTab
+                photo={photo}
+                categories={categories}
+                lensVersion={lensVersion}
+                terms={terms}
+                applying={applying}
+                onUse={onUseCaption}
+              />
             )}
-            {tab === "explain" && <ExplainTab key={photo.id} photo={photo} categories={categories} />}
-            {tab === "compare" && <CompareTab photo={photo} />}
-            {tab === "metadata" && <MetadataTab photo={photo} />}
+            {tab === "explain" && (
+              <ExplainTab key={photo.id} photo={photo} categories={categories} lensVersion={lensVersion} />
+            )}
+            {tab === "compare" && <CompareTab photo={photo} lensVersion={lensVersion} />}
+            {tab === "metadata" && <MetadataTab photo={photo} lensVersion={lensVersion} />}
           </div>
         </aside>
       </div>

@@ -6,6 +6,7 @@ import { groupStyle } from "@/lib/categories";
 import { splitTags, traceVariant } from "@/lib/explain";
 import type { Photo } from "@/lib/types";
 
+import { LensDocLink } from "../LensDocLink";
 import { Chip, GroupLabel, SectionTitle } from "../ui";
 
 function Step({ n, title, children }: { n: number; title: string; children: React.ReactNode }) {
@@ -20,7 +21,7 @@ function Step({ n, title, children }: { n: number; title: string; children: Reac
   );
 }
 
-export function ExplainTab({ photo, categories }: { photo: Photo; categories: string[] }) {
+export function ExplainTab({ photo, categories, lensVersion }: { photo: Photo; categories: string[]; lensVersion: string }) {
   const variants = Object.keys(photo.caption.caption_variants);
   const [variant, setVariant] = useState(
     variants.includes(photo.caption.selected_category) ? photo.caption.selected_category : variants[0],
@@ -34,7 +35,10 @@ export function ExplainTab({ photo, categories }: { photo: Photo; categories: st
     <div className="space-y-4">
       <p className="text-small text-text-secondary">
         The model only supplies raw output. Everything after that is lens&apos;s assembly pipeline: classify,
-        filter, specialise, token-budget.
+        filter, specialise, token-budget.{" "}
+        <LensDocLink section="assembly" version={lensVersion}>
+          How lens assembles a caption
+        </LensDocLink>
       </p>
       {drift && (
         <p className="rounded-md border border-warning/40 bg-warning/10 p-3 text-caption text-warning">

@@ -20,6 +20,7 @@ It's the standalone demo for argus-lens. The full pipeline UI is [Argus Studio](
 - **How it was built.** Raw tags and prose, which tags were dropped as meta noise (`1girl`, `solo`), how fragments were classified, and which ones each variant kept or trimmed, plus lens's own compaction notes and headcount evidence.
 - **Compare.** The same raw output assembled tags-only, prose-only and hybrid. No model is re-run, which shows that the value is in the assembly, not the model.
 - **Metadata and sidecars.** EXIF (camera, lens, exposure; **never GPS**), provenance and licence, and the two sidecars lens writes: the `.txt` caption trainers read, and an XMP file (keywords + description) for Lightroom, digiKam and Immich.
+- **Lens docs.** A `/docs` page names the lens version the gallery was captioned with and links to lens's docs at that version: the release tag, or the commit for a dev build. The detail tabs say which lens version, backend and refine model captioned each photo, taken from the recorded caption, and link to the matching lens section.
 
 Face grouping and content rating are left out. They are the curator demo, [argus-cull](https://github.com/smk762/argus-cull). This gallery only links there.
 
