@@ -1,5 +1,6 @@
 "use client";
 
+import { shownCaption } from "@/lib/caption";
 import { groupStyle } from "@/lib/categories";
 import { assetUrl } from "@/lib/data";
 import { type Selection, photoTerms } from "@/lib/filter";
@@ -37,6 +38,7 @@ export function PhotoGrid({
       {photos.map((photo, i) => {
         const matches = matchedTerms(photo, selection);
         const label = photo.provenance.title || "photo";
+        const shown = shownCaption(photo.caption).text;
         return (
           <li key={photo.id} className="relative mb-3 break-inside-avoid">
             <input
@@ -44,14 +46,14 @@ export function PhotoGrid({
               checked={picked.has(photo.id)}
               onChange={() => onToggle(photo.id)}
               aria-label={`Select ${label}`}
-              className="absolute right-2 top-2 z-10 size-4"
+              className="absolute right-2 top-2 z-10 size-6"
             />
             <button
               type="button"
               onClick={(e) => onOpen(photo.id, e.currentTarget.querySelector("img"))}
               className="group relative block w-full overflow-hidden rounded-md shadow-soft transition-shadow duration-200 hover:shadow-glow"
               style={{ aspectRatio: `${photo.width} / ${photo.height}`, background: photo.color }}
-              aria-label={photo.caption.final_caption}
+              aria-label={shown}
             >
               {/* eslint-disable-next-line @next/next/no-img-element -- static export; thumbnails are pre-sized by the bake */}
               <img
@@ -79,7 +81,7 @@ export function PhotoGrid({
                 </span>
               )}
               <span className="pointer-events-none absolute inset-x-0 bottom-0 bg-linear-to-t from-base-900/95 via-base-900/60 to-transparent p-3 pt-10 text-left text-caption leading-snug text-text-primary opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100">
-                {photo.caption.final_caption}
+                {shown}
               </span>
             </button>
           </li>

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { flushSync } from "react-dom";
+import Link from "next/link";
 
 import { groupStyle } from "@/lib/categories";
 import { loadIndex, loadStatus } from "@/lib/data";
@@ -17,6 +18,7 @@ import {
 import type { GalleryIndex } from "@/lib/types";
 import { type ViewState, parseView, serializeView } from "@/lib/urlState";
 
+import { ExternalLink } from "./ExternalLink";
 import { FacetSidebar } from "./FacetSidebar";
 import { PhotoDetail } from "./PhotoDetail";
 import { PhotoGrid } from "./PhotoGrid";
@@ -246,25 +248,44 @@ export function Lightbox() {
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-[1800px] flex-col px-4 sm:px-6">
+      {/* The facet sidebar puts dozens of checkboxes ahead of the photos in tab order. Focus moves
+          without a fragment navigation, which would fire popstate and add a history entry. */}
+      <a
+        href="#gallery"
+        onClick={(e) => {
+          e.preventDefault();
+          document.getElementById("gallery")?.focus();
+        }}
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-base-800 focus:px-3 focus:py-2 focus:text-small"
+      >
+        Skip to photos
+      </a>
       <header className="flex flex-wrap items-end justify-between gap-4 py-6">
         <div>
           <h1 className="font-display text-display font-semibold tracking-tight">Lightbox</h1>
           <p className="text-small text-text-secondary">
             Every photo here is navigated by its{" "}
-            <a href="https://github.com/smk762/argus-lens" className="text-accent-tertiary hover:underline">
+            <ExternalLink href="https://github.com/smk762/argus-lens" className="text-accent-tertiary underline underline-offset-2 hover:decoration-2">
               argus-lens
-            </a>{" "}
+            </ExternalLink>{" "}
             structured caption.
           </p>
         </div>
-        {index && badge && (
-          <div className="flex items-center gap-2 text-caption text-text-secondary">
-            <span className={`rounded-full px-2.5 py-1 ${badge.tone}`} title={badge.title}>
-              {badge.label}
-            </span>
-            <span>lens {index.lens_version}</span>
-          </div>
-        )}
+        <div className="flex flex-wrap items-center gap-3 text-caption text-text-secondary">
+          {index && badge && (
+            <>
+              <span className={`rounded-full px-2.5 py-1 ${badge.tone}`} title={badge.title}>
+                {badge.label}
+              </span>
+              <span>lens {index.lens_version}</span>
+            </>
+          )}
+          <nav aria-label="Site">
+            <Link href="/docs/" className="text-accent-tertiary underline underline-offset-2 hover:decoration-2">
+              Docs
+            </Link>
+          </nav>
+        </div>
       </header>
 
       <div className="flex flex-1 flex-col gap-4 pb-10 md:flex-row md:gap-6">
@@ -290,7 +311,7 @@ export function Lightbox() {
           />
         </div>
 
-        <main className="@container min-w-0 flex-1">
+        <main id="gallery" tabIndex={-1} className="@container min-w-0 flex-1">
           <div className="sticky top-0 z-10 -mx-1 mb-4 bg-base-900/90 px-1 py-2 backdrop-blur">
             <input
               type="search"
@@ -299,12 +320,12 @@ export function Lightbox() {
                 setPage(0);
                 update({ ...view, query: e.target.value });
               }}
-              placeholder="Search captions: “red dress beach”, “neon”, “reading”…"
+              placeholder="Search captions: “snow mountain”, “neon night”, “harbor boats”, “typewriter”…"
               aria-label="Search captions"
               className="w-full rounded-md border border-base-600 bg-base-800 px-4 py-2.5 text-body placeholder:text-text-muted focus:border-accent-primary focus:outline-none"
             />
             <div className="mt-2 flex flex-wrap items-center gap-2 text-caption text-text-secondary">
-              <span className="tabular-nums">
+              <span role="status" className="tabular-nums">
                 {index ? `${filtered.length} of ${photos.length} photos` : "Loading…"}
               </span>
               {index && (
@@ -469,11 +490,21 @@ export function Lightbox() {
         </main>
       </div>
 
+      <footer className="flex flex-wrap gap-x-4 gap-y-1 border-t border-base-700 py-4 text-caption text-text-secondary">
+        <Link href="/docs/" className="text-accent-tertiary underline underline-offset-2 hover:decoration-2">
+          Docs
+        </Link>
+        <ExternalLink href="https://github.com/smk762/argus-lightbox" className="text-accent-tertiary underline underline-offset-2 hover:decoration-2">
+          argus-lightbox on GitHub
+        </ExternalLink>
+      </footer>
+
       {openPhoto && index && (
         <PhotoDetail
           photo={openPhoto}
           position={{ index: Math.max(openIndex, 0), total: Math.max(filtered.length, 1) }}
           categories={index.categories}
+          lensVersion={index.lens_version}
           terms={terms}
           applying={applying}
           onClose={() => {

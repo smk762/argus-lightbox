@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
+import { shownCaption } from "@/lib/caption";
 import { assetUrl } from "@/lib/data";
 import { swipeStep } from "@/lib/gesture";
 import type { Photo } from "@/lib/types";
@@ -23,6 +24,7 @@ export function PhotoDetail({
   photo,
   position,
   categories,
+  lensVersion,
   terms,
   applying,
   onClose,
@@ -32,6 +34,7 @@ export function PhotoDetail({
   photo: Photo;
   position: { index: number; total: number };
   categories: string[];
+  lensVersion: string;
   terms: string[];
   applying: boolean;
   onClose: () => void;
@@ -71,13 +74,31 @@ export function PhotoDetail({
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement | null;
-      if (target?.closest("input, select, textarea")) return;
+      // Arrow keys belong to form controls and to the tab list (which moves between tabs).
+      if (target?.closest('input, select, textarea, [role="tablist"]')) return;
       if (e.key === "ArrowRight") onStep(1);
       if (e.key === "ArrowLeft") onStep(-1);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [onStep]);
+
+  // The ARIA tabs pattern: one tab stop for the list; arrows, Home and End move
+  // between tabs and select them (automatic activation).
+  const onTabKey = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.altKey || e.ctrlKey || e.metaKey) return; // Alt+Arrow is browser back/forward
+    const i = TABS.findIndex((t) => t.key === tab);
+    const next =
+      e.key === "ArrowRight" ? (i + 1) % TABS.length
+      : e.key === "ArrowLeft" ? (i - 1 + TABS.length) % TABS.length
+      : e.key === "Home" ? 0
+      : e.key === "End" ? TABS.length - 1
+      : -1;
+    if (next < 0) return;
+    e.preventDefault();
+    setTab(TABS[next].key);
+    e.currentTarget.querySelector<HTMLElement>(`#tab-${TABS[next].key}`)?.focus();
+  };
 
   return (
     <dialog
@@ -89,7 +110,7 @@ export function PhotoDetail({
         void requestClose();
       }}
       onClick={(e) => e.target === dialog.current && void requestClose()}
-      aria-label={photo.caption.final_caption}
+      aria-label={shownCaption(photo.caption).text}
       className="photo-detail m-0 h-dvh max-h-none w-screen max-w-none bg-transparent p-0 text-text-primary"
     >
       <div className="flex h-full flex-col lg:flex-row">
@@ -115,7 +136,7 @@ export function PhotoDetail({
           <img
             key={photo.id}
             src={assetUrl(photo.image)}
-            alt={photo.caption.final_caption}
+            alt={shownCaption(photo.caption).text}
             width={photo.width}
             height={photo.height}
             fetchPriority="high"
@@ -141,14 +162,21 @@ export function PhotoDetail({
         </figure>
 
         <aside className="flex max-h-[55dvh] min-h-0 w-full flex-col border-t border-base-700 bg-base-800 lg:max-h-none lg:w-[440px] lg:border-l lg:border-t-0">
-          <div role="tablist" aria-label="Photo details" className="flex shrink-0 gap-1 overflow-x-auto border-b border-base-700 px-3 pt-3">
+          <div
+            role="tablist"
+            aria-label="Photo details"
+            onKeyDown={onTabKey}
+            className="flex shrink-0 gap-1 overflow-x-auto border-b border-base-700 px-3 pt-3"
+          >
             {TABS.map(({ key, label }) => (
               <button
                 key={key}
+                id={`tab-${key}`}
                 role="tab"
                 type="button"
                 aria-selected={tab === key}
                 aria-controls={`panel-${key}`}
+                tabIndex={tab === key ? 0 : -1}
                 onClick={() => setTab(key)}
                 className={`-mb-px shrink-0 whitespace-nowrap rounded-t-sm border-b-2 px-3 py-2 text-small font-medium transition-colors ${
                   tab === key
@@ -160,13 +188,27 @@ export function PhotoDetail({
               </button>
             ))}
           </div>
-          <div role="tabpanel" id={`panel-${tab}`} className="min-h-0 flex-1 overflow-y-auto p-5">
+          <div
+            role="tabpanel"
+            id={`panel-${tab}`}
+            aria-labelledby={`tab-${tab}`}
+            className="min-h-0 flex-1 overflow-y-auto p-5"
+          >
             {tab === "caption" && (
-              <CaptionTab photo={photo} categories={categories} terms={terms} applying={applying} onUse={onUseCaption} />
+              <CaptionTab
+                photo={photo}
+                categories={categories}
+                lensVersion={lensVersion}
+                terms={terms}
+                applying={applying}
+                onUse={onUseCaption}
+              />
             )}
-            {tab === "explain" && <ExplainTab key={photo.id} photo={photo} categories={categories} />}
-            {tab === "compare" && <CompareTab photo={photo} />}
-            {tab === "metadata" && <MetadataTab photo={photo} />}
+            {tab === "explain" && (
+              <ExplainTab key={photo.id} photo={photo} categories={categories} lensVersion={lensVersion} />
+            )}
+            {tab === "compare" && <CompareTab photo={photo} lensVersion={lensVersion} />}
+            {tab === "metadata" && <MetadataTab photo={photo} lensVersion={lensVersion} />}
           </div>
         </aside>
       </div>

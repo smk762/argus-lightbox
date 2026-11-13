@@ -9,6 +9,7 @@ image bytes from the cortex blob store by sha256, falling back to a local
 
 from __future__ import annotations
 
+import html
 import os
 from collections.abc import Callable, Iterator
 from dataclasses import dataclass, field
@@ -33,7 +34,7 @@ _TAPE_SQL = """
     SELECT DISTINCT ON (a.id)
            a.uri, a.sha256, a.metadata,
            c.final_caption, c.variants, c.raw_tags, c.raw_prose,
-           c.backend, c.profile, c.version
+           c.backend, c.profile, c.version, c.metadata
     FROM source_asset a
     JOIN caption c ON c.asset_id = a.id
     {where}
@@ -42,6 +43,46 @@ _TAPE_SQL = """
 
 # Provenance keys worth showing (quarry records licence/source/author on the asset).
 _PROVENANCE_KEYS = ("license", "license_url", "source", "source_url", "author", "author_url", "title", "dataset")
+# argus-quarry writes British "licence" and "attribution"; map them onto the keys the web app reads.
+_PROVENANCE_ALIASES = {"licence": "license", "licence_url": "license_url", "attribution": "author"}
+
+
+def _provenance(asset_meta: dict[str, Any] | None, uri: str) -> dict[str, Any]:
+    meta = dict(asset_meta or {})
+    for alias, key in _PROVENANCE_ALIASES.items():
+        if meta.get(alias) and not meta.get(key):
+            meta[key] = meta[alias]
+    if not meta.get("source_url") and urlparse(uri).scheme in ("http", "https"):
+        meta["source_url"] = uri  # e.g. the Wikimedia Commons file page quarry fetched it from
+    # Commons attribution strings arrive HTML-escaped ("EN NOIR &amp; BLANC"); React escapes again.
+    return {k: html.unescape(v) if isinstance(v, str) else v for k in _PROVENANCE_KEYS if (v := meta.get(k))}
+
+
+def refine_record(payload: dict[str, Any]) -> dict[str, Any] | None:
+    """Keep the rewrite lens recorded, whether it arrived on the wire or from our cache.
+
+    A checked rewrite changes ``final_caption`` after assembly. The explain view
+    needs that fact so the difference is not reported as ``drift``.
+    """
+    raw = payload.get("refine")
+    if not isinstance(raw, dict):
+        metadata = payload.get("metadata")
+        raw = metadata.get("refine") if isinstance(metadata, dict) else None
+    if not isinstance(raw, dict):
+        return None
+    record: dict[str, Any] = {}
+    model = raw.get("model")
+    if isinstance(model, str) and model:
+        record["model"] = model
+    accepted = raw.get("accepted")
+    if isinstance(accepted, list):
+        names = [item for item in accepted if isinstance(item, str) and item]
+        if names:
+            record["accepted"] = names
+    skipped = raw.get("skipped")
+    if isinstance(skipped, str) and skipped:
+        record["skipped"] = skipped
+    return record or None
 
 
 def _local_path(uri: str) -> Path | None:
@@ -71,7 +112,7 @@ def tape_records(pg_url: str, *, dataset: str | None = None, limit: int | None =
         cur.execute(sql, params)
         rows = cur.fetchall()
 
-    for uri, sha256, asset_meta, final, variants, raw_tags, raw_prose, backend, profile, version in rows:
+    for uri, sha256, asset_meta, final, variants, raw_tags, raw_prose, backend, profile, version, caption_meta in rows:
 
         def load(sha256=sha256, uri=uri) -> bytes | None:
             if sha256 and (data := blobs.get(sha256)) is not None:
@@ -80,21 +121,25 @@ def tape_records(pg_url: str, *, dataset: str | None = None, limit: int | None =
             return path.read_bytes() if path else None
 
         profile = profile or {}
+        caption: dict[str, Any] = {
+            "final_caption": final,
+            "caption_variants": variants or {},
+            "selected_category": profile.get("target_category", "identity"),
+            "raw_tags": raw_tags or "",
+            "raw_prose": raw_prose or "",
+            "backend_name": backend or "",
+            "profile": profile,
+            "version": version,
+        }
+        # Lens records a checked rewrite in CaptionResult.metadata["refine"]; cortex keeps it in caption.metadata.
+        if (refine := refine_record({"metadata": caption_meta})) is not None:
+            caption["refine"] = refine
         yield SourceRecord(
             uri=uri,
             sha256=sha256,
-            provenance={k: asset_meta[k] for k in _PROVENANCE_KEYS if (asset_meta or {}).get(k)},
+            provenance=_provenance(asset_meta, uri),
             load_bytes=load,
-            caption={
-                "final_caption": final,
-                "caption_variants": variants or {},
-                "selected_category": profile.get("target_category", "identity"),
-                "raw_tags": raw_tags or "",
-                "raw_prose": raw_prose or "",
-                "backend_name": backend or "",
-                "profile": profile,
-                "version": version,
-            },
+            caption=caption,
         )
 
 

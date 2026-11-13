@@ -5,13 +5,15 @@ import { useState } from "react";
 import { groupStyle } from "@/lib/categories";
 import type { Photo } from "@/lib/types";
 
+import { LensDocLink } from "../LensDocLink";
+
 const MODES = [
   { key: "tags", label: "Tags only", blurb: "Tagger output alone" },
   { key: "prose", label: "Prose only", blurb: "The written description alone" },
   { key: "hybrid", label: "Hybrid", blurb: "Both, fused by lens" },
 ] as const;
 
-export function CompareTab({ photo }: { photo: Photo }) {
+export function CompareTab({ photo, lensVersion }: { photo: Photo; lensVersion: string }) {
   const [variant, setVariant] = useState("final");
   const hybrid = photo.compare.hybrid;
 
@@ -30,7 +32,10 @@ export function CompareTab({ photo }: { photo: Photo }) {
     <div className="space-y-4">
       <p className="text-small text-text-secondary">
         Same image, same raw model output, assembled from the tags alone, the prose alone, and both. No model is
-        re-run: this is the assembly pipeline doing the work.
+        re-run: this is the assembly pipeline doing the work.{" "}
+        <LensDocLink section="assembly" version={lensVersion}>
+          How lens assembles a caption
+        </LensDocLink>
       </p>
       <label className="flex items-center gap-2 text-caption text-text-secondary">
         Show
