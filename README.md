@@ -114,6 +114,7 @@ The hosted demo at https://lightbox.dragonhound.dev is `make pages`: the same ex
 | `NEXT_PUBLIC_CURATOR_URL` | argus-cull repo | The faces / content-rating cross-link. |
 | `NEXT_PUBLIC_DEMO_BANNER` | (none) | Any value shows the "demo on recorded data" strip at the top. |
 | `NEXT_PUBLIC_SITE_URL` | (none) | Absolute origin for `og:image` and the canonical link. |
+| `NEXT_PUBLIC_DEFAULT_CAPTION` | `zeroshot` | The caption variant the grid and the photo view show first, or `final` for lens's own pick (`final_caption`). A photo without that variant shows its final caption. Display only: the recorded `final_caption`, the `.txt` download and the XMP sidecar don't change. Compose passes it as a build arg from `.env`. |
 
 These are build-time variables (inlined by Next.js), so rebuild after changing them.
 

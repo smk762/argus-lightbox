@@ -7,6 +7,9 @@ WORKDIR /src/web
 COPY web/package.json web/package-lock.json ./
 RUN npm ci
 COPY web/ ./
+# The caption variant the gallery shows first; inlined into the static build.
+ARG NEXT_PUBLIC_DEFAULT_CAPTION=zeroshot
+ENV NEXT_PUBLIC_DEFAULT_CAPTION=$NEXT_PUBLIC_DEFAULT_CAPTION
 RUN npm run build
 
 FROM python:3.12-slim-bookworm AS runtime
