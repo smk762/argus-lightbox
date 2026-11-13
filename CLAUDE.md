@@ -7,7 +7,7 @@ Guidance for AI agents working in this repo. Human-facing usage lives in [README
 The standalone **demo for argus-lens**: a static photo gallery navigated by lens's structured captions. Two halves that meet at one file:
 
 - `bake/` (Python, `lightbox_bake`): reads the recorded pipeline run (cortex lineage store + blob store) or the synthetic fixture, re-runs lens's assembly on the raw output, and writes `web/public/data/` (`index.json`, `images/`, `thumbs/`, `xmp/`).
-- `web/` (Next.js 16 static export, React 19, Tailwind v4): loads `index.json` and does all filtering and rendering client-side. **No server, no API routes.**
+- `web/` (Next.js 16 static export, React 19, Tailwind v4): loads `index.json` and does all filtering and rendering client-side. **No Next server or API routes.** The one write path is `POST /api/caption-choice`, served only by `bake/.../serve.py` in folder mode. On a static host it fails, and the UI shows the error. CLI and server flags are in `docs/cli.md`.
 
 This is not part of argus-studio (the suite UI) and is not a pip package. This repo only consumes lens and cortex output.
 
