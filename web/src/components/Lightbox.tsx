@@ -17,6 +17,7 @@ import {
 import type { GalleryIndex } from "@/lib/types";
 import { type ViewState, parseView, serializeView } from "@/lib/urlState";
 
+import { ExternalLink } from "./ExternalLink";
 import { FacetSidebar } from "./FacetSidebar";
 import { PhotoDetail } from "./PhotoDetail";
 import { PhotoGrid } from "./PhotoGrid";
@@ -263,9 +264,9 @@ export function Lightbox() {
           <h1 className="font-display text-display font-semibold tracking-tight">Lightbox</h1>
           <p className="text-small text-text-secondary">
             Every photo here is navigated by its{" "}
-            <a href="https://github.com/smk762/argus-lens" className="text-accent-tertiary underline underline-offset-2 hover:decoration-2">
+            <ExternalLink href="https://github.com/smk762/argus-lens" className="text-accent-tertiary underline underline-offset-2 hover:decoration-2">
               argus-lens
-            </a>{" "}
+            </ExternalLink>{" "}
             structured caption.
           </p>
         </div>
