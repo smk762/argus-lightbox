@@ -82,12 +82,12 @@ def test_comfyui_takes_prose_and_ollama_stays_the_rewriter(tmp_path) -> None:
 def test_comfyui_url_without_a_model_leaves_ollama_as_prose(tmp_path) -> None:
     chosen = _resolve(
         tmp_path,
-        OLLAMA_URL="http://192.168.1.198:11434",
+        OLLAMA_URL="http://ollama.example:11434",
         OLLAMA_MODEL="qwen3-vl:8b-instruct",
-        COMFYUI_URL="http://192.168.1.39:8188",
+        COMFYUI_URL="http://comfy.example:8188",
     )
     assert chosen["ARGUS_BACKEND"] == "hybrid:ram+openai-compat"
-    assert chosen["ARGUS_OPENAI_COMPAT_BASE_URL"] == "http://192.168.1.198:11434/v1"
+    assert chosen["ARGUS_OPENAI_COMPAT_BASE_URL"] == "http://ollama.example:11434/v1"
     assert chosen["ARGUS_OPENAI_COMPAT_MODEL"] == "qwen3-vl:8b-instruct"
 
 
