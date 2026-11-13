@@ -174,7 +174,8 @@ def test_tape_records_maps_lineage_rows(monkeypatch, tmp_path) -> None:
     img.write_bytes(_jpeg())
     row = (str(img), "ab" * 32, {"license": "CC0-1.0", "author": "Ada", "internal": "x"},
            "final", {"identity": "final"}, "1girl, red dress", "A woman.", "hybrid",
-           {"target_category": "wardrobe"}, 2)  # fmt: skip
+           {"target_category": "wardrobe"}, 2,
+           {"refine": {"model": "qwen3:4b-instruct", "accepted": ["wardrobe"], "extra": 1}})  # fmt: skip
     executed = {}
 
     class Cursor:
@@ -209,6 +210,7 @@ def test_tape_records_maps_lineage_rows(monkeypatch, tmp_path) -> None:
     assert record.provenance == {"license": "CC0-1.0", "author": "Ada"}
     assert record.caption["selected_category"] == "wardrobe"
     assert record.caption["caption_variants"] == {"identity": "final"}
+    assert record.caption["refine"] == {"model": "qwen3:4b-instruct", "accepted": ["wardrobe"]}  # from caption.metadata
     assert record.load_bytes() == img.read_bytes()  # blob store miss falls back to the local uri
 
 
