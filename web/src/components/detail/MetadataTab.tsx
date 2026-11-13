@@ -4,6 +4,7 @@ import { assetUrl } from "@/lib/data";
 import type { Photo } from "@/lib/types";
 
 import { ExternalLink } from "../ExternalLink";
+import { LensDocLink } from "../LensDocLink";
 import { SectionTitle } from "../ui";
 
 function Row({ label, children }: { label: string; children: React.ReactNode }) {
@@ -33,7 +34,7 @@ function download(filename: string, text: string) {
   URL.revokeObjectURL(url);
 }
 
-export function MetadataTab({ photo }: { photo: Photo }) {
+export function MetadataTab({ photo, lensVersion }: { photo: Photo; lensVersion: string }) {
   const { exif, provenance, caption } = photo;
   const hasExif = Object.keys(exif).length > 0;
   const profile = (caption.profile ?? {}) as Record<string, string>;
@@ -98,7 +99,10 @@ export function MetadataTab({ photo }: { photo: Photo }) {
         <p className="mb-3 text-caption text-text-muted">
           What lens writes next to the source image: the caption as <code>.txt</code> for trainers, and an XMP sidecar
           (keywords + description) that Lightroom, digiKam and Immich ingest. XMP writes merge, so curator can add
-          faces and a content rating to the same file.
+          faces and a content rating to the same file.{" "}
+          <LensDocLink section="xmp" version={lensVersion}>
+            Lens XMP sidecar docs
+          </LensDocLink>
         </p>
         <div className="flex flex-wrap gap-2">
           <button
