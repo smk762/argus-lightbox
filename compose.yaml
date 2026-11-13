@@ -90,7 +90,10 @@ services:
     restart: unless-stopped
 
   lightbox:
-    build: .
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_DEFAULT_CAPTION: ${NEXT_PUBLIC_DEFAULT_CAPTION:-zeroshot}
     ports:
       - "${PORT:-3000}:3000"
     environment:

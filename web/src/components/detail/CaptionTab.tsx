@@ -1,9 +1,12 @@
 "use client";
 
+import { shownCaption } from "@/lib/caption";
 import { groupStyle } from "@/lib/categories";
+import { captionedBy, refineSummary } from "@/lib/lensDocs";
 import { tokenUse } from "@/lib/tokens";
 import type { Photo } from "@/lib/types";
 
+import { LensDocLink } from "../LensDocLink";
 import { CopyButton, GroupLabel, Highlight, SectionTitle } from "../ui";
 
 function TokenCount({ text, backend, alert = false }: { text: string; backend?: string; alert?: boolean }) {
@@ -23,12 +26,14 @@ const SPECIAL = ["training", "training_prose", "zeroshot"];
 export function CaptionTab({
   photo,
   categories,
+  lensVersion,
   terms,
   applying,
   onUse,
 }: {
   photo: Photo;
   categories: string[];
+  lensVersion: string;
   terms: string[];
   applying: boolean;
   onUse: (category: string) => void;
@@ -36,13 +41,30 @@ export function CaptionTab({
   const { caption } = photo;
   const backend = typeof caption.profile?.target_backend === "string" ? caption.profile.target_backend : undefined;
   const finalUse = tokenUse(caption.final_caption, backend);
+  const by = captionedBy(caption, lensVersion);
+  const refined = refineSummary(by);
   const keys = [
     ...categories.filter((c) => c in caption.caption_variants),
     ...SPECIAL.filter((c) => c in caption.caption_variants),
     ...Object.keys(caption.caption_variants).filter((c) => !categories.includes(c) && !SPECIAL.includes(c)),
   ];
+  const shown = shownCaption(caption);
   return (
     <div className="space-y-6">
+      {shown.variant !== "final" && (
+        <section>
+          <SectionTitle hint={`${groupStyle(shown.variant).label} variant, shown by default`}>Caption</SectionTitle>
+          <div className="rounded-md border border-accent-primary/60 bg-base-900 p-3">
+            <p className="text-body leading-relaxed">
+              <Highlight text={shown.text} terms={terms} />
+            </p>
+            <div className="mt-2 flex items-center justify-between gap-3">
+              <TokenCount text={shown.text} backend={backend} />
+              <CopyButton text={shown.text} />
+            </div>
+          </div>
+        </section>
+      )}
       <section>
         <SectionTitle hint={`selected variant: ${groupStyle(caption.selected_category).label}`}>
           Final caption
@@ -58,6 +80,28 @@ export function CaptionTab({
         </div>
         <p className="mt-2 text-caption text-text-muted">
           This is what lens writes to <code>{"<image>.txt"}</code> next to the source image.
+        </p>
+        <p className="mt-2 text-caption text-text-secondary">
+          Captioned by argus-lens {by.lensVersion}
+          {by.backend && (
+            <>
+              {" "}
+              with the <code>{by.backend}</code> backend
+            </>
+          )}
+          {refined && <>, {refined}</>}. Lens docs:{" "}
+          <LensDocLink section="features" version={lensVersion}>
+            backends
+          </LensDocLink>
+          {by.refineModel || by.refineSkipped ? (
+            <>
+              {" · "}
+              <LensDocLink section="refine" version={lensVersion}>
+                refinement
+              </LensDocLink>
+            </>
+          ) : null}
+          .
         </p>
       </section>
 

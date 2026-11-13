@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { groupStyle } from "@/lib/categories";
+import { browserStorage, defaultOpen, readOpenState, writeOpenState } from "@/lib/facetGroups";
 import { type FacetTerm, type Selection, activeCount } from "@/lib/filter";
 
 import { SuiteLinks } from "./SuiteLinks";
@@ -12,23 +13,52 @@ const COLLAPSED_LIMIT = 8;
 function FacetGroup({
   group,
   terms,
+  active,
   onToggle,
 }: {
   group: string;
   terms: FacetTerm[];
+  active: number;
   onToggle: (group: string, term: string) => void;
 }) {
   const [expanded, setExpanded] = useState(false);
+  // The viewer's remembered choice; undefined means "use the default for this group's length".
+  const [remembered, setRemembered] = useState<boolean | undefined>(() => readOpenState(browserStorage())[group]);
   const style = groupStyle(group);
   if (terms.length === 0) return null;
+  const open = remembered ?? defaultOpen(group, terms.length);
   const visible = expanded ? terms : terms.slice(0, COLLAPSED_LIMIT);
   return (
-    <div role="group" aria-labelledby={`facet-${group}`} className="border-t border-base-700 py-4 first:border-t-0">
-      <h3 id={`facet-${group}`} className="mb-2 flex items-center gap-2" title={style.blurb}>
+    <details
+      open={open}
+      onToggle={(event) => {
+        const next = event.currentTarget.open;
+        if (next === open) return; // React re-applying `open`, not the viewer
+        setRemembered(next);
+        writeOpenState(browserStorage(), group, next);
+      }}
+      className="group/facet border-t border-base-700 py-3 first:border-t-0"
+    >
+      <summary
+        title={style.blurb}
+        className="flex cursor-pointer list-none items-center gap-2 rounded-sm px-1 py-1 hover:bg-base-700 [&::-webkit-details-marker]:hidden"
+      >
+        <span
+          aria-hidden
+          className="inline-block w-3 text-caption text-text-muted transition-transform group-open/facet:rotate-90"
+        >
+          ▸
+        </span>
         <span aria-hidden className="size-2.5 rounded-full" style={{ background: style.color }} />
-        <span className="font-display text-small font-semibold">{style.label}</span>
-      </h3>
-      <ul className="space-y-0.5">
+        <h3 className="font-display text-small font-semibold">{style.label}</h3>
+        {!open && active > 0 && (
+          <span className="ml-auto rounded-full bg-base-700 px-1.5 text-caption tabular-nums text-text-primary">
+            {active}
+            <span className="sr-only"> active {active === 1 ? "filter" : "filters"}</span>
+          </span>
+        )}
+      </summary>
+      <ul className="mt-1 space-y-0.5">
         {visible.map(({ term, count, selected }) => (
           <li key={term}>
             <label
@@ -58,7 +88,7 @@ function FacetGroup({
           {expanded ? "Show fewer" : `Show all ${terms.length}`}
         </button>
       )}
-    </div>
+    </details>
   );
 }
 
@@ -92,7 +122,13 @@ export function FacetSidebar({
         Category hints claim a tag when they can. Other ordinary tags are listed below.
       </p>
       {groups.map((group) => (
-        <FacetGroup key={group} group={group} terms={facets[group] ?? []} onToggle={onToggle} />
+        <FacetGroup
+          key={group}
+          group={group}
+          terms={facets[group] ?? []}
+          active={selection[group]?.length ?? 0}
+          onToggle={onToggle}
+        />
       ))}
       <SuiteLinks />
     </nav>

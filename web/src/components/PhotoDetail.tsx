@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
+import { shownCaption } from "@/lib/caption";
 import { assetUrl } from "@/lib/data";
 import { swipeStep } from "@/lib/gesture";
 import type { Photo } from "@/lib/types";
@@ -23,6 +24,7 @@ export function PhotoDetail({
   photo,
   position,
   categories,
+  lensVersion,
   terms,
   applying,
   onClose,
@@ -32,6 +34,7 @@ export function PhotoDetail({
   photo: Photo;
   position: { index: number; total: number };
   categories: string[];
+  lensVersion: string;
   terms: string[];
   applying: boolean;
   onClose: () => void;
@@ -107,7 +110,7 @@ export function PhotoDetail({
         void requestClose();
       }}
       onClick={(e) => e.target === dialog.current && void requestClose()}
-      aria-label={photo.caption.final_caption}
+      aria-label={shownCaption(photo.caption).text}
       className="photo-detail m-0 h-dvh max-h-none w-screen max-w-none bg-transparent p-0 text-text-primary"
     >
       <div className="flex h-full flex-col lg:flex-row">
@@ -133,7 +136,7 @@ export function PhotoDetail({
           <img
             key={photo.id}
             src={assetUrl(photo.image)}
-            alt={photo.caption.final_caption}
+            alt={shownCaption(photo.caption).text}
             width={photo.width}
             height={photo.height}
             fetchPriority="high"
@@ -192,11 +195,20 @@ export function PhotoDetail({
             className="min-h-0 flex-1 overflow-y-auto p-5"
           >
             {tab === "caption" && (
-              <CaptionTab photo={photo} categories={categories} terms={terms} applying={applying} onUse={onUseCaption} />
+              <CaptionTab
+                photo={photo}
+                categories={categories}
+                lensVersion={lensVersion}
+                terms={terms}
+                applying={applying}
+                onUse={onUseCaption}
+              />
             )}
-            {tab === "explain" && <ExplainTab key={photo.id} photo={photo} categories={categories} />}
-            {tab === "compare" && <CompareTab photo={photo} />}
-            {tab === "metadata" && <MetadataTab photo={photo} />}
+            {tab === "explain" && (
+              <ExplainTab key={photo.id} photo={photo} categories={categories} lensVersion={lensVersion} />
+            )}
+            {tab === "compare" && <CompareTab photo={photo} lensVersion={lensVersion} />}
+            {tab === "metadata" && <MetadataTab photo={photo} lensVersion={lensVersion} />}
           </div>
         </aside>
       </div>

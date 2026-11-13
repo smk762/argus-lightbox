@@ -22,6 +22,7 @@ It's the standalone demo for argus-lens. The full pipeline UI is [Argus Studio](
 - **Compare.** The same raw output assembled tags-only, prose-only and hybrid. No model is re-run, which shows that the value is in the assembly, not the model.
 - **Metadata and sidecars.** EXIF (camera, lens, exposure; **never GPS**), provenance and licence, and the two sidecars lens writes: the `.txt` caption trainers read, and an XMP file (keywords + description) for Lightroom, digiKam and Immich.
 - **Word cloud.** The most frequent caption words or tags, counted over the current filter or the whole set, with an **Export histogram** button that saves the counts as CSV. Its state is in the URL too (`cloud=1`, `words=tags`, `scope=source`).
+- **Lens docs.** A `/docs` page names the lens version the gallery was captioned with and links to lens's docs at that version: the release tag, or the commit for a dev build. The detail tabs say which lens version, backend and refine model captioned each photo, taken from the recorded caption, and link to the matching lens section.
 
 Face grouping and content rating are left out. They are the curator demo, [argus-cull](https://github.com/smk762/argus-cull). This gallery only links there.
 
@@ -119,7 +120,7 @@ The choice rewrites the photo's `final_caption` and `selected_category` in `inde
 
 `make build` writes a static site to `web/out/`. Serve it from anything.
 
-The hosted demo at https://lightbox.dragonhound.dev is `make pages`: the same export, reading the committed tape bake in `web/public/data-tape/` (29 public-domain/CC0 Commons photos from the halo tape), with the demo banner and absolute OG URLs. Those photos were re-captioned with argus-lens 0.10.0 on CPU: hybrid RAM++ tags plus `qwen3-vl:2b-instruct` prose through Ollama (`straightforward` prompt), with the identity caption refined by `qwen3:4b-instruct`. The results are recorded as version-2 `caption` rows beside the tape's original WD14 rows, so the bake displays them and recomposition agrees (no `explain.drift`). `.github/workflows/pages.yml` runs it on every push to `main` and uploads `web/out/` with `wrangler pages deploy`. After a change to the bake or a lens bump, re-run `make tape` against the tape's stores and commit `web/public/data-tape/`.
+The hosted demo at https://lightbox.dragonhound.dev is `make pages`: the same export, reading the committed tape bake in `web/public/data-tape/`, with the demo banner and absolute OG URLs. The tape holds 205 photos: 202 recent Flickr photos from [argus-quarry](https://github.com/smk762/argus-quarry)'s Megalith-10m archive plus 3 kept from the earlier Commons set. Each one's licence was re-checked against Flickr at selection time (only CC0, the Public Domain Mark and US Government works were kept), and its source page, author and licence are on the photo's Metadata tab. The set was chosen for variety: caption-term queries across landscapes, cities, wildlife, plants, food, objects, vehicles, interiors, night, weather, abstract and a few crowd scenes, mostly colour; near-duplicates were dropped by perceptual hash and CLIP similarity, and CLIP k-means picked one photo per cluster within each subject, followed by a manual review. They were captioned with argus-lens main plus the caption-quality PRs #90–#94 (reported as `0.10.0+pr90.94`) on a GPU: hybrid RAM++ tags plus `qwen3-vl:2b-instruct` prose through Ollama (`grounded` prompt), with the identity caption refined by `qwen3:4b-instruct`. The captions are recorded as `caption` rows in a cortex lineage store, and the bake recomposes them with the same lens build, so there is no `explain.drift`. Megalith's Flickr renditions carry no EXIF, so the camera facet is empty for this set. `.github/workflows/pages.yml` runs it on every push to `main` and uploads `web/out/` with `wrangler pages deploy`. After a change to the bake or a lens bump, re-run `make tape` against the tape's stores and commit `web/public/data-tape/`.
 
 | Variable | Default | Purpose |
 |---|---|---|
@@ -129,6 +130,7 @@ The hosted demo at https://lightbox.dragonhound.dev is `make pages`: the same ex
 | `NEXT_PUBLIC_CURATOR_URL` | argus-cull repo | The faces / content-rating cross-link. |
 | `NEXT_PUBLIC_DEMO_BANNER` | (none) | Any value shows the "demo on recorded data" strip at the top. |
 | `NEXT_PUBLIC_SITE_URL` | (none) | Absolute origin for `og:image` and the canonical link. |
+| `NEXT_PUBLIC_DEFAULT_CAPTION` | `zeroshot` | The caption variant the grid and the photo view show first, or `final` for lens's own pick (`final_caption`). A photo without that variant shows its final caption. Display only: the recorded `final_caption`, the `.txt` download and the XMP sidecar don't change. Compose passes it as a build arg from `.env`. |
 
 These are build-time variables (inlined by Next.js), so rebuild after changing them.
 

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { flushSync } from "react-dom";
+import Link from "next/link";
 
 import { groupStyle } from "@/lib/categories";
 import { loadIndex, loadStatus } from "@/lib/data";
@@ -270,14 +271,21 @@ export function Lightbox() {
             structured caption.
           </p>
         </div>
-        {index && badge && (
-          <div className="flex items-center gap-2 text-caption text-text-secondary">
-            <span className={`rounded-full px-2.5 py-1 ${badge.tone}`} title={badge.title}>
-              {badge.label}
-            </span>
-            <span>lens {index.lens_version}</span>
-          </div>
-        )}
+        <div className="flex flex-wrap items-center gap-3 text-caption text-text-secondary">
+          {index && badge && (
+            <>
+              <span className={`rounded-full px-2.5 py-1 ${badge.tone}`} title={badge.title}>
+                {badge.label}
+              </span>
+              <span>lens {index.lens_version}</span>
+            </>
+          )}
+          <nav aria-label="Site">
+            <Link href="/docs/" className="text-accent-tertiary underline underline-offset-2 hover:decoration-2">
+              Docs
+            </Link>
+          </nav>
+        </div>
       </header>
 
       <div className="flex flex-1 flex-col gap-4 pb-10 md:flex-row md:gap-6">
@@ -312,7 +320,7 @@ export function Lightbox() {
                 setPage(0);
                 update({ ...view, query: e.target.value });
               }}
-              placeholder="Search captions: “red dress beach”, “neon”, “reading”…"
+              placeholder="Search captions: “snow mountain”, “neon night”, “harbor boats”, “typewriter”…"
               aria-label="Search captions"
               className="w-full rounded-md border border-base-600 bg-base-800 px-4 py-2.5 text-body placeholder:text-text-muted focus:border-accent-primary focus:outline-none"
             />
@@ -482,11 +490,21 @@ export function Lightbox() {
         </main>
       </div>
 
+      <footer className="flex flex-wrap gap-x-4 gap-y-1 border-t border-base-700 py-4 text-caption text-text-secondary">
+        <Link href="/docs/" className="text-accent-tertiary underline underline-offset-2 hover:decoration-2">
+          Docs
+        </Link>
+        <ExternalLink href="https://github.com/smk762/argus-lightbox" className="text-accent-tertiary underline underline-offset-2 hover:decoration-2">
+          argus-lightbox on GitHub
+        </ExternalLink>
+      </footer>
+
       {openPhoto && index && (
         <PhotoDetail
           photo={openPhoto}
           position={{ index: Math.max(openIndex, 0), total: Math.max(filtered.length, 1) }}
           categories={index.categories}
+          lensVersion={index.lens_version}
           terms={terms}
           applying={applying}
           onClose={() => {
