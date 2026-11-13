@@ -7,8 +7,11 @@ const REPO_URL = "https://github.com/smk762/argus-lightbox";
 export function DemoBanner() {
   if (!process.env.NEXT_PUBLIC_DEMO_BANNER) return null;
   return (
-    <div className="border-b border-base-700 bg-base-800 px-4 py-1.5 text-center text-caption text-text-secondary sm:px-6">
-      <span className="text-text-primary">Argus Lightbox</span> — demo on recorded data ·{" "}
+    // One line at phone width: the long label is sm+ only, and nothing wraps.
+    <div className="whitespace-nowrap border-b border-base-700 bg-base-800 px-4 py-1.5 text-center text-caption text-text-secondary sm:px-6">
+      <span className="text-text-primary">Argus Lightbox</span>
+      <span className="hidden sm:inline"> — demo on recorded data</span>
+      <span className="sm:hidden"> demo</span> ·{" "}
       <a className="text-accent-tertiary hover:underline" href={ORG_URL}>
         Dragonhound Labs
       </a>{" "}
