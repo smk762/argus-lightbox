@@ -117,7 +117,7 @@ The hosted demo at https://lightbox.dragonhound.dev is `make pages`: the same ex
 
 These are build-time variables (inlined by Next.js), so rebuild after changing them.
 
-`npm run build` also gives every page a strict, hash-based Content-Security-Policy (`web/scripts/csp.mjs`). It adds a `<meta>` that lists the sha256 of each inline script Next emitted and allows `NEXT_PUBLIC_DATA_URL`'s origin for fetches and images. It also writes `out/_headers` (Cloudflare Pages / Netlify format) for what a `<meta>` can't set: `frame-ancestors 'none'`, `X-Frame-Options`, `nosniff`, `Referrer-Policy` and `Permissions-Policy`. On another host, send those headers yourself.
+`npm run build` also gives every page a strict, hash-based Content-Security-Policy (`web/scripts/csp.mjs`). It adds a `<meta>` that lists the sha256 of each inline script Next emitted and allows `NEXT_PUBLIC_DATA_URL`'s origin for fetches and images. Trusted Types is enforced, with one `default` policy that lets Next load its own `/_next/static/` chunks and nothing else. It also writes `out/_headers` (Cloudflare Pages / Netlify format) for what a `<meta>` can't set: `frame-ancestors 'none'`, `X-Frame-Options`, `nosniff`, `Referrer-Policy`, `Permissions-Policy` and `Cross-Origin-Opener-Policy`, plus a year of immutable caching for the content-hashed `/_next/static/` files. On another host, send those headers yourself.
 
 ## Develop
 

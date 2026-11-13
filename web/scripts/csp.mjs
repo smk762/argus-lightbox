@@ -8,6 +8,14 @@
 // React. Directives a <meta> CSP can't carry (frame-ancestors) go in out/_headers,
 // which Cloudflare Pages and Netlify read; other hosts should send the same.
 //
+// Trusted Types: Turbopack's chunk loader (and React's script preinit) assign
+// plain strings to script.src, which `require-trusted-types-for 'script'` blocks;
+// a <Link> prefetch on the 404 page hit it. Next only ships a policy for webpack
+// builds, so each page gets a `default` policy, inline and first in <head>, that
+// accepts same-origin `${basePath}/_next/static/**.js` script URLs and rejects
+// everything else. It has no createHTML or createScript, so HTML and script sinks
+// stay blocked, and `trusted-types default` allows no other policy name.
+//
 //   node scripts/csp.mjs [outDir]   (run by `npm run build`)
 import { createHash } from "node:crypto";
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -30,6 +38,20 @@ export function dataOrigin(url) {
   return new URL(url).origin;
 }
 
+/**
+ * @param {string} basePath NEXT_PUBLIC_BASE_PATH ("" at the root)
+ * @returns {string} The inline script that registers the `default` Trusted Types policy. It returns
+ *   an accepted URL unchanged: Turbopack finds its chunk scripts by their exact src attribute.
+ */
+export function trustedTypesPolicy(basePath = "") {
+  const prefix = JSON.stringify(`${basePath.replace(/\/+$/, "")}/_next/static/`);
+  return (
+    `if(self.trustedTypes)trustedTypes.createPolicy("default",{createScriptURL(s){` +
+    `const u=new URL(s,location.href);` +
+    `return u.origin===location.origin&&u.pathname.startsWith(${prefix})&&u.pathname.endsWith(".js")?s:null}})`
+  );
+}
+
 /** @param {string[]} hashes @param {string} data extra origin for index.json and renditions ("" = same origin) */
 export function policy(hashes, data = "") {
   const self = data ? `'self' ${data}` : "'self'";
@@ -44,31 +66,39 @@ export function policy(hashes, data = "") {
     "base-uri 'none'",
     "form-action 'none'",
     "require-trusted-types-for 'script'",
-    "trusted-types 'none'",
+    "trusted-types default",
   ].join("; ");
 }
 
 /**
- * @param {string} html @param {string} data
- * @returns {string} html with the CSP <meta> ahead of any script: right after <meta charset>
- *   (which has to stay within the first 1024 bytes), else first in <head>.
+ * @param {string} html @param {string} data @param {string} basePath
+ * @returns {string} html with the CSP <meta>, then the Trusted Types policy script, ahead of any
+ *   other script: right after <meta charset> (which has to stay within the first 1024 bytes),
+ *   else first in <head>.
  */
-export function withCsp(html, data = "") {
+export function withCsp(html, data = "", basePath = "") {
   if (html.includes('http-equiv="Content-Security-Policy"')) throw new Error("page already has a CSP <meta>");
-  const meta = `<meta http-equiv="Content-Security-Policy" content="${policy(inlineScriptHashes(html), data)}"/>`;
   const anchor = /<meta charset=[^>]*>/i.exec(html) ?? /<head[^>]*>/i.exec(html);
   if (!anchor) throw new Error("no <head> to put the CSP in");
   const end = anchor.index + anchor[0].length;
-  return html.slice(0, end) + meta + html.slice(end);
+  const tt = `<script>${trustedTypesPolicy(basePath)}</script>`;
+  const meta = `<meta http-equiv="Content-Security-Policy" content="${policy(inlineScriptHashes(tt + html), data)}"/>`;
+  return html.slice(0, end) + meta + tt + html.slice(end);
 }
 
 // Response headers for hosts that read a _headers file. frame-ancestors only works as a header.
-export const HEADERS = `/*
+// Next's /_next/static/ files are content-hashed, so they can be cached for good.
+/** @param {string} basePath @returns {string} the _headers file */
+export const headers = (basePath = "") => `/*
   Content-Security-Policy: frame-ancestors 'none'
   X-Frame-Options: DENY
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), geolocation=(), microphone=()
+  Cross-Origin-Opener-Policy: same-origin-allow-popups
+
+${basePath.replace(/\/+$/, "")}/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
 `;
 
 function htmlFiles(dir) {
@@ -80,8 +110,9 @@ function htmlFiles(dir) {
 if (import.meta.url === `file://${process.argv[1]}`) {
   const out = process.argv[2] ?? "out";
   const data = dataOrigin(process.env.NEXT_PUBLIC_DATA_URL);
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
   const files = htmlFiles(out);
-  for (const file of files) writeFileSync(file, withCsp(readFileSync(file, "utf8"), data));
-  writeFileSync(join(out, "_headers"), HEADERS);
+  for (const file of files) writeFileSync(file, withCsp(readFileSync(file, "utf8"), data, basePath));
+  writeFileSync(join(out, "_headers"), headers(basePath));
   console.log(`csp: ${files.length} page(s)${data ? `, data from ${data}` : ""}`);
 }
