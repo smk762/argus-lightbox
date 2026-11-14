@@ -20,7 +20,7 @@
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">seawall, city wall, lighthouse, people</rdf:li>
+     <rdf:li xml:lang="x-default">coast, water, city, building, lighthouse, seawall, dock</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>

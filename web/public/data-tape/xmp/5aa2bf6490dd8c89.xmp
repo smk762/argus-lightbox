@@ -23,7 +23,7 @@
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">carrot, tomato, pepper, stew, curry, vegetable, tray, platter, container, kitchenware</rdf:li>
+     <rdf:li xml:lang="x-default">curry, carrot, pepper, vegetable, tray, platter, kitchenware</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>

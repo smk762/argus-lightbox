@@ -25,7 +25,7 @@
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">boat, sailboat, harbor, dock, vessel, water, shore</rdf:li>
+     <rdf:li xml:lang="x-default">boat, sailboat, dock, harbor, vessel</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>

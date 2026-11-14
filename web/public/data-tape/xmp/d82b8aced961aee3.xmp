@@ -23,7 +23,7 @@
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">container ship, cargo ship, vessel, sail</rdf:li>
+     <rdf:li xml:lang="x-default">container ship, cargo ship, vessel</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>

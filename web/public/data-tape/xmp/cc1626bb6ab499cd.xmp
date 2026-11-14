@@ -12,6 +12,11 @@
      <rdf:li>neon</rdf:li>
     </rdf:Bag>
    </dc:subject>
+   <dc:description>
+    <rdf:Alt>
+     <rdf:li xml:lang="x-default">neon sign, building, city</rdf:li>
+    </rdf:Alt>
+   </dc:description>
   </rdf:Description>
  </rdf:RDF>
 </x:xmpmeta>

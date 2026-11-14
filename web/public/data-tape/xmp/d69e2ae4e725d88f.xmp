@@ -20,7 +20,7 @@
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">road, car, park, building, city street, street scene, street sign, alley</rdf:li>
+     <rdf:li xml:lang="x-default">road, car, building, city street, street scene</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>

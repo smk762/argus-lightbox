@@ -19,7 +19,7 @@
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">blue van, police van, person, crowd</rdf:li>
+     <rdf:li xml:lang="x-default">person, blue van, crowd</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>

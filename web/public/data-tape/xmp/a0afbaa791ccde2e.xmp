@@ -26,7 +26,7 @@
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">man, woman, couple, hiker, mountain, cliff, canyon</rdf:li>
+     <rdf:li xml:lang="x-default">man, woman, hiker, couple</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>

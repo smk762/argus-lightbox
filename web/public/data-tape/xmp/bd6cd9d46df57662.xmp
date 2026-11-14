@@ -21,7 +21,7 @@
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">road, car, building, street scene, city street, corner</rdf:li>
+     <rdf:li xml:lang="x-default">road, car, building, street scene, city street, street corner</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>

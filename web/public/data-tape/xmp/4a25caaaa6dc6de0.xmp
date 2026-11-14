@@ -23,7 +23,7 @@
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">food, container, meat, vegetable, green, kale, lettuce, tofu, cheese, salad, potato</rdf:li>
+     <rdf:li xml:lang="x-default">meat, vegetable, kale, salad, tofu, lettuce, clear container, potato, cheese</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>

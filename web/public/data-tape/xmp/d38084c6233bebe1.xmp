@@ -19,7 +19,7 @@
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">rainbow, car, city, building, park</rdf:li>
+     <rdf:li xml:lang="x-default">rainbow, car, building, city, park</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>

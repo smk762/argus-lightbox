@@ -20,7 +20,7 @@
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">boat, harbor, building, city, train track, water</rdf:li>
+     <rdf:li xml:lang="x-default">boat, harbor, train track, vessel, city, water, sea</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>

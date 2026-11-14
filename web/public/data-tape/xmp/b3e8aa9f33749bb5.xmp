@@ -20,7 +20,7 @@
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">tent, camp, campsite, bridge, city, grass, fence, park, urban</rdf:li>
+     <rdf:li xml:lang="x-default">tent, camp, campsite, bridge, city, grass, fence, park</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>

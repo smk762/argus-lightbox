@@ -18,7 +18,7 @@
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">star, nebula, galaxy, cloud, space</rdf:li>
+     <rdf:li xml:lang="x-default">nebula, galaxy, star, space, dust, cloud</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>

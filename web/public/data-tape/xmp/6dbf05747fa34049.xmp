@@ -23,7 +23,7 @@
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">sun, cloud, mountain, sea, sky, horizon</rdf:li>
+     <rdf:li xml:lang="x-default">cloud, sun, mountain, sky, sea, peak, hill, horizon</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>

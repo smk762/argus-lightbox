@@ -17,7 +17,7 @@
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">person, walk, theater, plaza</rdf:li>
+     <rdf:li xml:lang="x-default">building, city, car, street scene</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>

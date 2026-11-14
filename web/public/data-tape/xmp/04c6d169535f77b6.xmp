@@ -18,7 +18,7 @@
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">red car, classic car, sports car, sedan, convertible, coupe</rdf:li>
+     <rdf:li xml:lang="x-default">red, classic, sports car, coupe</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>

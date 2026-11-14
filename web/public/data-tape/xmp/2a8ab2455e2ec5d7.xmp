@@ -22,7 +22,7 @@
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">library, bookshelf, sculpture, art, pillar, pole</rdf:li>
+     <rdf:li xml:lang="x-default">library, sculpture, bookshelf, art, pillar, pole</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>

@@ -19,7 +19,7 @@
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">city bus, tour bus, road, city street, bus stop, curb</rdf:li>
+     <rdf:li xml:lang="x-default">city bus, tour bus, bus stop</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>

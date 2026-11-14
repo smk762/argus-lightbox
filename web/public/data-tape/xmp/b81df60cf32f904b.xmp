@@ -19,7 +19,7 @@
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">firework, red, city, town</rdf:li>
+     <rdf:li xml:lang="x-default">firework, red, town, city, building</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>

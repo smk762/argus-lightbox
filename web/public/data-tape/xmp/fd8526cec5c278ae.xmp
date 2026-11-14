@@ -21,7 +21,7 @@
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">building, water, tree, car, city, sky, reflection, urban</rdf:li>
+     <rdf:li xml:lang="x-default">building, tree, city, car, water, reflection</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>

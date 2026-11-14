@@ -23,7 +23,7 @@
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">tram, black, yellow, track, passenger train, train car</rdf:li>
+     <rdf:li xml:lang="x-default">yellow, black, passenger train, train car</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>

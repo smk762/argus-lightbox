@@ -23,7 +23,7 @@
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">tree, forest, branch, mushroom, spider web, bat</rdf:li>
+     <rdf:li xml:lang="x-default">tree, forest, branch, bat, debris, spider web</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>
