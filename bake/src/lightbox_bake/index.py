@@ -3,13 +3,15 @@
 Shape (``version`` 1.x)::
 
     {
-      "version": "1.1", "generated_at": ISO-8601, "source": "fixture" | "tape" | "folder",
+      "version": "1.2", "generated_at": ISO-8601, "source": "fixture" | "tape" | "folder",
       "lens_version": "0.7.0", "categories": ["identity", ...],
       "queue": 12,   # optional; folder bakes only. Images not yet captioned. 0 when the bake finished.
       "caption_params": {...},  # optional (1.1); the run settings every photo's caption was recorded with
                                 # (e.g. prose_model, prose_prompt), present only when all photos agree.
       "photos": [{
         "id", "sha256", "image", "thumb", "xmp", "width", "height", "color",
+        "thumbs": [{"src", "width"}],  # optional (1.2); grid thumbnails narrowest first, for srcset.
+                                       # The last is ``thumb``. ``width``/``height`` above are the display image's.
         "caption":  CaptionResult fields (final_caption, caption_variants, raw_tags, raw_prose,
                     backend_name, selected_category) + profile, version,
                     optional refine {model, accepted, skipped}             # as recorded
@@ -38,10 +40,11 @@ from pathlib import Path
 
 import argus_lens
 from argus_lens.connectors.xmp import XmpSink
+from PIL import Image
 
 from lightbox_bake import INDEX_VERSION
 from lightbox_bake.explain import CATEGORIES, explain
-from lightbox_bake.images import render
+from lightbox_bake.images import THUMB_WIDTHS, decode, render, thumb_set
 from lightbox_bake.sources import SourceRecord
 
 
@@ -119,6 +122,7 @@ def render_photo(record: SourceRecord, out_dir: Path) -> tuple[dict | None, str 
         "sha256": sha256,
         "image": rendition.image,
         "thumb": rendition.thumb,
+        "thumbs": rendition.thumbs,
         "xmp": _write_xmp(out_dir, photo_id, record.caption),
         "width": rendition.width,
         "height": rendition.height,
@@ -283,9 +287,59 @@ def _write_xmp(out_dir: Path, photo_id: str, caption: dict) -> str:
     return f"xmp/{photo_id}.xmp"
 
 
+def regenerate_thumbs(out_dir: Path, blobs: Path) -> tuple[int, list[str]]:
+    """Write the narrower grid thumbnails for an existing bake and record them as ``thumbs`` in its index.
+
+    The source image of each photo is ``<blobs>/<sha256>``, checked against its hash. Nothing else in
+    ``index.json`` changes apart from ``version`` (raised to this bake's 1.x when lower): captions, explain
+    data, ``generated_at`` and the XMP sidecars are left as they are, so a new thumbnail width does not mean
+    re-captioning. Returns ``(updated, skipped reasons)``.
+    """
+    path = out_dir / "index.json"
+    index = json.loads(path.read_text(encoding="utf-8"))
+    skipped: list[str] = []
+    updated = 0
+    photos: list[dict] = []
+    for photo in index["photos"]:
+        photo_id, sha256 = str(photo["id"]), str(photo.get("sha256") or "")
+        source = blobs / sha256
+        raw = source.read_bytes() if sha256 and source.is_file() else None
+        if raw is None or hashlib.sha256(raw).hexdigest() != sha256:
+            skipped.append(f"{photo_id}: no source image matching sha256 {sha256[:16]}")
+            photos.append(photo)
+            continue
+        with Image.open(out_dir / photo["thumb"]) as thumb:
+            thumb_width = thumb.width
+        img, _ = decode(raw)
+        thumbs = thumb_set(img, out_dir, photo_id, thumb_width)
+        rebuilt: dict = {}
+        for key, value in photo.items():
+            if key != "thumbs":
+                rebuilt[key] = value
+            if key == "thumb":
+                rebuilt["thumbs"] = thumbs
+        photos.append(rebuilt)
+        updated += 1
+    index["photos"] = photos
+    if _version_key(str(index.get("version", ""))) < _version_key(INDEX_VERSION):
+        index["version"] = INDEX_VERSION
+    _prune(out_dir, {str(photo["id"]) for photo in photos})
+    _atomic_json(path, index)
+    return updated, skipped
+
+
+def _version_key(version: str) -> tuple[int, ...]:
+    try:
+        return tuple(int(part) for part in version.split("."))
+    except ValueError:
+        return ()
+
+
 def _prune(out_dir: Path, keep: set[str]) -> None:
     """Drop renditions left over from a previous bake (only inside our own subdirs)."""
-    for sub, pattern in (("images", "*.webp"), ("thumbs", "*.webp"), ("xmp", "*.xmp")):
+    subs = [("images", "*.webp"), ("thumbs", "*.webp"), ("xmp", "*.xmp")]
+    subs += [(f"thumbs/{width}", "*.webp") for width in THUMB_WIDTHS]
+    for sub, pattern in subs:
         for path in (out_dir / sub).glob(pattern):
             if path.stem not in keep:
                 path.unlink()

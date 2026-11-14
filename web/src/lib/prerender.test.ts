@@ -10,7 +10,7 @@ import { shownCaption } from "./caption";
 import { EXTRA_GROUPS, facetCounts } from "./filter";
 import { isFamilyUrl } from "./links";
 import { buildTimeIndex, gridCard, prerenderGallery } from "./prerender";
-import { thumbLoading } from "./thumbs";
+import { THUMB_SIZES, thumbLoading, thumbSrcSet } from "./thumbs";
 import type { GalleryIndex } from "./types";
 
 const fixture = JSON.parse(
@@ -44,6 +44,7 @@ describe("split-index", () => {
     const byId = new Map(details);
     expect(list.photos.map((p) => ({ ...p, ...byId.get(p.id) }))).toEqual(fixture.photos);
     expect(fixture.photos[0]).toHaveProperty("explain"); // the input is untouched
+    expect(list.photos[0].thumbs).toEqual(fixture.photos[0].thumbs); // srcset renditions stay in the list
   });
 
   it("refuses a photo id that isn't a safe file name", () => {
@@ -65,8 +66,10 @@ describe("prerender", () => {
     expect(page.firstPage.map((c) => c.id)).toEqual(fixture.photos.slice(0, 5).map((p) => p.id));
     const card = gridCard(fixture.photos[0]);
     expect(Object.keys(card).sort()).toEqual(
-      ["caption", "color", "exif", "facets", "height", "id", "provenance", "thumb", "width"].sort(),
+      ["caption", "color", "exif", "facets", "height", "id", "provenance", "thumb", "thumbs", "width"].sort(),
     );
+    expect(card.thumbs).toEqual(fixture.photos[0].thumbs);
+    expect(gridCard({ ...fixture.photos[0], thumbs: undefined })).not.toHaveProperty("thumbs"); // a bake before index 1.2
     expect(shownCaption(card.caption).text).toBe(shownCaption(fixture.photos[0].caption).text);
     expect(page.meta).not.toHaveProperty("photos");
   });
@@ -94,6 +97,27 @@ describe("thumbLoading", () => {
   it("copes with an empty page and missing sizes", () => {
     expect(thumbLoading([])).toEqual([]);
     expect(thumbLoading([{ width: 0, height: 0 }])[0].eager).toBe(true);
+  });
+});
+
+describe("thumbSrcSet", () => {
+  it("lists every rendition with its width, and ends with the main thumbnail", () => {
+    const photo = fixture.photos[0];
+    expect(photo.thumbs?.at(-1)?.src).toBe(photo.thumb);
+    const set = thumbSrcSet(photo.thumbs, (p) => `/data/${p}`);
+    expect(set).toBe(photo.thumbs?.map((t) => `/data/${t.src} ${t.width}w`).join(", "));
+    expect(set).toMatch(/thumbs\/240\/\w+\.webp 240w/);
+  });
+
+  it("leaves srcset off for a bake with one thumbnail", () => {
+    expect(thumbSrcSet(undefined, String)).toBeUndefined();
+    expect(thumbSrcSet([{ src: "thumbs/a.webp", width: 480 }], String)).toBeUndefined();
+  });
+
+  it("sizes the image to a grid column at every breakpoint", () => {
+    // The mobile default is half the viewport less the page padding and column gap.
+    expect(THUMB_SIZES.split(", ").at(-1)).toBe("calc((100vw - 44px) / 2)");
+    expect(THUMB_SIZES).toContain("(min-width: 1536px)");
   });
 });
 

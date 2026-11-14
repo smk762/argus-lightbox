@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import hashlib
 import io
 import json
+import shutil
 import sys
 import types
 
@@ -11,8 +13,8 @@ from lightbox_bake.cli import main
 from lightbox_bake.exif import read_exif
 from lightbox_bake.explain import CATEGORIES, explain
 from lightbox_bake.fixture import SCENES, fixture_records
-from lightbox_bake.images import THUMB_MAX, render
-from lightbox_bake.index import CaptionChoiceError, build_index, choose_final_caption, write_gallery
+from lightbox_bake.images import THUMB_MAX, THUMB_WIDTHS, render
+from lightbox_bake.index import CaptionChoiceError, build_index, choose_final_caption, regenerate_thumbs, write_gallery
 from lightbox_bake.sources import SourceRecord, tape_records
 
 
@@ -135,8 +137,10 @@ def test_single_source_backend_has_no_compare() -> None:
 
 def test_build_index_writes_renditions_and_prunes(tmp_path) -> None:
     stale = tmp_path / "thumbs" / "deadbeefdeadbeef.webp"
-    stale.parent.mkdir(parents=True)
+    stale_small = tmp_path / "thumbs" / "240" / "deadbeefdeadbeef.webp"
+    stale_small.parent.mkdir(parents=True)
     stale.write_bytes(b"old")
+    stale_small.write_bytes(b"old")
 
     records = list(fixture_records())
     missing = SourceRecord(uri="file:///nope.jpg", caption=records[0].caption, load_bytes=lambda: None)
@@ -146,7 +150,7 @@ def test_build_index_writes_renditions_and_prunes(tmp_path) -> None:
     assert stats.baked == len(SCENES)
     assert len(stats.skipped) == 3  # the duplicate, the missing bytes, the unreadable image
     index = json.loads((tmp_path / "index.json").read_text())
-    assert index["version"] == "1.1" and index["source"] == "fixture"
+    assert index["version"] == "1.2" and index["source"] == "fixture"
     assert index["categories"] == CATEGORIES
     photo = index["photos"][0]
     for key in ("id", "image", "thumb", "width", "height", "color", "caption", "explain", "compare", "facets", "exif"):
@@ -156,7 +160,11 @@ def test_build_index_writes_renditions_and_prunes(tmp_path) -> None:
     assert "red dress" in xmp and photo["caption"]["final_caption"] in xmp
     assert max(photo["width"], photo["height"]) <= 2048
     assert "queue" not in index and not (tmp_path / "status.json").exists()
-    assert not stale.exists()
+    assert not stale.exists() and not stale_small.exists()
+    assert photo["thumbs"][-1]["src"] == photo["thumb"]
+    for entry in photo["thumbs"]:
+        with Image.open(tmp_path / entry["src"]) as thumb:
+            assert thumb.width == entry["width"]
 
 
 def test_thumbnail_long_side_is_capped_below_the_detail_image(tmp_path) -> None:
@@ -167,6 +175,64 @@ def test_thumbnail_long_side_is_capped_below_the_detail_image(tmp_path) -> None:
         assert max(thumb.size) <= THUMB_MAX < 1600
     with Image.open(tmp_path / rendition.image) as full:
         assert max(full.size) == 1600
+
+
+def test_narrower_thumbnails_are_written_by_width(tmp_path) -> None:
+    buf = io.BytesIO()
+    Image.new("RGB", (1600, 900), "#224466").save(buf, "JPEG")
+    landscape = render(buf.getvalue(), tmp_path, "abcdabcdabcdabcd")
+    assert [t["width"] for t in landscape.thumbs] == [*THUMB_WIDTHS, THUMB_MAX]
+    assert landscape.thumbs[0]["src"] == f"thumbs/{THUMB_WIDTHS[0]}/abcdabcdabcdabcd.webp"
+    with Image.open(tmp_path / landscape.thumbs[0]["src"]) as small:
+        assert small.size == (240, 135)
+
+    buf = io.BytesIO()
+    Image.new("RGB", (900, 1600), "#224466").save(buf, "JPEG")
+    portrait = render(buf.getvalue(), tmp_path, "ef01ef01ef01ef01")
+    # The 480 thumbnail of a portrait photo is 270 wide, so only narrower widths are added.
+    assert [t["width"] for t in portrait.thumbs] == [240, 270]
+
+
+def test_regenerate_thumbs_keeps_everything_else(tmp_path) -> None:
+    blobs = tmp_path / "blobs"
+    blobs.mkdir()
+    records = []
+    for i, colour in enumerate(("#224466", "#664422")):
+        buf = io.BytesIO()
+        Image.new("RGB", (1200 - i * 400, 800), colour).save(buf, "JPEG")
+        raw = buf.getvalue()
+        sha = hashlib.sha256(raw).hexdigest()
+        (blobs / sha).write_bytes(raw)
+        base = next(iter(fixture_records()))
+        records.append(SourceRecord(uri=f"file:///{i}.jpg", caption=base.caption, load_bytes=lambda raw=raw: raw))
+    out = tmp_path / "out"
+    build_index(records, out, source="tape")
+    index = json.loads((out / "index.json").read_text())
+    # An index from before 1.2: no thumbs, no narrow files.
+    index["version"] = "1.1"
+    for photo in index["photos"]:
+        del photo["thumbs"]
+    (out / "index.json").write_text(json.dumps(index))
+    shutil.rmtree(out / "thumbs" / "240")
+    shutil.rmtree(out / "thumbs" / "360")
+    xmp_before = {p.name: p.read_bytes() for p in (out / "xmp").iterdir()}
+    thumb_before = {p.name: p.read_bytes() for p in (out / "thumbs").glob("*.webp")}
+
+    (blobs / index["photos"][1]["sha256"]).write_bytes(b"tampered")
+    updated, skipped = regenerate_thumbs(out, blobs)
+
+    assert updated == 1 and len(skipped) == 1
+    after = json.loads((out / "index.json").read_text())
+    assert after["version"] == "1.2" and after["generated_at"] == index["generated_at"]
+    first, second = after["photos"]
+    assert list(first)[: list(first).index("thumbs") + 1][-2:] == ["thumb", "thumbs"]
+    assert [t["width"] for t in first["thumbs"]] == [240, 360, 480]
+    assert all((out / t["src"]).is_file() for t in first["thumbs"])
+    assert "thumbs" not in second
+    stripped = [{k: v for k, v in p.items() if k != "thumbs"} for p in after["photos"]]
+    assert stripped == index["photos"]
+    assert {p.name: p.read_bytes() for p in (out / "xmp").iterdir()} == xmp_before
+    assert {p.name: p.read_bytes() for p in (out / "thumbs").glob("*.webp")} == thumb_before
 
 
 def test_tape_records_maps_lineage_rows(monkeypatch, tmp_path) -> None:

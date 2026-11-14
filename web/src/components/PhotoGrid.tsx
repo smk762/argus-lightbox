@@ -6,7 +6,7 @@ import { shownCaption } from "@/lib/caption";
 import { groupStyle } from "@/lib/categories";
 import { assetUrl } from "@/lib/data";
 import { type Selection, photoTerms } from "@/lib/filter";
-import { thumbLoading } from "@/lib/thumbs";
+import { THUMB_SIZES, thumbLoading, thumbSrcSet } from "@/lib/thumbs";
 import type { GridPhoto } from "@/lib/types";
 
 function matchedTerms(photo: GridPhoto, selection: Selection): { group: string; term: string }[] {
@@ -47,6 +47,7 @@ export function PhotoGrid({
         const matches = matchedTerms(photo, selection);
         const label = photo.provenance.title || "photo";
         const shown = shownCaption(photo.caption).text;
+        const srcSet = thumbSrcSet(photo.thumbs, assetUrl);
         return (
           <li key={photo.id} className="relative mb-3 break-inside-avoid">
             <input
@@ -67,6 +68,9 @@ export function PhotoGrid({
             >
               {/* eslint-disable-next-line @next/next/no-img-element -- static export; thumbnails are pre-sized by the bake */}
               <img
+                // srcset before src: a phone column is ~175 CSS px, so it fetches the 240 or 360 px rendition.
+                srcSet={srcSet}
+                sizes={srcSet ? THUMB_SIZES : undefined}
                 src={assetUrl(photo.thumb)}
                 alt=""
                 // The first screen of every column loads eagerly; the column tops are the likeliest LCP.

@@ -4,13 +4,14 @@ All notable changes to this project are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-`index.json` has its own contract version (currently `1.1`), documented in `bake/src/lightbox_bake/index.py`.
+`index.json` has its own contract version (currently `1.2`), documented in `bake/src/lightbox_bake/index.py`.
 
 ## [Unreleased]
 
 ### Added
 
 - `index.json` 1.1 adds an optional `caption_params`: the run settings recorded with every caption (prose model, prompt preset, refine model), written only when all photos agree. `/docs` shows them under the lens version.
+- `index.json` 1.2 adds an optional per-photo `thumbs`: the grid thumbnail at 240 and 360 px wide as well as the 480 px one, narrowest first. The grid serves them with `srcset` and `sizes` matched to the column layout, so a phone downloads about a third of the thumbnail bytes it did. `lightbox-bake thumbs` adds them to an existing bake without re-captioning; the demo tape and the fixture were updated that way.
 
 ### Changed
 
