@@ -20,7 +20,7 @@
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">city, building, bell tower, spire, urban</rdf:li>
+     <rdf:li xml:lang="x-default">church, tower, spire, city, building, tree</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>

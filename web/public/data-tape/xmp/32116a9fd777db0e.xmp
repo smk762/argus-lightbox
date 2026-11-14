@@ -21,7 +21,7 @@
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">trolley, track, headlight, urban</rdf:li>
+     <rdf:li xml:lang="x-default">trolley, headlight, track</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>

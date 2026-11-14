@@ -22,7 +22,7 @@
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">factory, house, chimney, power station, town, hillside</rdf:li>
+     <rdf:li xml:lang="x-default">factory, house, town, chimney, power station, hut</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>

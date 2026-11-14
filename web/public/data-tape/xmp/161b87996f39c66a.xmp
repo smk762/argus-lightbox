@@ -22,7 +22,7 @@
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">coast, cliff, sea, water, stone, wave, rocky shore, rock formation</rdf:li>
+     <rdf:li xml:lang="x-default">coast, cliff, water, stone, wave, rocky, shoreline, shore</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>

@@ -146,7 +146,7 @@ def test_build_index_writes_renditions_and_prunes(tmp_path) -> None:
     assert stats.baked == len(SCENES)
     assert len(stats.skipped) == 3  # the duplicate, the missing bytes, the unreadable image
     index = json.loads((tmp_path / "index.json").read_text())
-    assert index["version"] == "1.0" and index["source"] == "fixture"
+    assert index["version"] == "1.1" and index["source"] == "fixture"
     assert index["categories"] == CATEGORIES
     photo = index["photos"][0]
     for key in ("id", "image", "thumb", "width", "height", "color", "caption", "explain", "compare", "facets", "exif"):
@@ -175,7 +175,8 @@ def test_tape_records_maps_lineage_rows(monkeypatch, tmp_path) -> None:
     row = (str(img), "ab" * 32, {"license": "CC0-1.0", "author": "Ada", "internal": "x"},
            "final", {"identity": "final"}, "1girl, red dress", "A woman.", "hybrid",
            {"target_category": "wardrobe"}, 2,
-           {"refine": {"model": "qwen3:4b-instruct", "accepted": ["wardrobe"], "extra": 1}})  # fmt: skip
+           {"refine": {"model": "qwen3:4b-instruct", "accepted": ["wardrobe"], "extra": 1}},
+           {"prose_prompt": "straightforward"})  # fmt: skip
     executed = {}
 
     class Cursor:
@@ -212,6 +213,20 @@ def test_tape_records_maps_lineage_rows(monkeypatch, tmp_path) -> None:
     assert record.caption["caption_variants"] == {"identity": "final"}
     assert record.caption["refine"] == {"model": "qwen3:4b-instruct", "accepted": ["wardrobe"]}  # from caption.metadata
     assert record.load_bytes() == img.read_bytes()  # blob store miss falls back to the local uri
+    assert record.params == {"prose_prompt": "straightforward"}
+
+
+def test_build_index_records_params_only_when_every_photo_agrees(tmp_path) -> None:
+    records = list(fixture_records())[:2]
+    for record in records:
+        record.params = {"prose_model": "qwen3-vl:2b-instruct", "prose_prompt": "straightforward"}
+    build_index(records, tmp_path, source="tape")
+    index = json.loads((tmp_path / "index.json").read_text())
+    assert index["caption_params"] == {"prose_model": "qwen3-vl:2b-instruct", "prose_prompt": "straightforward"}
+
+    records[1].params = {"prose_model": "qwen3-vl:2b-instruct", "prose_prompt": "detailed"}
+    build_index(records, tmp_path, source="tape")
+    assert "caption_params" not in json.loads((tmp_path / "index.json").read_text())
 
 
 def test_provenance_maps_quarry_spelling() -> None:

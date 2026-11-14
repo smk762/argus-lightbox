@@ -22,7 +22,7 @@
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">plate, noodle, food, vegetable, pasta, cheese, pepper, topping</rdf:li>
+     <rdf:li xml:lang="x-default">plate, noodle, vegetable, food, pasta, cheese, pepper, topping</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>

@@ -75,6 +75,20 @@ export interface GalleryIndex {
   photos: Photo[];
   /** Folder bakes: images not in `photos` yet. Absent once a fixture or tape bake is written. */
   queue?: number;
+  /** Index 1.1+: the run settings every caption was recorded with, when all photos agree. */
+  caption_params?: CaptionParams;
+}
+
+/** Run settings recorded with a caption (cortex `caption.params`). Every field is optional. */
+export interface CaptionParams {
+  tag_model?: string;
+  prose_model?: string;
+  /** A lens prompt preset name, or the literal prompt text. */
+  prose_prompt?: string;
+  /** Lens's default preset at the recorded version, when the run used another one. */
+  prose_prompt_default?: string;
+  refine_model?: string;
+  [key: string]: unknown;
 }
 
 export const SUPPORTED_INDEX_MAJOR = "1";

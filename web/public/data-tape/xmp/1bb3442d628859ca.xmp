@@ -19,7 +19,7 @@
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">car, sedan, headlight, parking garage, pillar</rdf:li>
+     <rdf:li xml:lang="x-default">car, sedan, headlight, parking garage</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>

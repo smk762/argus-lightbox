@@ -3,9 +3,11 @@
 Shape (``version`` 1.x)::
 
     {
-      "version": "1.0", "generated_at": ISO-8601, "source": "fixture" | "tape" | "folder",
+      "version": "1.1", "generated_at": ISO-8601, "source": "fixture" | "tape" | "folder",
       "lens_version": "0.7.0", "categories": ["identity", ...],
       "queue": 12,   # optional; folder bakes only. Images not yet captioned. 0 when the bake finished.
+      "caption_params": {...},  # optional (1.1); the run settings every photo's caption was recorded with
+                                # (e.g. prose_model, prose_prompt), present only when all photos agree.
       "photos": [{
         "id", "sha256", "image", "thumb", "xmp", "width", "height", "color",
         "caption":  CaptionResult fields (final_caption, caption_variants, raw_tags, raw_prose,
@@ -58,6 +60,7 @@ def build_index(records: Iterable[SourceRecord], out_dir: Path, *, source: str) 
     stats = BakeStats()
     photos: list[dict] = []
     seen: set[str] = set()
+    params: list[dict] = []
     for record in records:
         photo, reason = render_photo(record, out_dir)
         if photo is None or reason is not None:
@@ -69,11 +72,19 @@ def build_index(records: Iterable[SourceRecord], out_dir: Path, *, source: str) 
         seen.add(photo["id"])
         stats.drifted += bool(photo["explain"]["drift"])
         photos.append(photo)
+        params.append(record.params)
         stats.baked += 1
 
     _prune(out_dir, seen)
-    write_gallery(out_dir, photos, source=source)
+    write_gallery(out_dir, photos, source=source, caption_params=shared_params(params))
     return stats
+
+
+def shared_params(params: list[dict]) -> dict | None:
+    """The recorded run settings when every photo has the same non-empty ones, else ``None``."""
+    if not params or not params[0] or any(item != params[0] for item in params[1:]):
+        return None
+    return params[0]
 
 
 def read_photos(out_dir: Path) -> list[dict]:
@@ -119,7 +130,9 @@ def render_photo(record: SourceRecord, out_dir: Path) -> tuple[dict | None, str 
     }, None
 
 
-def write_gallery(out_dir: Path, photos: list[dict], *, source: str, queue: int | None = None) -> None:
+def write_gallery(
+    out_dir: Path, photos: list[dict], *, source: str, queue: int | None = None, caption_params: dict | None = None
+) -> None:
     """Atomically rewrite ``index.json``. ``queue`` is how many folder images are still uncaptioned."""
     out_dir.mkdir(parents=True, exist_ok=True)
     index = {
@@ -130,6 +143,8 @@ def write_gallery(out_dir: Path, photos: list[dict], *, source: str, queue: int 
         "categories": CATEGORIES,
         "photos": photos,
     }
+    if caption_params:
+        index["caption_params"] = caption_params
     if queue is not None:
         index["queue"] = max(queue, 0)
     _atomic_json(out_dir / "index.json", index)

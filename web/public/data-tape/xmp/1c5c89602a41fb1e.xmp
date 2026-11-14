@@ -17,7 +17,7 @@
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">sky, cloud, sea, sunset</rdf:li>
+     <rdf:li xml:lang="x-default">sky, cloud, sunset, sea</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>

@@ -20,7 +20,7 @@
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">lava, red, fire, volcano, sun, steam, cloud, plume</rdf:li>
+     <rdf:li xml:lang="x-default">lava, volcano, fire, red, steam, plume</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>

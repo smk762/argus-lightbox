@@ -27,6 +27,8 @@ class SourceRecord:
     load_bytes: Callable[[], bytes | None]
     sha256: str | None = None
     provenance: dict[str, Any] = field(default_factory=dict)
+    # The run settings recorded with the caption (lens version, models, prose prompt, ...), when the source has them.
+    params: dict[str, Any] = field(default_factory=dict)
 
 
 # Latest caption per asset; optionally restricted to one curated dataset.
@@ -34,7 +36,7 @@ _TAPE_SQL = """
     SELECT DISTINCT ON (a.id)
            a.uri, a.sha256, a.metadata,
            c.final_caption, c.variants, c.raw_tags, c.raw_prose,
-           c.backend, c.profile, c.version, c.metadata
+           c.backend, c.profile, c.version, c.metadata, c.params
     FROM source_asset a
     JOIN caption c ON c.asset_id = a.id
     {where}
@@ -112,7 +114,20 @@ def tape_records(pg_url: str, *, dataset: str | None = None, limit: int | None =
         cur.execute(sql, params)
         rows = cur.fetchall()
 
-    for uri, sha256, asset_meta, final, variants, raw_tags, raw_prose, backend, profile, version, caption_meta in rows:
+    for (
+        uri,
+        sha256,
+        asset_meta,
+        final,
+        variants,
+        raw_tags,
+        raw_prose,
+        backend,
+        profile,
+        version,
+        caption_meta,
+        run_params,
+    ) in rows:
 
         def load(sha256=sha256, uri=uri) -> bytes | None:
             if sha256 and (data := blobs.get(sha256)) is not None:
@@ -140,6 +155,7 @@ def tape_records(pg_url: str, *, dataset: str | None = None, limit: int | None =
             provenance=_provenance(asset_meta, uri),
             load_bytes=load,
             caption=caption,
+            params=run_params if isinstance(run_params, dict) else {},
         )
 
 

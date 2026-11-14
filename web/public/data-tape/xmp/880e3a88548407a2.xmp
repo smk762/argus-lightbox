@@ -24,7 +24,7 @@
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">water, pond, sand, grass, lake, brush, vegetation</rdf:li>
+     <rdf:li xml:lang="x-default">pond, water, grass, sand, vegetation</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>

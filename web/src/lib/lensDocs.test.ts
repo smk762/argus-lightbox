@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 import { checkIndex } from "./data";
-import { captionedBy, lensDocUrl, lensPypiUrl, lensSource, lensTreeUrl, refineSummary } from "./lensDocs";
+import { captionSettings, captionedBy, lensDocUrl, lensPypiUrl, lensSource, lensTreeUrl, refineSummary } from "./lensDocs";
 import type { GalleryIndex } from "./types";
 
 const load = (dir: string) =>
@@ -63,5 +63,34 @@ describe("captioned by, from recorded data", () => {
     expect(refineSummary(captionedBy({ ...base, backend_name: "x", refine: { skipped: "no server" } }, "1.0.0"))).toBe(
       "LLM rewrite skipped (no server)",
     );
+  });
+});
+
+describe("captionSettings", () => {
+  it("names a preset and lens's default when they differ", () => {
+    expect(
+      captionSettings({
+        tag_model: "RAM++",
+        prose_model: "qwen3-vl:2b-instruct",
+        prose_prompt: "straightforward",
+        prose_prompt_default: "detailed",
+        refine_model: "qwen3:4b-instruct",
+      }),
+    ).toBe(
+      `Tags by RAM++. Prose by qwen3-vl:2b-instruct with lens's "straightforward" prompt preset (lens's default is "detailed"). Checked rewrite by qwen3:4b-instruct.`,
+    );
+  });
+
+  it("calls literal prompt text custom, and says nothing without params", () => {
+    expect(captionSettings({ prose_prompt: "Describe the photo plainly." })).toBe(
+      "Prose by the prose model with a custom prompt.",
+    );
+    expect(captionSettings(undefined)).toBeNull();
+    expect(captionSettings({})).toBeNull();
+  });
+
+  it("reads the tape's recorded settings", () => {
+    const tape = load("data-tape");
+    expect(captionSettings(tape.caption_params)).toContain(`"${tape.caption_params?.prose_prompt}" prompt preset`);
   });
 });

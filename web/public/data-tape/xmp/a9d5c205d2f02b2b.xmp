@@ -17,7 +17,7 @@
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">tower, obelisk, city, sea</rdf:li>
+     <rdf:li xml:lang="x-default">tower, city, sea</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>

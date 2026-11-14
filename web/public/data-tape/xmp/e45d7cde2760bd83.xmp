@@ -22,7 +22,7 @@
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">person, city, urban, crowd</rdf:li>
+     <rdf:li xml:lang="x-default">person, city, building, urban</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>

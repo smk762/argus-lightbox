@@ -17,7 +17,7 @@
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">river, water, city, building, urban</rdf:li>
+     <rdf:li xml:lang="x-default">river, city, building, waterway</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import { loadIndex } from "@/lib/data";
-import { LENS_SECTIONS, type LensSection, lensPypiUrl, lensSource, lensTreeUrl } from "@/lib/lensDocs";
+import { LENS_SECTIONS, type LensSection, captionSettings, lensPypiUrl, lensSource, lensTreeUrl } from "@/lib/lensDocs";
 
 import { ExternalLink } from "./ExternalLink";
 import { LensDocLink } from "./LensDocLink";
@@ -27,12 +27,16 @@ const GUIDE: { section: LensSection; blurb: string }[] = [
 /** /docs: the lens version this gallery was baked with, and where its docs live. */
 export function LensDocs() {
   const [version, setVersion] = useState<string | null>(null);
+  const [settings, setSettings] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const ctrl = new AbortController();
     loadIndex(ctrl.signal)
-      .then((index) => setVersion(index.lens_version))
+      .then((index) => {
+        setVersion(index.lens_version);
+        setSettings(captionSettings(index.caption_params));
+      })
       .catch((e: unknown) => {
         if (!ctrl.signal.aborted) setError(e instanceof Error ? e.message : String(e));
       });
@@ -75,6 +79,7 @@ export function LensDocs() {
             "Loading…"
           )}
         </p>
+        {settings && <p className="mt-1 text-small text-text-secondary">{settings}</p>}
       </header>
 
       <main className="flex-1 space-y-6 pb-10">

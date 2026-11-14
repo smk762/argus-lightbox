@@ -20,7 +20,7 @@
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">building, park, tree, path, garden, dirt road</rdf:li>
+     <rdf:li xml:lang="x-default">building, tree, path, garden, pillar</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>

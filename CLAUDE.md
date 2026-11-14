@@ -48,7 +48,7 @@ There's no host Node here; the Makefile falls back to `node:22-bookworm-slim` vi
 
 ## Conventions & gotchas
 
-- **`index.json` is the contract.** Its shape is documented at the top of `bake/.../index.py` and mirrored in `web/src/lib/types.ts`; change both together. It carries `version` (currently `1.0`): an additive change is a minor bump, and a breaking one is a major that `checkIndex()` refuses. After changing the bake, run `make fixture` and commit the result, or the web tests drift from reality.
+- **`index.json` is the contract.** Its shape is documented at the top of `bake/.../index.py` and mirrored in `web/src/lib/types.ts`; change both together. It carries `version` (currently `1.1`): an additive change is a minor bump, and a breaking one is a major that `checkIndex()` refuses. After changing the bake, run `make fixture` and commit the result, or the web tests drift from reality.
 - **`caption` keeps argus-lens's `CaptionResult` field names** (`final_caption`, `caption_variants`, `raw_tags`, `raw_prose`, `backend_name`, `selected_category`) so a live lens `/caption` response drops into the same shape. Don't rename them.
 - **The recorded caption is the truth; recomposition is only explanation.** Never overwrite `caption` with recomposed output. Disagreement sets `explain.drift`.
 - **Don't use `CaptionResult.removed_phrases` for the explain view.** It lists anything removed from *any* variant, so it over-reports for a single one. `web/src/lib/explain.ts` traces per variant from the buckets instead.

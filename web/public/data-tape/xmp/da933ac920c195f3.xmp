@@ -19,7 +19,7 @@
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">bridge, city, building, green light, waterway</rdf:li>
+     <rdf:li xml:lang="x-default">bridge, city, building, green light</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>

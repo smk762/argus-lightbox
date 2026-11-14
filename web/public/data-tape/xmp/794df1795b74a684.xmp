@@ -21,7 +21,7 @@
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">food, buffet, tray, vegetable, noodle, bean, asparagus</rdf:li>
+     <rdf:li xml:lang="x-default">food, buffet, plate, tray, vegetable, noodle, bean, asparagus, container</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>

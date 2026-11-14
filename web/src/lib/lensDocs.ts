@@ -4,7 +4,7 @@
 // at the source the gallery was baked with: the release tag for a release, the commit for a dev build.
 // Keeping the links here means the import only has to change this file.
 
-import type { CaptionRecord } from "./types";
+import type { CaptionParams, CaptionRecord } from "./types";
 
 export const LENS_REPO = "https://github.com/smk762/argus-lens";
 const PYPI = "https://pypi.org/project/argus-lens";
@@ -87,4 +87,33 @@ export function refineSummary(by: CaptionedBy): string | null {
   if (by.refineSkipped) return `LLM rewrite skipped (${by.refineSkipped})`;
   if (!by.refineModel) return null;
   return by.refineAccepted ? `refined by ${by.refineModel}` : `${by.refineModel}'s rewrite was not kept`;
+}
+
+const text = (value: unknown): string | null => (typeof value === "string" && value.trim() ? value.trim() : null);
+
+/**
+ * How the gallery was captioned, from the run settings the bake recorded, or null when it recorded none.
+ * A prompt with no spaces is a lens preset name; anything else is literal prompt text and is called custom.
+ */
+export function captionSettings(params: CaptionParams | null | undefined): string | null {
+  if (!params) return null;
+  const parts: string[] = [];
+  const tagModel = text(params.tag_model);
+  const proseModel = text(params.prose_model);
+  const prompt = text(params.prose_prompt);
+  const fallback = text(params.prose_prompt_default);
+  const refineModel = text(params.refine_model);
+  if (tagModel) parts.push(`Tags by ${tagModel}.`);
+  if (proseModel || prompt) {
+    let prose = `Prose by ${proseModel ?? "the prose model"}`;
+    if (prompt && !/\s/.test(prompt)) {
+      prose += ` with lens's "${prompt}" prompt preset`;
+      if (fallback && fallback !== prompt) prose += ` (lens's default is "${fallback}")`;
+    } else if (prompt) {
+      prose += " with a custom prompt";
+    }
+    parts.push(`${prose}.`);
+  }
+  if (refineModel) parts.push(`Checked rewrite by ${refineModel}.`);
+  return parts.length ? parts.join(" ") : null;
 }

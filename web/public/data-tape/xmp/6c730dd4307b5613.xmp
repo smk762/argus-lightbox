@@ -18,7 +18,7 @@
    </dc:subject>
    <dc:description>
     <rdf:Alt>
-     <rdf:li xml:lang="x-default">lake, sky, tree, boat, water</rdf:li>
+     <rdf:li xml:lang="x-default">lake, boat, tree, water, sky</rdf:li>
     </rdf:Alt>
    </dc:description>
   </rdf:Description>
