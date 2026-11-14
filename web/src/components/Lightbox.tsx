@@ -492,9 +492,9 @@ export function Lightbox({ initial = null }: { initial?: PrerenderedGallery | nu
                     </div>
                   </>
                 )}
-                {choiceNote && <span className="text-warning">{choiceNote}</span>}
+                {choiceNote && <span className="text-warn-ink">{choiceNote}</span>}
                 {queue > 0 && (
-                  <span className="rounded-full bg-warning/15 px-2.5 py-1 text-warning tabular-nums">
+                  <span className="rounded-full bg-warn-tint px-2.5 py-1 text-warn-ink tabular-nums">
                     {queue} {queue === 1 ? "caption" : "captions"} in queue
                   </span>
                 )}
@@ -515,10 +515,10 @@ export function Lightbox({ initial = null }: { initial?: PrerenderedGallery | nu
                       type="button"
                       onClick={() => setSelection(toggleTerm(view.selection, group, term))}
                       data-group={group}
-                      className="flex min-h-8 items-center gap-1 rounded-full border border-(--group) px-2 py-0.5 hover:bg-base-700"
+                      className="flex min-h-8 items-center gap-1 rounded-full border border-(--group) bg-(--group-tint) px-2 py-0.5 text-(--group-ink) hover:bg-base-700"
                       aria-label={`Remove filter ${groupStyle(group).label}: ${term}`}
                     >
-                      <span className="text-text-muted">{groupStyle(group).label}:</span> {term} <span aria-hidden>✕</span>
+                      <span>{groupStyle(group).label}:</span> <span className="font-medium">{term}</span> <span aria-hidden>✕</span>
                     </button>
                   )),
                 )}

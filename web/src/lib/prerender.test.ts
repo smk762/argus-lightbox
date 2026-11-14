@@ -138,10 +138,22 @@ describe("isFamilyUrl", () => {
 });
 
 describe("facet group colours", () => {
-  it("globals.css gives every group the colour categories.ts does", () => {
+  it("globals.css gives every group the shared categorical slot categories.ts does", () => {
     const css = readFileSync(new URL("../app/globals.css", import.meta.url), "utf-8");
     for (const [key, style] of Object.entries(STYLES)) {
-      expect(css, key).toContain(`[data-group="${key}"] { --group: ${style.color}; }`);
+      expect(style.cat, key).toBeGreaterThanOrEqual(1);
+      expect(style.cat, key).toBeLessThanOrEqual(8);
+      expect(style.color).toBe(`var(--dh-cat-${style.cat})`);
+      expect(style.ink).toBe(`var(--dh-cat-${style.cat}-ink)`);
+      expect(style.tint).toBe(`var(--dh-cat-${style.cat}-tint)`);
+      expect(css, key).toContain(
+        `[data-group="${key}"] { --group: ${style.color}; --group-ink: ${style.ink}; --group-tint: ${style.tint}; }`,
+      );
     }
+  });
+
+  it("keeps the seven content groups on distinct hues", () => {
+    const groups = ["identity", "wardrobe", "pose_composition", "setting", "lighting", "action", "people"];
+    expect(new Set(groups.map((g) => STYLES[g].cat)).size).toBe(groups.length);
   });
 });

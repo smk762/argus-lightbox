@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useRef } from "react";
 
 import { shownCaption } from "@/lib/caption";
-import { groupStyle } from "@/lib/categories";
 import { assetUrl } from "@/lib/data";
 import { type Selection, photoTerms } from "@/lib/filter";
 import { THUMB_SIZES, thumbLoading, thumbSrcSet } from "@/lib/thumbs";
@@ -64,7 +63,9 @@ export function PhotoGrid({
               onFocus={() => onIntent?.(photo.id)}
               className="group relative block w-full overflow-hidden rounded-md bg-base-800 shadow-soft transition-shadow duration-200 hover:shadow-glow"
               data-color={photo.color}
-              aria-label={shown}
+              // The name reads in visual order, matched-term chips first, so it contains the visible text
+              // (axe label-content-name-mismatch).
+              aria-label={matches.length ? `${matches.map((m) => m.term).join(", ")}: ${shown}` : shown}
             >
               {/* eslint-disable-next-line @next/next/no-img-element -- static export; thumbnails are pre-sized by the bake */}
               <img
@@ -87,8 +88,8 @@ export function PhotoGrid({
                   {matches.map(({ group, term }) => (
                     <span
                       key={`${group}:${term}`}
-                      className="rounded-sm px-1.5 py-0.5 text-caption font-medium text-base-900"
-                      style={{ background: groupStyle(group).color }}
+                      data-group={group}
+                      className="rounded-sm border border-(--group) bg-(--group-tint) px-1.5 py-0.5 text-caption font-medium text-(--group-ink)"
                     >
                       {term}
                     </span>

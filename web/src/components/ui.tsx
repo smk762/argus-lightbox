@@ -17,34 +17,35 @@ export function Highlight({ text, terms }: { text: string; terms: string[] }) {
 export function GroupLabel({ group, className = "" }: { group: string; className?: string }) {
   const style = groupStyle(group);
   return (
-    <span className={`inline-flex items-center gap-1.5 ${className}`}>
-      <span aria-hidden className="size-2 shrink-0 rounded-full" style={{ background: style.color }} />
+    <span data-group={group} className={`inline-flex items-center gap-1.5 ${className}`}>
+      <span aria-hidden className="size-2 shrink-0 rounded-full bg-(--group)" />
       {style.label}
     </span>
   );
 }
 
+/** A tag chip; with a `group`, in that group's categorical tint (ink text on the tint, fill border). */
 export function Chip({
   children,
-  color,
+  group,
   struck = false,
   title,
 }: {
   children: React.ReactNode;
-  color?: string;
+  group?: string;
   struck?: boolean;
   title?: string;
 }) {
+  const coloured = group !== undefined && !struck;
   return (
     <span
       title={title}
+      data-group={coloured ? group : undefined}
       className={`inline-flex items-center rounded-sm border px-2 py-0.5 text-caption ${
-        struck ? "text-text-muted line-through" : "text-text-primary"
+        coloured
+          ? "border-(--group) bg-(--group-tint) text-(--group-ink)"
+          : `border-base-600 ${struck ? "text-text-muted line-through" : "text-text-primary"}`
       }`}
-      style={{
-        borderColor: color ? `color-mix(in srgb, ${color} 45%, transparent)` : "var(--color-base-600)",
-        background: color && !struck ? `color-mix(in srgb, ${color} 12%, transparent)` : "transparent",
-      }}
     >
       {children}
     </span>

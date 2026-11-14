@@ -41,7 +41,7 @@ export function ExplainTab({ photo, categories, lensVersion }: { photo: Photo; c
         </LensDocLink>
       </p>
       {drift && (
-        <p className="rounded-md border border-warning/40 bg-warning/10 p-3 text-caption text-warning">
+        <p className="rounded-md border border-warning/40 bg-warn-tint p-3 text-caption text-warn-ink">
           This caption was recorded by an older lens release; the current pipeline would assemble it slightly
           differently. The recorded caption is shown.
         </p>
@@ -76,18 +76,17 @@ export function ExplainTab({ photo, categories, lensVersion }: { photo: Photo; c
               const tags = buckets.tags?.[g] ?? [];
               const prose = buckets.prose?.[g] ?? [];
               if (!tags.length && !prose.length) return null;
-              const color = groupStyle(g).color;
               return (
                 <li key={g}>
                   <GroupLabel group={g} className="mb-1 text-caption font-medium text-text-secondary" />
                   <div className="flex flex-wrap gap-1">
                     {tags.map((t) => (
-                      <Chip key={`t-${t}`} color={color}>
+                      <Chip key={`t-${t}`} group={g}>
                         {t}
                       </Chip>
                     ))}
                     {prose.map((p) => (
-                      <Chip key={`p-${p}`} color={color} title="prose fragment">
+                      <Chip key={`p-${p}`} group={g} title="prose fragment">
                         “{p}”
                       </Chip>
                     ))}
@@ -117,7 +116,7 @@ export function ExplainTab({ photo, categories, lensVersion }: { photo: Photo; c
             {trace.fragments.map((f) => (
               <Chip
                 key={`${f.source}-${f.category}-${f.text}`}
-                color={f.status === "kept" ? groupStyle(f.category).color : undefined}
+                group={f.status === "kept" ? f.category : undefined}
                 struck={f.status === "trimmed"}
                 title={f.status === "kept" ? `kept (${groupStyle(f.category).label})` : "trimmed from this variant"}
               >

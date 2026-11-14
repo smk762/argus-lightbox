@@ -47,6 +47,8 @@
 
   --color-success: var(--dh-success);
   --color-warning: var(--dh-warn);
+  --color-warn-ink: var(--dh-warn-ink);
+  --color-warn-tint: var(--dh-warn-tint);
   --color-error: var(--dh-danger);
 
   --font-sans: var(--dh-font);
@@ -66,16 +68,10 @@
 }
 
 /*
- * Categorical facet palette: one hue per caption category, for dots, the word cloud and tints.
- * The shared layer has no categorical scale, so these stay local (data colours, not chrome).
+ * Facet hues are the shared categorical palette (--dh-cat-1..8, colour-blind aware), wired per group
+ * below. Text sizes: --text-caption is the shared 12 px floor (--dh-text-2xs), the smallest text here.
  */
 @theme {
-  --color-accent-secondary: #8b5cf6;
-  --color-accent-tertiary: #22d3ee;
-  --color-warm-primary: #f472b6;
-  --color-warm-secondary: #f59e9e;
-  --color-info: #3b82f6;
-
   --text-display: 32px;
   --text-display--line-height: 1.3;
   --text-heading: 24px;
@@ -86,7 +82,7 @@
   --text-body--line-height: 1.6;
   --text-small: 14px;
   --text-small--line-height: 1.6;
-  --text-caption: 12px;
+  --text-caption: var(--dh-text-2xs);
   --text-caption--line-height: 1.5;
 
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
@@ -108,23 +104,26 @@ body {
 }
 
 /*
- * Facet group colours as a custom property (`bg-(--group)`, `accent-(--group)`), so the
- * prerendered sidebar needs no inline style attribute, which the CSP doesn't allow.
- * Mirrors STYLES in src/lib/categories.ts (a test keeps the two in step).
+ * Facet group colours as custom properties (`bg-(--group)`, `text-(--group-ink)`, `bg-(--group-tint)`),
+ * so the prerendered sidebar needs no inline style attribute, which the CSP doesn't allow. --group is
+ * the fill (dots, borders, checkbox accent: 3:1 or better on the page), --group-ink the text colour on
+ * --group-tint or the page. Mirrors STYLES in src/lib/categories.ts (prerender.test.ts keeps them in step).
  */
-[data-group] { --group: var(--color-text-muted); }
-[data-group="identity"] { --group: var(--color-accent-primary); }
-[data-group="wardrobe"] { --group: var(--color-warm-primary); }
-[data-group="pose_composition"] { --group: var(--color-accent-secondary); }
-[data-group="setting"] { --group: var(--color-success); }
-[data-group="lighting"] { --group: var(--color-warning); }
-[data-group="action"] { --group: var(--color-accent-tertiary); }
-[data-group="detail"] { --group: var(--color-text-muted); }
-[data-group="people"] { --group: var(--color-warm-secondary); }
-[data-group="camera"] { --group: var(--color-text-secondary); }
-[data-group="training"] { --group: var(--color-info); }
-[data-group="training_prose"] { --group: var(--color-info); }
-[data-group="zeroshot"] { --group: var(--color-text-secondary); }
+[data-group] { --group: var(--dh-cat-8); --group-ink: var(--dh-cat-8-ink); --group-tint: var(--dh-cat-8-tint); }
+[data-group="identity"] { --group: var(--dh-cat-1); --group-ink: var(--dh-cat-1-ink); --group-tint: var(--dh-cat-1-tint); }
+[data-group="lighting"] { --group: var(--dh-cat-2); --group-ink: var(--dh-cat-2-ink); --group-tint: var(--dh-cat-2-tint); }
+[data-group="setting"] { --group: var(--dh-cat-3); --group-ink: var(--dh-cat-3-ink); --group-tint: var(--dh-cat-3-tint); }
+[data-group="pose_composition"] { --group: var(--dh-cat-4); --group-ink: var(--dh-cat-4-ink); --group-tint: var(--dh-cat-4-tint); }
+[data-group="wardrobe"] { --group: var(--dh-cat-5); --group-ink: var(--dh-cat-5-ink); --group-tint: var(--dh-cat-5-tint); }
+[data-group="people"] { --group: var(--dh-cat-6); --group-ink: var(--dh-cat-6-ink); --group-tint: var(--dh-cat-6-tint); }
+[data-group="action"] { --group: var(--dh-cat-7); --group-ink: var(--dh-cat-7-ink); --group-tint: var(--dh-cat-7-tint); }
+[data-group="detail"] { --group: var(--dh-cat-8); --group-ink: var(--dh-cat-8-ink); --group-tint: var(--dh-cat-8-tint); }
+[data-group="camera"] { --group: var(--dh-cat-8); --group-ink: var(--dh-cat-8-ink); --group-tint: var(--dh-cat-8-tint); }
+[data-group="training"] { --group: var(--dh-cat-7); --group-ink: var(--dh-cat-7-ink); --group-tint: var(--dh-cat-7-tint); }
+[data-group="training_prose"] { --group: var(--dh-cat-7); --group-ink: var(--dh-cat-7-ink); --group-tint: var(--dh-cat-7-tint); }
+[data-group="zeroshot"] { --group: var(--dh-cat-8); --group-ink: var(--dh-cat-8-ink); --group-tint: var(--dh-cat-8-tint); }
+
+"zeroshot"] { --group: var(--color-text-secondary); }
 
 :focus-visible {
   outline: var(--dh-focus-ring);
@@ -132,8 +131,9 @@ body {
 }
 
 mark {
-  background: color-mix(in srgb, var(--color-warning) 28%, transparent);
-  color: inherit;
+  background: var(--dh-warn-tint);
+  color: var(--dh-warn-ink);
+  box-shadow: inset 0 -1px 0 var(--dh-warn);
   border-radius: 3px;
   padding: 0 1px;
 }
