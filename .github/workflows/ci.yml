@@ -40,3 +40,15 @@ jobs:
       - run: npm run typecheck
       - run: npm test
       - run: npm run build
+
+  # The vendored Dragonhound shared layer (web/vendor/dh/): fails if a copy was edited here, or no
+  # longer matches the published v1 source. A newer upstream version is a warning: re-sync from
+  # dragonhound-site with scripts/sync-shared.mjs.
+  dh-shared:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node web/vendor/dh/sync-shared.mjs --check . --against https://dragonhound.dev/brand/v1/manifest.json --allow-outdated

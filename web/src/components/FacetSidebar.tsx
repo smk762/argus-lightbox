@@ -124,7 +124,7 @@ export function FacetSidebar({
           Filter by caption
         </h2>
         {active > 0 && (
-          <button type="button" onClick={onClear} className="text-caption text-accent-tertiary hover:underline">
+          <button type="button" onClick={onClear} className="text-caption text-link hover:underline">
             Clear {active}
           </button>
         )}

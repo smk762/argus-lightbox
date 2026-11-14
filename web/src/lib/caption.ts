@@ -32,3 +32,17 @@ export function shownCaption(
   if (text) return { text, variant: want, fellBack: false };
   return { text: caption.final_caption, variant: "final", fellBack: true };
 }
+
+/**
+ * Short alt text for the detail image: the caption's first sentence (or first clause of a tag list), cut at a
+ * word boundary near *max* characters. The full caption is on screen beside the image, in the Caption tab, so
+ * a screen reader doesn't need to hear a long tag list twice.
+ */
+export function altText(caption: string, max = 125): string {
+  const text = caption.trim().replace(/\s+/g, " ");
+  const sentence = text.match(/^.+?[.!?](?=\s|$)/)?.[0] ?? text;
+  if (sentence.length <= max) return sentence;
+  const cut = sentence.slice(0, max + 1);
+  const at = Math.max(cut.lastIndexOf(", "), cut.lastIndexOf(" "));
+  return `${cut.slice(0, at > max / 2 ? at : max).replace(/[,;:]$/, "")}…`;
+}

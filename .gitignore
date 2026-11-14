@@ -25,3 +25,4 @@ web/public/data-folder/
 # Local copy from `npx modern-web-guidance install`; the plugin is enabled in .claude/settings.json
 .claude/skills/
 skills-lock.json
+.wrangler/

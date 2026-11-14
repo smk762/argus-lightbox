@@ -117,7 +117,7 @@ export function CaptionTab({
                     type="button"
                     disabled={applying || key === caption.selected_category}
                     onClick={() => onUse(key)}
-                    className="text-caption text-accent-tertiary hover:underline disabled:text-text-muted disabled:no-underline"
+                    className="text-caption text-link hover:underline disabled:text-text-muted disabled:no-underline"
                   >
                     {key === caption.selected_category ? "Final caption" : "Use as final"}
                   </button>

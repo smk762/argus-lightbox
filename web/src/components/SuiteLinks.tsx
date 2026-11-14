@@ -8,7 +8,7 @@ import { ExternalLink } from "./ExternalLink";
 
 const CULL_REPO = "https://github.com/smk762/argus-cull";
 const LENS_URL = "https://github.com/smk762/argus-lens";
-const LINK = "text-accent-tertiary underline underline-offset-2 hover:decoration-2";
+const LINK = "text-link underline underline-offset-2 hover:decoration-2";
 
 export function SuiteLinks() {
   return (

@@ -1,5 +1,5 @@
 // Display metadata for lens's caption categories and the extra facet groups.
-// Colours come from the ui-demo token palette (see globals.css).
+// Colours: the shared tokens for status hues, a local categorical palette for the rest (see globals.css).
 
 export interface GroupStyle {
   label: string;

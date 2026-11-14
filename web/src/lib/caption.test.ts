@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
-import { DEFAULT_CAPTION, FALLBACK_CAPTION, shownCaption } from "./caption";
+import { DEFAULT_CAPTION, FALLBACK_CAPTION, altText, shownCaption } from "./caption";
 import type { GalleryIndex } from "./types";
 
 const caption = {
@@ -40,5 +40,20 @@ describe("shown caption", () => {
       readFileSync(new URL("../../public/data-tape/index.json", import.meta.url), "utf-8"),
     ) as GalleryIndex;
     expect(tape.photos.every((p) => !shownCaption(p.caption, "zeroshot").fellBack)).toBe(true);
+  });
+});
+
+describe("alt text", () => {
+  it("keeps a short caption whole and takes the first sentence of prose", () => {
+    expect(altText("a full moon over dark branches")).toBe("a full moon over dark branches");
+    expect(altText("A heron stands in reeds. Soft morning light, mist.")).toBe("A heron stands in reeds.");
+  });
+
+  it("cuts a long tag list at a word boundary", () => {
+    const tags = Array.from({ length: 40 }, (_, i) => `tag${i}`).join(", ");
+    const alt = altText(tags);
+    expect(alt.length).toBeLessThanOrEqual(126);
+    expect(alt.endsWith("…")).toBe(true);
+    expect(alt).not.toMatch(/,…$/);
   });
 });
