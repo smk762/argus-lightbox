@@ -48,7 +48,7 @@ The web app loads `index.json` and does everything else client-side. All gallery
 
 ## Quick start
 
-What this UI needs live, what its mock or recording stands in for, and the no-GPU command are in [What to run for which UI](https://studio.dragonhound.dev/docs/setup/which-services/#lightbox). Each external service it depends on has a setup page under the suite's [Setup and services](https://studio.dragonhound.dev/docs/setup/).
+What this UI needs live, what its mock or recording stands in for, and the no-GPU command are in [What to run for which UI](https://docs.dragonhound.dev/setup/which-services/#lightbox). Each external service it depends on has a setup page under the suite's [Setup and services](https://docs.dragonhound.dev/setup/).
 
 Needs [uv](https://docs.astral.sh/uv/). Node 22 is optional: the Makefile runs npm in the `node:22` Docker image when `npm` isn't on your PATH.
 
