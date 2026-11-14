@@ -13,6 +13,7 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
     ".wrangler/**", // wrangler pages dev scratch
+    "vendor/**", // the vendored Dragonhound shared layer: checked by sync-shared.mjs, edited upstream
   ]),
 ]);
 

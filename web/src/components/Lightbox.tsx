@@ -20,6 +20,7 @@ import type { DetailFields, GridPhoto, ListIndex, Photo } from "@/lib/types";
 import { PAGE_SIZE, type ViewState, parseView, serializeView } from "@/lib/urlState";
 
 import { ExternalLink } from "./ExternalLink";
+import { HostedDemoStrip } from "./DemoStrip";
 import { DemoLinks } from "./SuiteLinks";
 import { FacetSidebar } from "./FacetSidebar";
 import { PhotoDetail } from "./PhotoDetail";
@@ -28,29 +29,31 @@ import { WordCloud } from "./WordCloud";
 
 const EMPTY: ViewState = { query: "", selection: {}, photo: null, cloud: false, words: "caption", scope: "subset" };
 const NO_FACETS: Record<string, never[]> = {};
-const LINK = "text-accent-tertiary underline underline-offset-2 hover:decoration-2";
+const LINK = "text-link underline underline-offset-2 hover:decoration-2";
 // The hosted demo is a static site, so the caption-choice write path has nowhere to go.
 const READ_ONLY = Boolean(process.env.NEXT_PUBLIC_DEMO_BANNER);
 
-function sourceBadge(source: string): { label: string; title: string; tone: string } {
+/** The source badge, in the Dragonhound demo-state vocabulary (vendor/dh/README.md, dh-badge.css). */
+function sourceBadge(source: string): { label: string; title: string; className: string } {
   if (source === "fixture") {
     return {
-      label: "Synthetic fixture",
-      title: "Placeholder images with hand-written model output, captioned by lens's real pipeline",
-      tone: "bg-warning/15 text-warning",
+      label: "Sample data",
+      title: "Synthetic fixture: placeholder images with hand-written model output, captioned by lens's real pipeline",
+      className: "dh-badge dh-badge--sample",
     };
   }
   if (source === "folder") {
+    // Not a demo state: a local gallery, captioned live from a mounted folder.
     return {
       label: "Local folder",
       title: "Photos captioned from a folder mounted into this stack",
-      tone: "bg-success/15 text-success",
+      className: "dh-badge",
     };
   }
   return {
-    label: "Recorded pipeline run",
-    title: "Captions recorded from a real pipeline run",
-    tone: "bg-success/15 text-success",
+    label: "Recorded",
+    title: "Recorded output from a real pipeline run; no model runs while you browse",
+    className: "dh-badge",
   };
 }
 
@@ -307,7 +310,7 @@ export function Lightbox({ initial = null }: { initial?: PrerenderedGallery | nu
   const filterCount = activeCount(view.selection);
 
   return (
-    <div className="mx-auto flex min-h-dvh max-w-[1800px] flex-col px-4 sm:px-6">
+    <>
       {/* The facet sidebar puts dozens of checkboxes ahead of the photos in tab order. Focus moves
           without a fragment navigation, which would fire popstate and add a history entry. */}
       <a
@@ -320,300 +323,311 @@ export function Lightbox({ initial = null }: { initial?: PrerenderedGallery | nu
       >
         Skip to photos
       </a>
-      <header className="flex flex-wrap items-end justify-between gap-4 py-6">
-        <div>
-          <h1 className="font-display text-display font-semibold tracking-tight">Lightbox</h1>
-          <p className="text-small text-text-secondary">
-            Every photo here is navigated by its{" "}
-            <ExternalLink href="https://github.com/smk762/argus-lens" className={LINK}>
-              argus-lens
-            </ExternalLink>{" "}
-            structured caption.
-          </p>
-        </div>
-        {/* Fixed height: the badge row is in the HTML of a prerendered build and arrives with the
-            index otherwise, and either way it must not push the grid down. */}
-        <div className="flex min-h-7 flex-wrap items-center gap-3 text-caption text-text-secondary">
-          {meta && badge && (
-            <>
-              <span className={`rounded-full px-2.5 py-1 ${badge.tone}`} title={badge.title}>
-                {badge.label}
-              </span>
-              <span>lens {meta.lens_version}</span>
-            </>
-          )}
-          <nav aria-label="Site">
-            <Link href="/docs/" className={LINK}>
-              Docs
-            </Link>
-          </nav>
-        </div>
-      </header>
+      <HostedDemoStrip />
+      <div className="mx-auto flex min-h-dvh max-w-[1800px] flex-col px-4 sm:px-6">
+        <header className="flex flex-wrap items-end justify-between gap-4 py-6">
+          <div>
+            <h1 className="font-display text-display font-semibold tracking-tight">Lightbox</h1>
+            <p className="text-small text-text-secondary">
+              Every photo here is navigated by its{" "}
+              <ExternalLink href="https://github.com/smk762/argus-lens" className={LINK}>
+                argus-lens
+              </ExternalLink>{" "}
+              structured caption.
+            </p>
+          </div>
+          {/* Fixed height: the badge row is in the HTML of a prerendered build and arrives with the
+              index otherwise, and either way it must not push the grid down. */}
+          <div className="flex min-h-7 flex-wrap items-center gap-3 text-caption text-text-secondary">
+            {meta && badge && (
+              <>
+                <span className={badge.className} title={badge.title}>
+                  {badge.label}
+                </span>
+                <span>lens {meta.lens_version}</span>
+              </>
+            )}
+            <nav aria-label="Site">
+              <Link href="/docs/" className={LINK}>
+                Docs
+              </Link>
+            </nav>
+          </div>
+        </header>
 
-      <div className="flex flex-1 flex-col gap-4 pb-10 md:flex-row md:gap-6">
-        <button
-          type="button"
-          onClick={() => setFiltersOpen((o) => !o)}
-          aria-expanded={filtersOpen}
-          aria-controls="facet-sidebar"
-          className="min-h-11 self-start rounded-md border border-base-600 px-4 text-small md:hidden"
-        >
-          {filtersOpen ? "Hide filters" : `Filters${filterCount ? ` (${filterCount})` : ""}`}
-        </button>
-        <div
-          id="facet-sidebar"
-          className={`${filtersOpen ? "block" : "hidden"} md:sticky md:top-4 md:block md:h-[calc(100dvh-2rem)] md:w-64 md:shrink-0 md:overflow-y-auto md:pr-2`}
-        >
-          <FacetSidebar
-            groups={groups}
-            facets={shownFacets}
-            selection={view.selection}
-            onToggle={(group, term) => setSelection(toggleTerm(view.selection, group, term))}
-            onClear={() => setSelection({})}
-          />
-          {/* Phones: the open filter list is long, so close it from the bottom as well as the top. */}
+        <div className="flex flex-1 flex-col gap-4 pb-10 md:flex-row md:gap-6">
           <button
             type="button"
-            onClick={() => {
-              setFiltersOpen(false);
-              document.getElementById("gallery")?.scrollIntoView({ block: "start" });
-            }}
-            className="mt-4 min-h-11 w-full rounded-md bg-accent-primary px-4 text-small font-medium text-base-900 md:hidden"
+            onClick={() => setFiltersOpen((o) => !o)}
+            aria-expanded={filtersOpen}
+            aria-controls="facet-sidebar"
+            className="min-h-11 self-start rounded-md border border-base-600 px-4 text-small md:hidden"
           >
-            {index || previewing ? `Show ${matchCount} ${matchCount === 1 ? "photo" : "photos"}` : "Show photos"}
+            {filtersOpen ? "Hide filters" : `Filters${filterCount ? ` (${filterCount})` : ""}`}
           </button>
-        </div>
-
-        <main id="gallery" tabIndex={-1} className="@container min-w-0 flex-1 scroll-mt-2">
-          <div className="sticky top-0 z-10 -mx-1 mb-4 bg-base-900/90 px-1 py-2 backdrop-blur">
-            <input
-              type="search"
-              value={view.query}
-              onChange={(e) => {
-                setPage(0);
-                update({ ...view, query: e.target.value });
-              }}
-              // Short enough to show whole in a phone-width field.
-              placeholder="Search captions, e.g. “neon night”"
-              aria-label="Search captions"
-              enterKeyHint="search"
-              className="w-full rounded-md border border-base-600 bg-base-800 px-4 py-2.5 text-body placeholder:text-text-muted focus:border-accent-primary"
+          <div
+            id="facet-sidebar"
+            className={`${filtersOpen ? "block" : "hidden"} md:sticky md:top-4 md:block md:h-[calc(100dvh-2rem)] md:w-64 md:shrink-0 md:overflow-y-auto md:pr-2`}
+          >
+            <FacetSidebar
+              groups={groups}
+              facets={shownFacets}
+              selection={view.selection}
+              onToggle={(group, term) => setSelection(toggleTerm(view.selection, group, term))}
+              onClear={() => setSelection({})}
             />
-            <div className="mt-2 flex min-h-8 flex-wrap items-center gap-2 text-caption text-text-secondary">
-              <span role="status" className="tabular-nums">
-                {index || previewing ? `${matchCount} of ${totalCount} photos` : "Loading…"}
-              </span>
-              {meta && (
-                <button
-                  type="button"
-                  aria-pressed={view.cloud}
-                  onClick={() => update({ ...view, cloud: !view.cloud })}
-                  className={`min-h-8 rounded-full px-2.5 py-1 ${view.cloud ? "bg-accent-primary font-medium text-base-900" : "border border-base-600 hover:bg-base-700"}`}
-                >
-                  Word cloud
-                </button>
-              )}
-              {meta && categories.length > 0 && (
-                <>
-                  <button
-                    type="button"
-                    onClick={() => setToolsOpen((o) => !o)}
-                    aria-expanded={toolsOpen}
-                    aria-controls="caption-tools"
-                    className="min-h-8 rounded-full border border-base-600 px-2.5 py-1 hover:bg-base-700 md:hidden"
-                  >
-                    {toolsOpen ? "Hide caption tools" : `Caption tools${picked.size ? ` (${picked.size})` : ""}`}
-                  </button>
-                  <div
-                    id="caption-tools"
-                    role="group"
-                    aria-label="Choose final captions"
-                    title="Pick photos with their checkboxes, then make one caption option their final caption."
-                    className={`${toolsOpen ? "flex" : "hidden"} w-full flex-wrap items-center gap-2 md:flex md:w-auto`}
-                  >
-                    <p className="w-full text-text-muted md:hidden">
-                      Make one caption option the final caption of the photos you tick.
-                      {READ_ONLY && " This hosted demo is read-only, so saving only works in a local gallery."}
-                    </p>
-                    <label className="flex items-center gap-1">
-                      <span className="text-text-muted">Caption option</span>
-                      <select
-                        aria-label="Caption option"
-                        value={chosen}
-                        onChange={(e) => setChoice(e.target.value)}
-                        className="rounded-md border border-base-600 bg-base-800 px-2 py-1 text-text-primary"
-                      >
-                        {categories.map((category) => (
-                          <option key={category} value={category}>
-                            {groupStyle(category).label}
-                          </option>
-                        ))}
-                      </select>
-                    </label>
-                    <button
-                      type="button"
-                      disabled={applying || picked.size === 0}
-                      onClick={() => void applyCaption([...picked], chosen)}
-                      className="min-h-8 rounded-full bg-accent-primary px-3 py-1 font-medium text-base-900 disabled:opacity-40"
-                    >
-                      {applying ? "Updating captions…" : `Use for selected (${picked.size})`}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const pageIds = visible.map((photo) => photo.id);
-                        const allPicked = pageIds.length > 0 && pageIds.every((id) => picked.has(id));
-                        setPicked((current) => {
-                          const next = new Set(current);
-                          for (const id of pageIds) {
-                            if (allPicked) next.delete(id);
-                            else next.add(id);
-                          }
-                          return next;
-                        });
-                      }}
-                      className="min-h-8 rounded-full border border-base-600 px-2.5 py-1 hover:bg-base-700"
-                    >
-                      {visible.length > 0 && visible.every((photo) => picked.has(photo.id)) ? "Clear page" : "Select page"}
-                    </button>
-                  </div>
-                </>
-              )}
-              {choiceNote && <span className="text-warning">{choiceNote}</span>}
-              {queue > 0 && (
-                <span className="rounded-full bg-warning/15 px-2.5 py-1 text-warning tabular-nums">
-                  {queue} {queue === 1 ? "caption" : "captions"} in queue
-                </span>
-              )}
-              {pending > 0 && (
-                <button
-                  type="button"
-                  onClick={() => void reveal()}
-                  disabled={refreshing}
-                  className="rounded-full bg-accent-primary px-3 py-1 font-medium text-base-900 disabled:opacity-60"
-                >
-                  {refreshing ? "Loading new images…" : `Click here to show new images (${pending})`}
-                </button>
-              )}
-              {Object.entries(view.selection).flatMap(([group, ts]) =>
-                ts.map((term) => (
-                  <button
-                    key={`${group}:${term}`}
-                    type="button"
-                    onClick={() => setSelection(toggleTerm(view.selection, group, term))}
-                    data-group={group}
-                    className="flex min-h-8 items-center gap-1 rounded-full border border-(--group) px-2 py-0.5 hover:bg-base-700"
-                    aria-label={`Remove filter ${groupStyle(group).label}: ${term}`}
-                  >
-                    <span className="text-text-muted">{groupStyle(group).label}:</span> {term} <span aria-hidden>✕</span>
-                  </button>
-                )),
-              )}
-            </div>
+            {/* Phones: the open filter list is long, so close it from the bottom as well as the top. */}
+            <button
+              type="button"
+              onClick={() => {
+                setFiltersOpen(false);
+                document.getElementById("gallery")?.scrollIntoView({ block: "start" });
+              }}
+              className="mt-4 min-h-11 w-full rounded-md bg-accent-primary px-4 text-small font-medium text-base-900 md:hidden"
+            >
+              {index || previewing ? `Show ${matchCount} ${matchCount === 1 ? "photo" : "photos"}` : "Show photos"}
+            </button>
           </div>
 
-          {view.cloud && index && (
-            <WordCloud
-              photos={view.scope === "source" ? photos : filtered}
-              field={view.words}
-              scope={view.scope}
-              subsetCount={filtered.length}
-              sourceCount={photos.length}
-              onField={(words) => update({ ...view, words })}
-              onScope={(scope) => update({ ...view, scope })}
-              onSearch={(query) => {
-                setPage(0);
-                update({ ...view, query });
-              }}
-            />
-          )}
-
-          {!index && !previewing ? (
-            // Holds the grid's place while the index loads, so the footer doesn't jump.
-            <p aria-busy="true" className="min-h-dvh py-16 text-center text-text-secondary">
-              Loading photos…
-            </p>
-          ) : matchCount === 0 ? (
-            <p className="py-16 text-center text-text-secondary">
-              {photos.length === 0 && queue > 0
-                ? "No captioned photos yet."
-                : "No photos match. Try removing a filter. Terms within a category widen the search, categories narrow it."}
-            </p>
-          ) : (
-            <div id="gallery-grid" className="scroll-mt-28">
-              <PhotoGrid
-                photos={visible}
-                selection={view.selection}
-                picked={picked}
-                onOpen={openFromGrid}
-                onIntent={fetchDetail}
-                onToggle={(id) =>
-                  setPicked((current) => {
-                    const next = new Set(current);
-                    if (next.has(id)) next.delete(id);
-                    else next.add(id);
-                    return next;
-                  })
-                }
+          <main id="gallery" tabIndex={-1} className="@container min-w-0 flex-1 scroll-mt-2">
+            <div className="sticky top-0 z-10 -mx-1 mb-4 bg-base-900/90 px-1 py-2 backdrop-blur">
+              <input
+                type="search"
+                value={view.query}
+                onChange={(e) => {
+                  setPage(0);
+                  update({ ...view, query: e.target.value });
+                }}
+                // Short enough to show whole in a phone-width field.
+                placeholder="Search captions, e.g. “neon night”"
+                aria-label="Search captions"
+                enterKeyHint="search"
+                className="w-full rounded-md border border-base-600 bg-base-800 px-4 py-2.5 text-body placeholder:text-text-muted focus:border-accent-primary"
               />
-              {matchCount > PAGE_SIZE && (
-                <nav className="mt-6 flex items-center justify-between gap-3 text-small sm:justify-center" aria-label="Photo pages">
+              <div className="mt-2 flex min-h-8 flex-wrap items-center gap-2 text-caption text-text-secondary">
+                <span role="status" className="tabular-nums">
+                  {index || previewing ? `${matchCount} of ${totalCount} photos` : "Loading…"}
+                </span>
+                {meta && (
                   <button
                     type="button"
-                    disabled={safePage === 0}
-                    onClick={() => goToPage(safePage - 1)}
-                    className="min-h-11 rounded-md border border-base-600 px-4 disabled:opacity-40"
+                    aria-pressed={view.cloud}
+                    onClick={() => update({ ...view, cloud: !view.cloud })}
+                    className={`min-h-8 rounded-full px-2.5 py-1 ${view.cloud ? "bg-accent-primary font-medium text-base-900" : "border border-base-600 hover:bg-base-700"}`}
                   >
-                    <span aria-hidden>← </span>Previous
+                    Word cloud
                   </button>
-                  <span className="text-center tabular-nums text-text-secondary">
-                    {pageStart + 1}–{pageStart + visible.length} of {matchCount}
-                    <span className="block text-caption text-text-muted">
-                      Page {safePage + 1} of {pageCount}
-                    </span>
+                )}
+                {meta && categories.length > 0 && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => setToolsOpen((o) => !o)}
+                      aria-expanded={toolsOpen}
+                      aria-controls="caption-tools"
+                      className="min-h-8 rounded-full border border-base-600 px-2.5 py-1 hover:bg-base-700 md:hidden"
+                    >
+                      {toolsOpen ? "Hide caption tools" : `Caption tools${picked.size ? ` (${picked.size})` : ""}`}
+                    </button>
+                    <div
+                      id="caption-tools"
+                      role="group"
+                      aria-label="Choose final captions"
+                      title="Pick photos with their checkboxes, then make one caption option their final caption."
+                      className={`${toolsOpen ? "flex" : "hidden"} w-full flex-wrap items-center gap-2 md:flex md:w-auto`}
+                    >
+                      <p className="w-full text-text-muted md:hidden">
+                        Make one caption option the final caption of the photos you tick.
+                        {READ_ONLY && " This hosted demo is read-only, so saving only works in a local gallery."}
+                      </p>
+                      <label className="flex items-center gap-1">
+                        <span className="text-text-muted">Caption option</span>
+                        <select
+                          aria-label="Caption option"
+                          value={chosen}
+                          onChange={(e) => setChoice(e.target.value)}
+                          className="rounded-md border border-base-600 bg-base-800 px-2 py-1 text-text-primary"
+                        >
+                          {categories.map((category) => (
+                            <option key={category} value={category}>
+                              {groupStyle(category).label}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                      <button
+                        type="button"
+                        disabled={READ_ONLY || applying || picked.size === 0}
+                        onClick={() => void applyCaption([...picked], chosen)}
+                        className="min-h-8 rounded-full bg-accent-primary px-3 py-1 font-medium text-base-900 disabled:opacity-40"
+                      >
+                        {applying ? "Updating captions…" : `Use for selected (${picked.size})`}
+                      </button>
+                      {READ_ONLY && (
+                        <span
+                          className="dh-badge dh-badge--off"
+                          title="Saving a caption choice needs a local gallery (docker compose up); this hosted demo is read-only"
+                        >
+                          Not in this demo
+                        </span>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const pageIds = visible.map((photo) => photo.id);
+                          const allPicked = pageIds.length > 0 && pageIds.every((id) => picked.has(id));
+                          setPicked((current) => {
+                            const next = new Set(current);
+                            for (const id of pageIds) {
+                              if (allPicked) next.delete(id);
+                              else next.add(id);
+                            }
+                            return next;
+                          });
+                        }}
+                        className="min-h-8 rounded-full border border-base-600 px-2.5 py-1 hover:bg-base-700"
+                      >
+                        {visible.length > 0 && visible.every((photo) => picked.has(photo.id)) ? "Clear page" : "Select page"}
+                      </button>
+                    </div>
+                  </>
+                )}
+                {choiceNote && <span className="text-warning">{choiceNote}</span>}
+                {queue > 0 && (
+                  <span className="rounded-full bg-warning/15 px-2.5 py-1 text-warning tabular-nums">
+                    {queue} {queue === 1 ? "caption" : "captions"} in queue
                   </span>
+                )}
+                {pending > 0 && (
                   <button
                     type="button"
-                    disabled={safePage >= pageCount - 1}
-                    onClick={() => goToPage(safePage + 1)}
-                    className="min-h-11 rounded-md border border-base-600 px-4 disabled:opacity-40"
+                    onClick={() => void reveal()}
+                    disabled={refreshing}
+                    className="rounded-full bg-accent-primary px-3 py-1 font-medium text-base-900 disabled:opacity-60"
                   >
-                    Next<span aria-hidden> →</span>
+                    {refreshing ? "Loading new images…" : `Click here to show new images (${pending})`}
                   </button>
-                </nav>
-              )}
+                )}
+                {Object.entries(view.selection).flatMap(([group, ts]) =>
+                  ts.map((term) => (
+                    <button
+                      key={`${group}:${term}`}
+                      type="button"
+                      onClick={() => setSelection(toggleTerm(view.selection, group, term))}
+                      data-group={group}
+                      className="flex min-h-8 items-center gap-1 rounded-full border border-(--group) px-2 py-0.5 hover:bg-base-700"
+                      aria-label={`Remove filter ${groupStyle(group).label}: ${term}`}
+                    >
+                      <span className="text-text-muted">{groupStyle(group).label}:</span> {term} <span aria-hidden>✕</span>
+                    </button>
+                  )),
+                )}
+              </div>
             </div>
-          )}
-        </main>
+
+            {view.cloud && index && (
+              <WordCloud
+                photos={view.scope === "source" ? photos : filtered}
+                field={view.words}
+                scope={view.scope}
+                subsetCount={filtered.length}
+                sourceCount={photos.length}
+                onField={(words) => update({ ...view, words })}
+                onScope={(scope) => update({ ...view, scope })}
+                onSearch={(query) => {
+                  setPage(0);
+                  update({ ...view, query });
+                }}
+              />
+            )}
+
+            {!index && !previewing ? (
+              // Holds the grid's place while the index loads, so the footer doesn't jump.
+              <p aria-busy="true" className="min-h-dvh py-16 text-center text-text-secondary">
+                Loading photos…
+              </p>
+            ) : matchCount === 0 ? (
+              <p className="py-16 text-center text-text-secondary">
+                {photos.length === 0 && queue > 0
+                  ? "No captioned photos yet."
+                  : "No photos match. Try removing a filter. Terms within a category widen the search, categories narrow it."}
+              </p>
+            ) : (
+              <div id="gallery-grid" className="scroll-mt-28">
+                <PhotoGrid
+                  photos={visible}
+                  selection={view.selection}
+                  picked={picked}
+                  onOpen={openFromGrid}
+                  onIntent={fetchDetail}
+                  onToggle={(id) =>
+                    setPicked((current) => {
+                      const next = new Set(current);
+                      if (next.has(id)) next.delete(id);
+                      else next.add(id);
+                      return next;
+                    })
+                  }
+                />
+                {matchCount > PAGE_SIZE && (
+                  <nav className="mt-6 flex items-center justify-between gap-3 text-small sm:justify-center" aria-label="Photo pages">
+                    <button
+                      type="button"
+                      disabled={safePage === 0}
+                      onClick={() => goToPage(safePage - 1)}
+                      className="min-h-11 rounded-md border border-base-600 px-4 disabled:opacity-40"
+                    >
+                      <span aria-hidden>← </span>Previous
+                    </button>
+                    <span className="text-center tabular-nums text-text-secondary">
+                      {pageStart + 1}–{pageStart + visible.length} of {matchCount}
+                      <span className="block text-caption text-text-muted">
+                        Page {safePage + 1} of {pageCount}
+                      </span>
+                    </span>
+                    <button
+                      type="button"
+                      disabled={safePage >= pageCount - 1}
+                      onClick={() => goToPage(safePage + 1)}
+                      className="min-h-11 rounded-md border border-base-600 px-4 disabled:opacity-40"
+                    >
+                      Next<span aria-hidden> →</span>
+                    </button>
+                  </nav>
+                )}
+              </div>
+            )}
+          </main>
+        </div>
+
+        <footer className="flex flex-wrap gap-x-4 gap-y-1 border-t border-base-700 py-4 text-caption leading-6 text-text-secondary">
+          <Link href="/docs/" className={LINK}>
+            Docs
+          </Link>
+          <ExternalLink href="https://github.com/smk762/argus-lightbox" className={LINK}>
+            argus-lightbox on GitHub
+          </ExternalLink>
+          <DemoLinks className={LINK} />
+        </footer>
+
+        {openPhoto && index && (
+          <PhotoDetail
+            photo={openFull ?? openPhoto}
+            detail={openFull ? "ready" : openDetail === "error" ? "error" : "loading"}
+            position={{ index: Math.max(openIndex, 0), total: Math.max(filtered.length, 1) }}
+            categories={index.categories}
+            lensVersion={index.lens_version}
+            terms={terms}
+            applying={applying}
+            onClose={() => {
+              if (pushedPhoto.current) window.history.back();
+              else update({ ...view, photo: null });
+            }}
+            onStep={step}
+            onUseCaption={(category) => void applyCaption([openPhoto.id], category)}
+          />
+        )}
       </div>
-
-      <footer className="flex flex-wrap gap-x-4 gap-y-1 border-t border-base-700 py-4 text-caption text-text-secondary">
-        <Link href="/docs/" className={LINK}>
-          Docs
-        </Link>
-        <ExternalLink href="https://github.com/smk762/argus-lightbox" className={LINK}>
-          argus-lightbox on GitHub
-        </ExternalLink>
-        <DemoLinks className={LINK} />
-      </footer>
-
-      {openPhoto && index && (
-        <PhotoDetail
-          photo={openFull ?? openPhoto}
-          detail={openFull ? "ready" : openDetail === "error" ? "error" : "loading"}
-          position={{ index: Math.max(openIndex, 0), total: Math.max(filtered.length, 1) }}
-          categories={index.categories}
-          lensVersion={index.lens_version}
-          terms={terms}
-          applying={applying}
-          onClose={() => {
-            if (pushedPhoto.current) window.history.back();
-            else update({ ...view, photo: null });
-          }}
-          onStep={step}
-          onUseCaption={(category) => void applyCaption([openPhoto.id], category)}
-        />
-      )}
-    </div>
+    </>
   );
 }

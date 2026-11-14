@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
-import { shownCaption } from "@/lib/caption";
+import { altText, shownCaption } from "@/lib/caption";
 import { assetUrl } from "@/lib/data";
 import { swipeStep } from "@/lib/gesture";
 import type { ListPhoto, Photo } from "@/lib/types";
@@ -140,7 +140,7 @@ export function PhotoDetail({
           <img
             key={photo.id}
             src={assetUrl(photo.image)}
-            alt={shownCaption(photo.caption).text}
+            alt={altText(shownCaption(photo.caption).text)}
             width={photo.width}
             height={photo.height}
             fetchPriority="high"

@@ -15,7 +15,7 @@ export function LensDocLink({
   return (
     <ExternalLink
       href={lensDocUrl(section, version)}
-      className="text-accent-tertiary underline underline-offset-2 hover:decoration-2"
+      className="text-link underline underline-offset-2 hover:decoration-2"
     >
       {children}
     </ExternalLink>
