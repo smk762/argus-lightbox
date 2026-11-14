@@ -1,19 +1,20 @@
 {
   "name": "dh-shared",
-  "version": "1.2.0",
-  "checksum": "87a8194feab44009f0e91a782c7b43c4811a7d3b152eb00f1014470b669c9add",
+  "version": "1.2.2",
+  "checksum": "f07f85100a1171890543b43d027a4bca6b6dbebcb96873149d7f58a63b312936",
   "dest": "web/vendor/dh",
   "files": {
-    "README.md": "08baba5225eb911ad0968e273d976efdd500e6870f9570d8996d0d4abffae7bf",
-    "dh-badge.css": "d15e8c6553d63d5c550808c5c07aa1eb7b6375ee66068d78a51ef144bf2cc844",
+    "README.md": "32491ed6f43fa7d8e907c0854f572b1167ce440ac249b671bcb4df7a100b9534",
+    "dh-badge.css": "39815c9ea6bd23793d20e6c564263a7c472dbaea5323678dc3a83a6c710ab0e8",
     "dh-mark.svg": "0b989faaa928890504412368c01c63144fe72a5fca9ab53bbaad824333d047fd",
-    "dh-strip.css": "bb88c2c6f599733910cd9bc89912156aa83584704dda670188c851e9ac1a094f",
-    "dh-strip.html": "4f3729082a2d616da34ced907fe94f460603e121c793734b5609205cb8eb59fd",
-    "dh-strip.mjs": "3a13e403e8b5b3c9aa629f121423f535bf649f524e28ee89878fcc472e891794",
-    "dh-theme.js": "93bb87bb099285bceb88b5e2d8e929a9b19ed6b618b7eef7897fb3a984d0c46f",
-    "dh-tokens.css": "82b91107da1dcd3db6000e04478edd837105113aad03ad0f849c7816bcbba79c",
-    "manifest.json": "d259bb52c7224557692e341b6a4e70f758558a3090a1f0618bbf1414bee46eaf",
-    "sync-shared.mjs": "685ed591516e3199e3ef72e3ec344d9b096ebc66004ae72692092b4888d82f23"
+    "dh-strip.css": "29f4a584af34a555423ce00a68876c6e8af942b67deeea477fb9f93665a769cb",
+    "dh-strip.d.mts": "a7c52a89fb2388fb6707a5027244bab756ebc4cbde3390218c447f83b28b1781",
+    "dh-strip.html": "99bcc085a95f2cd30e2a89d52680b636f600dd93090c4e608ab47ca50bdc27e1",
+    "dh-strip.mjs": "b209254b3b0effa8191be61c397af92cf57ae7adabb6a62bbe3ea1495094603e",
+    "dh-theme.js": "ec9f0ffdb26b7739166a421b094775cd570944cf8f5bf8506cf11ae643846cdf",
+    "dh-tokens.css": "f96be34744c51ba3d970ab3a29b7891d0d199f71813fd4516fea4a51a11c20db",
+    "manifest.json": "bae10616813c24881b1f166cd3b0eee5a30099ed2cbcd808e704956df568b9cc",
+    "sync-shared.mjs": "762cf909b4f5dc57bbc04e250c0864a3fadd9b28f561529d6fa593a2978c7379"
   },
   "omitted": {
     "favicons/apple-touch-icon.png": "f4a9d02b04bb917eabe2b564f0ae333d2897e4e8cee955da58158c07b32bd5f0",
