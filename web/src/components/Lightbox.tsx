@@ -5,7 +5,7 @@ import { flushSync } from "react-dom";
 import Link from "next/link";
 
 import { groupStyle } from "@/lib/categories";
-import { loadIndex, loadStatus } from "@/lib/data";
+import { loadDetail, loadList, loadStatus } from "@/lib/data";
 import {
   EXTRA_GROUPS,
   type Selection,
@@ -15,17 +15,22 @@ import {
   searchText,
   toggleTerm,
 } from "@/lib/filter";
-import type { GalleryIndex } from "@/lib/types";
-import { type ViewState, parseView, serializeView } from "@/lib/urlState";
+import type { PrerenderedGallery } from "@/lib/prerender";
+import type { DetailFields, GridPhoto, ListIndex, Photo } from "@/lib/types";
+import { PAGE_SIZE, type ViewState, parseView, serializeView } from "@/lib/urlState";
 
 import { ExternalLink } from "./ExternalLink";
+import { DemoLinks } from "./SuiteLinks";
 import { FacetSidebar } from "./FacetSidebar";
 import { PhotoDetail } from "./PhotoDetail";
 import { PhotoGrid } from "./PhotoGrid";
 import { WordCloud } from "./WordCloud";
 
 const EMPTY: ViewState = { query: "", selection: {}, photo: null, cloud: false, words: "caption", scope: "subset" };
-const PAGE_SIZE = 48;
+const NO_FACETS: Record<string, never[]> = {};
+const LINK = "text-accent-tertiary underline underline-offset-2 hover:decoration-2";
+// The hosted demo is a static site, so the caption-choice write path has nowhere to go.
+const READ_ONLY = Boolean(process.env.NEXT_PUBLIC_DEMO_BANNER);
 
 function sourceBadge(source: string): { label: string; title: string; tone: string } {
   if (source === "fixture") {
@@ -49,8 +54,16 @@ function sourceBadge(source: string): { label: string; title: string; tone: stri
   };
 }
 
-export function Lightbox() {
-  const [index, setIndex] = useState<GalleryIndex | null>(null);
+/**
+ * The gallery. *initial* is the build-time first page, photo count and facet counts (a prerendered
+ * static export, src/lib/prerender.ts): it renders in the HTML, and the photo list loads after.
+ * Without it, everything waits for the index, as a folder gallery that is still captioning needs.
+ */
+export function Lightbox({ initial = null }: { initial?: PrerenderedGallery | null }) {
+  const split = initial !== null;
+  const [index, setIndex] = useState<ListIndex | null>(null);
+  const [details, setDetails] = useState<Record<string, DetailFields | "error">>({});
+  const [toolsOpen, setToolsOpen] = useState(false); // small screens only: the caption-choice controls
   const [error, setError] = useState<string | null>(null);
   const [view, setView] = useState<ViewState>(EMPTY);
   const [filtersOpen, setFiltersOpen] = useState(false); // small screens only; md+ always shows the sidebar
@@ -68,6 +81,7 @@ export function Lightbox() {
   // How many photos the grid is showing. The status poll reads this so a click
   // is what pulls in captions that finished after the page loaded.
   const shownCount = useRef(0);
+  const detailRequests = useRef(new Set<string>());
 
   useEffect(() => {
     const ctrl = new AbortController();
@@ -87,7 +101,7 @@ export function Lightbox() {
       }
     };
 
-    loadIndex(ctrl.signal)
+    loadList(split, ctrl.signal)
       .then((next) => {
         if (!alive) return;
         shownCount.current = next.photos.length;
@@ -105,7 +119,7 @@ export function Lightbox() {
       ctrl.abort();
       window.clearTimeout(timer);
     };
-  }, []);
+  }, [split]);
 
   // URL is the source of truth for shareable state; history entries are pushed
   // only when a photo opens or closes, so Back closes the viewer.
@@ -126,9 +140,10 @@ export function Lightbox() {
     else window.history.replaceState(null, "", url);
   }, []);
 
+  const meta = index ?? initial?.meta ?? null;
   const photos = useMemo(() => index?.photos ?? [], [index]);
   const searchCache = useMemo(() => new Map(photos.map((p) => [p.id, searchText(p)])), [photos]);
-  const groups = useMemo(() => [...(index?.categories ?? []), ...EXTRA_GROUPS], [index]);
+  const groups = useMemo(() => [...(meta?.categories ?? []), ...EXTRA_GROUPS], [meta]);
   const filtered = useMemo(
     () => filterPhotos(photos, view.query, view.selection, searchCache),
     [photos, view.query, view.selection, searchCache],
@@ -143,10 +158,21 @@ export function Lightbox() {
     [view.query, view.selection],
   );
 
-  const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const safePage = filtered.length === 0 ? 0 : Math.min(page, pageCount - 1);
+  // Until the photo list arrives, a prerendered page shows its baked first page and facet counts,
+  // as long as the view is the one they were baked for (no search, no filter, page one).
+  const previewing = !index && initial !== null && !view.query.trim() && activeCount(view.selection) === 0 && page === 0;
+  const matchCount = index ? filtered.length : previewing ? initial.total : 0;
+  const totalCount = index ? photos.length : (initial?.total ?? 0);
+  const shownFacets = index ? facets : previewing ? initial.facets : NO_FACETS;
+
+  const pageCount = Math.max(1, Math.ceil(matchCount / PAGE_SIZE));
+  const safePage = matchCount === 0 ? 0 : Math.min(page, pageCount - 1);
   const pageStart = safePage * PAGE_SIZE;
-  const visible = filtered.slice(pageStart, pageStart + PAGE_SIZE);
+  const visible: GridPhoto[] = index
+    ? filtered.slice(pageStart, pageStart + PAGE_SIZE)
+    : previewing
+      ? initial.firstPage
+      : [];
 
   const applyCaption = useCallback(async (ids: string[], category: string) => {
     setApplying(true);
@@ -159,7 +185,7 @@ export function Lightbox() {
       });
       const body = (await res.json().catch(() => ({}))) as { error?: string; updated?: string[]; skipped?: { reason: string }[] };
       if (!res.ok) throw new Error(body.error || `HTTP ${res.status}`);
-      const next = await loadIndex();
+      const next = await loadList(split);
       shownCount.current = next.photos.length;
       setIndex(next);
       setQueue(next.queue ?? 0);
@@ -173,12 +199,12 @@ export function Lightbox() {
     } finally {
       setApplying(false);
     }
-  }, []);
+  }, [split]);
 
   const reveal = useCallback(async () => {
     setRefreshing(true);
     try {
-      const next = await loadIndex();
+      const next = await loadList(split);
       shownCount.current = next.photos.length;
       setIndex(next);
       setQueue(next.queue ?? 0);
@@ -198,10 +224,36 @@ export function Lightbox() {
     } finally {
       setRefreshing(false);
     }
-  }, [view]);
+  }, [view, split]);
+
+  // Split exports fetch a photo's Explain/Compare data on demand: on hover or focus of its
+  // thumbnail, when it opens, and for its neighbours so the arrow keys don't wait.
+  const fetchDetail = useCallback(
+    (id: string) => {
+      if (!split || detailRequests.current.has(id)) return;
+      detailRequests.current.add(id);
+      loadDetail(id)
+        .then((d) => setDetails((current) => ({ ...current, [id]: d })))
+        .catch(() => setDetails((current) => ({ ...current, [id]: "error" })));
+    },
+    [split],
+  );
 
   const openIndex = view.photo ? filtered.findIndex((p) => p.id === view.photo) : -1;
   const openPhoto = openIndex >= 0 ? filtered[openIndex] : view.photo ? photos.find((p) => p.id === view.photo) : undefined;
+  const openDetail = openPhoto ? details[openPhoto.id] : undefined;
+  const openFull: Photo | null =
+    openPhoto?.explain && openPhoto.compare
+      ? (openPhoto as Photo)
+      : openPhoto && openDetail && openDetail !== "error"
+        ? { ...openPhoto, ...openDetail }
+        : null;
+  const prevId = openIndex >= 0 && filtered.length > 1 ? filtered[(openIndex - 1 + filtered.length) % filtered.length].id : null;
+  const nextId = openIndex >= 0 && filtered.length > 1 ? filtered[(openIndex + 1) % filtered.length].id : null;
+  useEffect(() => {
+    if (!openPhoto || openPhoto.explain) return;
+    for (const id of [openPhoto.id, nextId, prevId]) if (id) fetchDetail(id);
+  }, [openPhoto, nextId, prevId, fetchDetail]);
 
   const setSelection = (selection: Selection) => {
     setPage(0);
@@ -235,7 +287,11 @@ export function Lightbox() {
     });
   };
 
-  const badge = index ? sourceBadge(index.source) : null;
+  const badge = meta ? sourceBadge(meta.source) : null;
+  const goToPage = (next: number) => {
+    setPage(next);
+    document.getElementById("gallery-grid")?.scrollIntoView({ block: "start" });
+  };
 
   if (error) {
     return (
@@ -245,6 +301,10 @@ export function Lightbox() {
       </main>
     );
   }
+
+  const categories = meta?.categories ?? [];
+  const chosen = categories.includes(choice) ? choice : categories[0];
+  const filterCount = activeCount(view.selection);
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-[1800px] flex-col px-4 sm:px-6">
@@ -265,23 +325,25 @@ export function Lightbox() {
           <h1 className="font-display text-display font-semibold tracking-tight">Lightbox</h1>
           <p className="text-small text-text-secondary">
             Every photo here is navigated by its{" "}
-            <ExternalLink href="https://github.com/smk762/argus-lens" className="text-accent-tertiary underline underline-offset-2 hover:decoration-2">
+            <ExternalLink href="https://github.com/smk762/argus-lens" className={LINK}>
               argus-lens
             </ExternalLink>{" "}
             structured caption.
           </p>
         </div>
-        <div className="flex flex-wrap items-center gap-3 text-caption text-text-secondary">
-          {index && badge && (
+        {/* Fixed height: the badge row is in the HTML of a prerendered build and arrives with the
+            index otherwise, and either way it must not push the grid down. */}
+        <div className="flex min-h-7 flex-wrap items-center gap-3 text-caption text-text-secondary">
+          {meta && badge && (
             <>
               <span className={`rounded-full px-2.5 py-1 ${badge.tone}`} title={badge.title}>
                 {badge.label}
               </span>
-              <span>lens {index.lens_version}</span>
+              <span>lens {meta.lens_version}</span>
             </>
           )}
           <nav aria-label="Site">
-            <Link href="/docs/" className="text-accent-tertiary underline underline-offset-2 hover:decoration-2">
+            <Link href="/docs/" className={LINK}>
               Docs
             </Link>
           </nav>
@@ -294,9 +356,9 @@ export function Lightbox() {
           onClick={() => setFiltersOpen((o) => !o)}
           aria-expanded={filtersOpen}
           aria-controls="facet-sidebar"
-          className="self-start rounded-md border border-base-600 px-3 py-1.5 text-small md:hidden"
+          className="min-h-11 self-start rounded-md border border-base-600 px-4 text-small md:hidden"
         >
-          {filtersOpen ? "Hide filters" : `Filters${activeCount(view.selection) ? ` (${activeCount(view.selection)})` : ""}`}
+          {filtersOpen ? "Hide filters" : `Filters${filterCount ? ` (${filterCount})` : ""}`}
         </button>
         <div
           id="facet-sidebar"
@@ -304,14 +366,25 @@ export function Lightbox() {
         >
           <FacetSidebar
             groups={groups}
-            facets={facets}
+            facets={shownFacets}
             selection={view.selection}
             onToggle={(group, term) => setSelection(toggleTerm(view.selection, group, term))}
             onClear={() => setSelection({})}
           />
+          {/* Phones: the open filter list is long, so close it from the bottom as well as the top. */}
+          <button
+            type="button"
+            onClick={() => {
+              setFiltersOpen(false);
+              document.getElementById("gallery")?.scrollIntoView({ block: "start" });
+            }}
+            className="mt-4 min-h-11 w-full rounded-md bg-accent-primary px-4 text-small font-medium text-base-900 md:hidden"
+          >
+            {index || previewing ? `Show ${matchCount} ${matchCount === 1 ? "photo" : "photos"}` : "Show photos"}
+          </button>
         </div>
 
-        <main id="gallery" tabIndex={-1} className="@container min-w-0 flex-1">
+        <main id="gallery" tabIndex={-1} className="@container min-w-0 flex-1 scroll-mt-2">
           <div className="sticky top-0 z-10 -mx-1 mb-4 bg-base-900/90 px-1 py-2 backdrop-blur">
             <input
               type="search"
@@ -320,69 +393,90 @@ export function Lightbox() {
                 setPage(0);
                 update({ ...view, query: e.target.value });
               }}
-              placeholder="Search captions: “snow mountain”, “neon night”, “harbor boats”, “typewriter”…"
+              // Short enough to show whole in a phone-width field.
+              placeholder="Search captions, e.g. “neon night”"
               aria-label="Search captions"
-              className="w-full rounded-md border border-base-600 bg-base-800 px-4 py-2.5 text-body placeholder:text-text-muted focus:border-accent-primary focus:outline-none"
+              enterKeyHint="search"
+              className="w-full rounded-md border border-base-600 bg-base-800 px-4 py-2.5 text-body placeholder:text-text-muted focus:border-accent-primary"
             />
-            <div className="mt-2 flex flex-wrap items-center gap-2 text-caption text-text-secondary">
+            <div className="mt-2 flex min-h-8 flex-wrap items-center gap-2 text-caption text-text-secondary">
               <span role="status" className="tabular-nums">
-                {index ? `${filtered.length} of ${photos.length} photos` : "Loading…"}
+                {index || previewing ? `${matchCount} of ${totalCount} photos` : "Loading…"}
               </span>
-              {index && (
+              {meta && (
                 <button
                   type="button"
                   aria-pressed={view.cloud}
                   onClick={() => update({ ...view, cloud: !view.cloud })}
-                  className={`rounded-full px-2.5 py-1 ${view.cloud ? "bg-accent-primary font-medium text-base-900" : "border border-base-600 hover:bg-base-700"}`}
+                  className={`min-h-8 rounded-full px-2.5 py-1 ${view.cloud ? "bg-accent-primary font-medium text-base-900" : "border border-base-600 hover:bg-base-700"}`}
                 >
                   Word cloud
                 </button>
               )}
-              {index && index.categories.length > 0 && (
+              {meta && categories.length > 0 && (
                 <>
-                  <label className="flex items-center gap-1">
-                    <span className="text-text-muted">Caption option</span>
-                    <select
-                      aria-label="Caption option"
-                      value={index.categories.includes(choice) ? choice : index.categories[0]}
-                      onChange={(e) => setChoice(e.target.value)}
-                      className="rounded-md border border-base-600 bg-base-800 px-2 py-1 text-text-primary"
+                  <button
+                    type="button"
+                    onClick={() => setToolsOpen((o) => !o)}
+                    aria-expanded={toolsOpen}
+                    aria-controls="caption-tools"
+                    className="min-h-8 rounded-full border border-base-600 px-2.5 py-1 hover:bg-base-700 md:hidden"
+                  >
+                    {toolsOpen ? "Hide caption tools" : `Caption tools${picked.size ? ` (${picked.size})` : ""}`}
+                  </button>
+                  <div
+                    id="caption-tools"
+                    role="group"
+                    aria-label="Choose final captions"
+                    title="Pick photos with their checkboxes, then make one caption option their final caption."
+                    className={`${toolsOpen ? "flex" : "hidden"} w-full flex-wrap items-center gap-2 md:flex md:w-auto`}
+                  >
+                    <p className="w-full text-text-muted md:hidden">
+                      Make one caption option the final caption of the photos you tick.
+                      {READ_ONLY && " This hosted demo is read-only, so saving only works in a local gallery."}
+                    </p>
+                    <label className="flex items-center gap-1">
+                      <span className="text-text-muted">Caption option</span>
+                      <select
+                        aria-label="Caption option"
+                        value={chosen}
+                        onChange={(e) => setChoice(e.target.value)}
+                        className="rounded-md border border-base-600 bg-base-800 px-2 py-1 text-text-primary"
+                      >
+                        {categories.map((category) => (
+                          <option key={category} value={category}>
+                            {groupStyle(category).label}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                    <button
+                      type="button"
+                      disabled={applying || picked.size === 0}
+                      onClick={() => void applyCaption([...picked], chosen)}
+                      className="min-h-8 rounded-full bg-accent-primary px-3 py-1 font-medium text-base-900 disabled:opacity-40"
                     >
-                      {index.categories.map((category) => (
-                        <option key={category} value={category}>
-                          {groupStyle(category).label}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  <button
-                    type="button"
-                    disabled={applying || picked.size === 0}
-                    onClick={() =>
-                      void applyCaption([...picked], index.categories.includes(choice) ? choice : index.categories[0])
-                    }
-                    className="rounded-full bg-accent-primary px-3 py-1 font-medium text-base-900 disabled:opacity-40"
-                  >
-                    {applying ? "Updating captions…" : `Use for selected (${picked.size})`}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const pageIds = visible.map((photo) => photo.id);
-                      const allPicked = pageIds.length > 0 && pageIds.every((id) => picked.has(id));
-                      setPicked((current) => {
-                        const next = new Set(current);
-                        for (const id of pageIds) {
-                          if (allPicked) next.delete(id);
-                          else next.add(id);
-                        }
-                        return next;
-                      });
-                    }}
-                    className="rounded-full border border-base-600 px-2.5 py-1 hover:bg-base-700"
-                  >
-                    {visible.length > 0 && visible.every((photo) => picked.has(photo.id)) ? "Clear page" : "Select page"}
-                  </button>
+                      {applying ? "Updating captions…" : `Use for selected (${picked.size})`}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const pageIds = visible.map((photo) => photo.id);
+                        const allPicked = pageIds.length > 0 && pageIds.every((id) => picked.has(id));
+                        setPicked((current) => {
+                          const next = new Set(current);
+                          for (const id of pageIds) {
+                            if (allPicked) next.delete(id);
+                            else next.add(id);
+                          }
+                          return next;
+                        });
+                      }}
+                      className="min-h-8 rounded-full border border-base-600 px-2.5 py-1 hover:bg-base-700"
+                    >
+                      {visible.length > 0 && visible.every((photo) => picked.has(photo.id)) ? "Clear page" : "Select page"}
+                    </button>
+                  </div>
                 </>
               )}
               {choiceNote && <span className="text-warning">{choiceNote}</span>}
@@ -407,8 +501,8 @@ export function Lightbox() {
                     key={`${group}:${term}`}
                     type="button"
                     onClick={() => setSelection(toggleTerm(view.selection, group, term))}
-                    className="flex items-center gap-1 rounded-full border px-2 py-0.5 hover:bg-base-700"
-                    style={{ borderColor: groupStyle(group).color }}
+                    data-group={group}
+                    className="flex min-h-8 items-center gap-1 rounded-full border border-(--group) px-2 py-0.5 hover:bg-base-700"
                     aria-label={`Remove filter ${groupStyle(group).label}: ${term}`}
                   >
                     <span className="text-text-muted">{groupStyle(group).label}:</span> {term} <span aria-hidden>✕</span>
@@ -418,7 +512,7 @@ export function Lightbox() {
             </div>
           </div>
 
-          {view.cloud && (
+          {view.cloud && index && (
             <WordCloud
               photos={view.scope === "source" ? photos : filtered}
               field={view.words}
@@ -434,19 +528,25 @@ export function Lightbox() {
             />
           )}
 
-          {index && filtered.length === 0 ? (
+          {!index && !previewing ? (
+            // Holds the grid's place while the index loads, so the footer doesn't jump.
+            <p aria-busy="true" className="min-h-dvh py-16 text-center text-text-secondary">
+              Loading photos…
+            </p>
+          ) : matchCount === 0 ? (
             <p className="py-16 text-center text-text-secondary">
               {photos.length === 0 && queue > 0
                 ? "No captioned photos yet."
                 : "No photos match. Try removing a filter. Terms within a category widen the search, categories narrow it."}
             </p>
           ) : (
-            <div id="gallery-grid">
+            <div id="gallery-grid" className="scroll-mt-28">
               <PhotoGrid
                 photos={visible}
                 selection={view.selection}
                 picked={picked}
                 onOpen={openFromGrid}
+                onIntent={fetchDetail}
                 onToggle={(id) =>
                   setPicked((current) => {
                     const next = new Set(current);
@@ -456,32 +556,29 @@ export function Lightbox() {
                   })
                 }
               />
-              {filtered.length > PAGE_SIZE && (
-                <nav className="mt-6 flex items-center justify-center gap-3 text-small" aria-label="Photo pages">
+              {matchCount > PAGE_SIZE && (
+                <nav className="mt-6 flex items-center justify-between gap-3 text-small sm:justify-center" aria-label="Photo pages">
                   <button
                     type="button"
                     disabled={safePage === 0}
-                    onClick={() => {
-                      setPage(safePage - 1);
-                      document.getElementById("gallery-grid")?.scrollIntoView({ block: "start" });
-                    }}
-                    className="rounded-md border border-base-600 px-3 py-1.5 disabled:opacity-40"
+                    onClick={() => goToPage(safePage - 1)}
+                    className="min-h-11 rounded-md border border-base-600 px-4 disabled:opacity-40"
                   >
-                    Previous
+                    <span aria-hidden>← </span>Previous
                   </button>
-                  <span className="tabular-nums text-text-secondary">
-                    {pageStart + 1}–{pageStart + visible.length} of {filtered.length}
+                  <span className="text-center tabular-nums text-text-secondary">
+                    {pageStart + 1}–{pageStart + visible.length} of {matchCount}
+                    <span className="block text-caption text-text-muted">
+                      Page {safePage + 1} of {pageCount}
+                    </span>
                   </span>
                   <button
                     type="button"
                     disabled={safePage >= pageCount - 1}
-                    onClick={() => {
-                      setPage(safePage + 1);
-                      document.getElementById("gallery-grid")?.scrollIntoView({ block: "start" });
-                    }}
-                    className="rounded-md border border-base-600 px-3 py-1.5 disabled:opacity-40"
+                    onClick={() => goToPage(safePage + 1)}
+                    className="min-h-11 rounded-md border border-base-600 px-4 disabled:opacity-40"
                   >
-                    Next
+                    Next<span aria-hidden> →</span>
                   </button>
                 </nav>
               )}
@@ -491,17 +588,19 @@ export function Lightbox() {
       </div>
 
       <footer className="flex flex-wrap gap-x-4 gap-y-1 border-t border-base-700 py-4 text-caption text-text-secondary">
-        <Link href="/docs/" className="text-accent-tertiary underline underline-offset-2 hover:decoration-2">
+        <Link href="/docs/" className={LINK}>
           Docs
         </Link>
-        <ExternalLink href="https://github.com/smk762/argus-lightbox" className="text-accent-tertiary underline underline-offset-2 hover:decoration-2">
+        <ExternalLink href="https://github.com/smk762/argus-lightbox" className={LINK}>
           argus-lightbox on GitHub
         </ExternalLink>
+        <DemoLinks className={LINK} />
       </footer>
 
       {openPhoto && index && (
         <PhotoDetail
-          photo={openPhoto}
+          photo={openFull ?? openPhoto}
+          detail={openFull ? "ready" : openDetail === "error" ? "error" : "loading"}
           position={{ index: Math.max(openIndex, 0), total: Math.max(filtered.length, 1) }}
           categories={index.categories}
           lensVersion={index.lens_version}

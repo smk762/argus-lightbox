@@ -92,3 +92,37 @@ export interface CaptionParams {
 }
 
 export const SUPPORTED_INDEX_MAJOR = "1";
+
+/** The per-photo fields only the detail view's Explain and Compare tabs read. */
+export const DETAIL_FIELDS = ["explain", "compare"] as const;
+export type DetailFields = Pick<Photo, (typeof DETAIL_FIELDS)[number]>;
+
+/**
+ * A photo as the gallery list carries it. A static export splits the index into `list.json`
+ * (photos without the detail fields) and `detail/<id>.json` (the detail fields), so the grid,
+ * search and facets load about half the bytes; a folder gallery serves full photos.
+ */
+export type ListPhoto = Omit<Photo, keyof DetailFields> & Partial<DetailFields>;
+
+export interface ListIndex extends Omit<GalleryIndex, "photos"> {
+  photos: ListPhoto[];
+}
+
+/** What the grid needs to draw a thumbnail: a list photo, or a card baked into the page. */
+export interface GridPhoto {
+  id: string;
+  thumb: string;
+  width: number;
+  height: number;
+  color: string;
+  facets: Record<string, string[]>;
+  exif: Pick<Exif, "camera">;
+  provenance: { title?: string };
+  caption: Pick<CaptionRecord, "final_caption" | "caption_variants">;
+}
+
+/** Index fields the page shows before the photo list loads. */
+export type IndexMeta = Pick<
+  GalleryIndex,
+  "version" | "generated_at" | "source" | "lens_version" | "categories" | "caption_params"
+>;

@@ -7,7 +7,7 @@ export interface GroupStyle {
   blurb: string;
 }
 
-const STYLES: Record<string, GroupStyle> = {
+export const STYLES: Readonly<Record<string, GroupStyle>> = {
   identity: { label: "Identity", color: "var(--color-accent-primary)", blurb: "Who is in frame: hair, face, age." },
   wardrobe: { label: "Wardrobe", color: "var(--color-warm-primary)", blurb: "Clothing and accessories." },
   pose_composition: {

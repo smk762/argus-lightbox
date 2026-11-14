@@ -19,7 +19,15 @@ export function defaultOpen(group: string, termCount: number): boolean {
 /** Remembered open/closed state per group. Storage can be missing or throw (private mode, previews). */
 export function readOpenState(storage: Pick<Storage, "getItem"> | undefined): Record<string, boolean> {
   try {
-    const raw = storage?.getItem(FACET_OPEN_KEY);
+    return parseOpenState(storage?.getItem(FACET_OPEN_KEY) ?? null);
+  } catch {
+    return {};
+  }
+}
+
+/** The stored JSON (or null) as a per-group map; anything malformed reads as nothing remembered. */
+export function parseOpenState(raw: string | null): Record<string, boolean> {
+  try {
     if (!raw) return {};
     const parsed: unknown = JSON.parse(raw);
     if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return {};
@@ -43,6 +51,28 @@ export function writeOpenState(
     storage?.setItem(FACET_OPEN_KEY, JSON.stringify({ ...readOpenState(storage), [group]: open }));
   } catch {
     // quota, blocked site data: the default applies next time
+  }
+  for (const listener of listeners) listener();
+}
+
+// A tiny external store over the stored JSON string, for useSyncExternalStore: the server snapshot is
+// null, so prerendered groups use their defaults and hydration matches.
+const listeners = new Set<() => void>();
+
+export function subscribeOpenState(listener: () => void): () => void {
+  listeners.add(listener);
+  window.addEventListener("storage", listener);
+  return () => {
+    listeners.delete(listener);
+    window.removeEventListener("storage", listener);
+  };
+}
+
+export function rawOpenState(): string | null {
+  try {
+    return browserStorage()?.getItem(FACET_OPEN_KEY) ?? null;
+  } catch {
+    return null;
   }
 }
 

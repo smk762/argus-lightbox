@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef } from "react";
 
-import type { Photo } from "@/lib/types";
+import type { ListPhoto } from "@/lib/types";
 import { type WordCount, type WordField, histogramCsv, wordHistogram } from "@/lib/words";
 
 const CLOUD_LIMIT = 60;
@@ -42,7 +42,7 @@ export function WordCloud({
   onScope,
   onSearch,
 }: {
-  photos: Photo[];
+  photos: ListPhoto[];
   field: WordField;
   scope: "subset" | "source";
   subsetCount: number;

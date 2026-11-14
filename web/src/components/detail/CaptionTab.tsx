@@ -4,7 +4,7 @@ import { shownCaption } from "@/lib/caption";
 import { groupStyle } from "@/lib/categories";
 import { captionedBy, refineSummary } from "@/lib/lensDocs";
 import { tokenUse } from "@/lib/tokens";
-import type { Photo } from "@/lib/types";
+import type { ListPhoto } from "@/lib/types";
 
 import { LensDocLink } from "../LensDocLink";
 import { CopyButton, GroupLabel, Highlight, SectionTitle } from "../ui";
@@ -31,7 +31,7 @@ export function CaptionTab({
   applying,
   onUse,
 }: {
-  photo: Photo;
+  photo: ListPhoto;
   categories: string[];
   lensVersion: string;
   terms: string[];
