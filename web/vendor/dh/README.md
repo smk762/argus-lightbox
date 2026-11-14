@@ -1,7 +1,7 @@
-# Dragonhound shared design layer (dh-shared v1, currently 1.2.0)
+# Dragonhound shared design layer (dh-shared v1, currently 1.2.2)
 
 The one source of truth for what the Dragonhound Labs sites share: dragonhound.dev (this repo,
-the reference look), Studio, Lightbox and Realms. Each repo vendors a pinned copy, so there is no
+the reference look), Studio, Lightbox, Realms and Cull. Each repo vendors a pinned copy, so there is no
 runtime dependency and no CSP change. A checksum keeps the copies honest.
 
 | File | What it is |
@@ -9,6 +9,7 @@ runtime dependency and no CSP change. A checksum keeps the copies honest.
 | `dh-tokens.css` | CSS custom properties, light and dark: colour, type, space, radius, elevation, focus, motion |
 | `dh-badge.css` | The demo-state badge (`.dh-badge`), styled from the tokens |
 | `dh-strip.mjs` | The family bar's source: links, labels and mark as an ES module (for React/Next), plus the HTML renderer |
+| `dh-strip.d.mts` | TypeScript declarations for `dh-strip.mjs` (1.2.1), vendored next to it so a typed import needs no `// @ts-ignore` |
 | `dh-strip.html` + `dh-strip.css` | The family bar for the top of each demo (HTML + CSS, works without JS); generated from `dh-strip.mjs` |
 | `dh-theme.js` | Light/dark that follows you across `*.dragonhound.dev` (cookie), change event and `dhTheme` API, strip current-site marking; CSP-safe |
 | `dh-mark.svg` | The logo mark, simplified for small sizes (1.2 KB; same shape as `src/data/logo.ts`) |
@@ -54,7 +55,7 @@ All names start with `--dh-`. Use the tokens; don't copy their values.
     .facet[data-group="1"] { background: var(--dh-cat-1-tint); color: var(--dh-cat-1-ink); border-color: var(--dh-cat-1); }
     ```
   - `--dh-accent` is for links, buttons and icons. A product may override **only** `--dh-accent` and
-    `--dh-on-accent` (Studio purple, Lightbox indigo, Realms amber), at `:root`, in both schemes, and must keep 4.5:1 on `--dh-surface`.
+    `--dh-on-accent` (Studio purple, Lightbox indigo, Realms amber; Cull keeps the family accent), at `:root`, in both schemes, and must keep 4.5:1 on `--dh-surface`.
   - `--dh-highlight` (#003366 light, #1a4d80 dark) is the card hover border and glow, and the landing logo's outline trace.
     In dark mode it is 2.1:1 on the background, so it is decorative only.
   - `--dh-focus` is the focus-ring colour: the highlight in light mode (12.2:1), a lighter tint #4a86c4 in dark mode (4.8:1 on bg, 4.4:1 on surface).
@@ -67,6 +68,9 @@ All names start with `--dh-`. Use the tokens; don't copy their values.
   - **Text-size floor for dense tool UIs** (tables, inspectors, facet lists): nothing below `--dh-text-2xs` (12 px) on
     phones, and keep running text at `--dh-text-sm` or larger. If a desktop layout uses 11 px labels, raise them to
     `--dh-text-2xs` below 560 px.
+  - **Map labels:** the floor applies to UI text (controls, tables, legends, popups). Labels drawn on a map canvas
+    follow cartographic hierarchy instead and may go down to 11 px for minor places, provided they have a halo
+    (a contrasting outline or glow) so they stay legible over any terrain.
 - **Space:** `--dh-space-1|2|3|4|5|6|8|10|12|16` = 4 to 64 px on a 4 px base.
 - **Radius:** `--dh-radius-sm` 6, `md` 8 (buttons), `lg` 10 (cards), `xl` 14, `pill`.
 - **Elevation:** `--dh-shadow-1`, `--dh-shadow-hover` (the card hover: drop shadow plus a 1 px highlight ring in light mode, a highlight glow in dark mode), `--dh-shadow-color`, `--dh-glow`.
@@ -116,15 +120,16 @@ One source, two forms: `dh-strip.mjs` exports the links, labels and mark (`strip
 `dh-strip.html` is generated from it by `npm run shared:stamp`, and the build fails if the two drift.
 
 - **Static HTML:** paste `dh-strip.html` as the first element in `<body>` after the skip link, include `dh-strip.css`
-  after the tokens, and say which site this is with **`data-dh-site="studio"`** (or `lightbox`, `realms`) on `<html>`
+  after the tokens, and say which site this is with **`data-dh-site="studio"`** (or `lightbox`, `realms`, `cull`) on `<html>`
   or on the `<nav class="dh-strip">`. Don't edit the markup: `dh-strip.css` shows the current link from that
   attribute (no JS needed), and `dh-theme.js` adds `aria-current="page"` to it, also for strips mounted later.
   A hand-set `aria-current` still works.
 - **React / Next:** `import { strip } from "./vendor/dh/dh-strip.mjs"` and render it natively (the file header
   has a ready JSX snippet); set `aria-current="page"` on your own link. No HTML string replacement.
+  TypeScript picks up the types from `dh-strip.d.mts` next to it (1.2.1; for a `.mjs` import TypeScript looks for `.d.mts`, not `.d.ts`).
 
 It is a `<nav aria-label="Dragonhound Labs demos">` landmark, 30 px tall. Links are same-tab (all `*.dragonhound.dev` hosts are internal: make sure your
-external-link rewriter treats them that way). Below 560 px the "Dragonhound Labs" text and "· recorded output" are
+external-link rewriter treats them that way). Below 640 px (560 px before 1.2.2) the "Dragonhound Labs" text and "· recorded output" are
 visually hidden (still read out) and, as a last resort, the bar scrolls sideways instead of wrapping.
 If your header is sticky, offset it by `var(--dh-strip-h)` or put the strip inside it.
 
@@ -153,14 +158,15 @@ If your header is sticky, offset it by `var(--dh-strip-h)` or put the strip insi
 - **Toggles mounted later** (client-side navigation, hydration) get `aria-pressed` kept in sync automatically (a
   `MutationObserver` in `dh-theme.js`; clicks are delegated), so no per-site workaround is needed.
 - **Single-theme (locked) sites can skip `dh-theme.js`.** It only matters for the toggle and the cookie; set
-  `data-theme` on `<html>` yourself. Load it anyway only if you use the static `dh-strip.html` and want `aria-current`
+  `data-theme` on `<html>` yourself. Vendor with `--no-theme-script` (1.2.1) to leave the file out: the lock records
+  it under `omitted` (with `"noThemeScript": true`), so `--check` and `--against` still pass. Pass the flag on every re-sync. Load it anyway only if you use the static `dh-strip.html` and want `aria-current`
   (the visual state works without it). With `data-dh-theme-lock` the script leaves the theme alone, `set()` does
   nothing and `subscribe()` never fires.
 - The cookie must be mentioned anywhere a site says "no cookies".
 
 ## Favicons
 
-**These are the lab's own icons, for dragonhound.dev.** The **Argus apps (Studio, Lightbox, Realms) use the official
+**These are the lab's own icons, for dragonhound.dev.** The **Argus apps (Studio, Lightbox, Realms, Cull) use the official
 favicon sets from argus-cortex `brand/`**, copied unchanged (all rights reserved), and must not use the Dragonhound
 lab favicons. So `sync-shared.mjs` leaves `favicons/` out of a vendored copy unless you pass `--with-favicons`
 (the lock records the left-out files, so `--check` and `--against` still work).
@@ -184,7 +190,7 @@ writes the same six files to `dir` only.
 
 - `manifest.json` holds the version (semver: patch = fix, minor = new token or class, major = rename or removal; a major bump also moves the published path to `/brand/v2/`), each file's sha256 (text hashed with LF line endings) and `checksum`, the sha256 of the sorted `"<sha>  <path>"` lines. `dh-tokens.css` also carries its own body checksum in its header.
 - After any change here: `npm run shared:stamp` (add `-- --version 1.3.0` to bump). It also regenerates `dh-strip.html` and the current-site selectors in `dh-strip.css` from `dh-strip.mjs`. `npm run build` runs `shared:check` first and fails if the manifest, the header checksum or the landing's copies in `public/` are stale.
-- Vendor into another repo (from this repo): `node scripts/sync-shared.mjs ../argus-studio --dest frontend/vendor/dh` (default dest `vendor/dh`). It copies the files (without `favicons/` unless `--with-favicons`) plus `manifest.json` and `sync-shared.mjs`, writes `.dh-shared.json` (version, checksum, dest, file hashes, left-out files) at the repo root, and deletes files an earlier sync vendored that are no longer in the set.
+- Vendor into another repo (from this repo): `node scripts/sync-shared.mjs ../argus-studio --dest frontend/vendor/dh` (default dest `vendor/dh`). It copies the files (without `favicons/` unless `--with-favicons`, and without `dh-theme.js` if `--no-theme-script`) plus `manifest.json` and `sync-shared.mjs`, writes `.dh-shared.json` (version, checksum, dest, file hashes, left-out files) at the repo root, and deletes files an earlier sync vendored that are no longer in the set.
 - Check in the target repo: `node vendor/dh/sync-shared.mjs --check .` fails if a vendored file was edited; add `--against https://dragonhound.dev/brand/v1/manifest.json` to also fail when it no longer matches the published source (`--allow-outdated` turns a newer upstream version into a warning).
 
 - Test page (strip marking, `dhTheme` events and API, categorical swatches) in this repo: `node tests/shared/serve.mjs`, then open `http://localhost:4330/tests/shared/` (served with the site's CSP; it reports pass/fail on the page).
@@ -214,6 +220,22 @@ CI snippet for a target repo (GitHub Actions):
 9. Verify: 390 px and 1440 px in both themes, toggle on one subdomain and reload another (cookie `Domain=.dragonhound.dev`), zero CSP errors, Lighthouse unchanged or better.
 
 ## Changelog
+
+- **1.2.2**
+  - `dh-strip.mjs`: Cull (`cull`, https://cull.dragonhound.dev/) joins the strip after Realms, so the Cull demo marks
+    itself current; `dh-strip.html`, the current-site rules in `dh-strip.css` and the `DhSite` type in `dh-strip.d.mts` follow.
+  - `dh-strip.css`: with four demo links the full bar ("Dragonhound Labs" … "Live demo · recorded output") needs about
+    625 px, so the phone layout (name and "· recorded output" visually hidden) now applies below 640 px instead of 560 px,
+    and below 380 px the spacing tightens. The bar fits from 320 px to desktop without the sideways scroll.
+  - Comments in `dh-theme.js` and `sync-shared.mjs` and this README name Cull alongside the other demos.
+
+- **1.2.1**
+  - `dh-strip.html`: the header comment no longer contains tag-like text (it said `<nav>` and `<html>`, which led to a
+    bad partial paste); it names "the nav element" instead.
+  - `sync-shared.mjs`: `--no-theme-script` leaves `dh-theme.js` out of a vendored copy for locked single-theme sites,
+    recorded in `.dh-shared.json` so `--check`/`--against` still pass; `.mts` files are hashed as text.
+  - `dh-strip.d.mts` (new): TypeScript declarations for `dh-strip.mjs`.
+  - README: the 12 px floor is for UI text; map canvas labels may go to 11 px for minor places with a halo.
 
 - **1.2.0**
   - `--dh-warn-ink` light `#8a5a00` → `#7a4f00` (4.3 → 5.2:1 on a 20% warn mix, 6.5:1 on `--dh-warn-tint`); status ink ratios documented per tint.
