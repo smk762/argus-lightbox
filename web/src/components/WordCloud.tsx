@@ -6,14 +6,15 @@ import type { ListPhoto } from "@/lib/types";
 import { type WordCount, type WordField, histogramCsv, wordHistogram } from "@/lib/words";
 
 const CLOUD_LIMIT = 60;
+// Text colours: the page text plus the shared categorical inks (each 6.8:1 or better on the page).
 const COLORS = [
   "var(--color-text-primary)",
-  "var(--color-accent-tertiary)",
-  "var(--color-accent-secondary)",
-  "var(--color-warm-primary)",
-  "var(--color-success)",
-  "var(--color-warning)",
-  "var(--color-info)",
+  "var(--dh-cat-7-ink)",
+  "var(--dh-cat-5-ink)",
+  "var(--dh-cat-3-ink)",
+  "var(--dh-cat-2-ink)",
+  "var(--dh-cat-1-ink)",
+  "var(--dh-cat-6-ink)",
 ];
 
 function mixKey(word: string): number {

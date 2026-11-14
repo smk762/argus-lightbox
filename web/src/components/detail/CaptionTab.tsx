@@ -14,7 +14,7 @@ function TokenCount({ text, backend, alert = false }: { text: string; backend?: 
   const name = (backend || "sdxl").toLowerCase();
   const label = over ? `${used} / ${budget} tokens, over the ${name} budget` : `${used} / ${budget} tokens`;
   return (
-    <p className={`text-caption tabular-nums ${over ? "text-warning" : "text-text-muted"}`} role={alert && over ? "alert" : undefined}>
+    <p className={`text-caption tabular-nums ${over ? "text-warn-ink" : "text-text-muted"}`} role={alert && over ? "alert" : undefined}>
       {label}
     </p>
   );

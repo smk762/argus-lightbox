@@ -7,6 +7,8 @@ import { describe, expect, it } from "vitest";
 
 import { DemoStrip } from "@/components/DemoStrip";
 
+import { stripHtml } from "../../vendor/dh/dh-strip.mjs";
+
 const vendored = (path: string) => readFileSync(new URL(`../../vendor/dh/${path}`, import.meta.url), "utf8");
 const squash = (html: string) =>
   html
@@ -14,19 +16,26 @@ const squash = (html: string) =>
     .replace(/>\s+</g, "><")
     .replace(/<(path)([^>]*)\/>/g, "<$1$2></$1>")
     .trim();
+// The JSX strip also carries data-dh-site on the <nav> (dh-strip.css marks the current link from it).
+const rendered = (current?: "lightbox" | "studio" | "realms") =>
+  renderToStaticMarkup(createElement(DemoStrip, current ? { current } : {})).replace(
+    /<nav ([^>]*) data-dh-site="[a-z]+">/,
+    "<nav $1>",
+  );
 
 describe("dh-strip", () => {
-  it("is the vendored markup, with Lightbox marked current", () => {
-    const expected = squash(vendored("dh-strip.html")).replace(
-      '<a href="https://lightbox.dragonhound.dev/">',
-      '<a href="https://lightbox.dragonhound.dev/" aria-current="true">',
-    );
-    expect(renderToStaticMarkup(createElement(DemoStrip))).toBe(expected);
+  it("renders the shared source's markup, with Lightbox marked current", () => {
+    expect(rendered()).toBe(squash(stripHtml({ current: "lightbox" })));
   });
 
-  it("marks exactly one site current", () => {
-    const html = renderToStaticMarkup(createElement(DemoStrip, { current: "Realms" }));
+  it("matches the vendored static strip apart from the current marker", () => {
+    expect(rendered().replace(' aria-current="page"', "")).toBe(squash(vendored("dh-strip.html")));
+  });
+
+  it("marks exactly one site current, on the nav and the link", () => {
+    const html = renderToStaticMarkup(createElement(DemoStrip, { current: "realms" }));
+    expect(html).toContain('<nav class="dh-strip" aria-label="Dragonhound Labs demos" data-dh-site="realms">');
     expect(html.match(/aria-current/g)).toHaveLength(1);
-    expect(html).toContain('<a href="https://realms.dragonhound.dev/" aria-current="true">');
+    expect(html).toContain('<a href="https://realms.dragonhound.dev/" data-dh-site="realms" aria-current="page">');
   });
 });
