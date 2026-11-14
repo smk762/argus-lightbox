@@ -77,6 +77,25 @@ body {
   background: color-mix(in srgb, var(--color-accent-primary) 45%, transparent);
 }
 
+/*
+ * Facet group colours as a custom property (`bg-(--group)`, `accent-(--group)`), so the
+ * prerendered sidebar needs no inline style attribute, which the CSP doesn't allow.
+ * Mirrors STYLES in src/lib/categories.ts (a test keeps the two in step).
+ */
+[data-group] { --group: var(--color-text-muted); }
+[data-group="identity"] { --group: var(--color-accent-primary); }
+[data-group="wardrobe"] { --group: var(--color-warm-primary); }
+[data-group="pose_composition"] { --group: var(--color-accent-secondary); }
+[data-group="setting"] { --group: var(--color-success); }
+[data-group="lighting"] { --group: var(--color-warning); }
+[data-group="action"] { --group: var(--color-accent-tertiary); }
+[data-group="detail"] { --group: var(--color-text-muted); }
+[data-group="people"] { --group: var(--color-warm-secondary); }
+[data-group="camera"] { --group: var(--color-text-secondary); }
+[data-group="training"] { --group: var(--color-info); }
+[data-group="training_prose"] { --group: var(--color-info); }
+[data-group="zeroshot"] { --group: var(--color-text-secondary); }
+
 :focus-visible {
   outline: 2px solid var(--color-accent-tertiary);
   outline-offset: 2px;

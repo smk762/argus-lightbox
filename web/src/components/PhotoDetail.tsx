@@ -5,7 +5,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react
 import { shownCaption } from "@/lib/caption";
 import { assetUrl } from "@/lib/data";
 import { swipeStep } from "@/lib/gesture";
-import type { Photo } from "@/lib/types";
+import type { ListPhoto, Photo } from "@/lib/types";
 
 import { CaptionTab } from "./detail/CaptionTab";
 import { CompareTab } from "./detail/CompareTab";
@@ -22,6 +22,7 @@ type Tab = (typeof TABS)[number]["key"];
 
 export function PhotoDetail({
   photo,
+  detail = "ready",
   position,
   categories,
   lensVersion,
@@ -31,7 +32,10 @@ export function PhotoDetail({
   onStep,
   onUseCaption,
 }: {
-  photo: Photo;
+  /** The full photo once `detail` is ready; until then the list photo, without explain/compare. */
+  photo: ListPhoto;
+  /** Whether the Explain and Compare data is here (a split export fetches it per photo). */
+  detail?: "ready" | "loading" | "error";
   position: { index: number; total: number };
   categories: string[];
   lensVersion: string;
@@ -204,10 +208,15 @@ export function PhotoDetail({
                 onUse={onUseCaption}
               />
             )}
-            {tab === "explain" && (
-              <ExplainTab key={photo.id} photo={photo} categories={categories} lensVersion={lensVersion} />
+            {(tab === "explain" || tab === "compare") && detail !== "ready" && (
+              <p role="status" className="text-small text-text-secondary">
+                {detail === "error" ? "Couldn't load this photo's details. Reload the page to try again." : "Loading…"}
+              </p>
             )}
-            {tab === "compare" && <CompareTab photo={photo} lensVersion={lensVersion} />}
+            {tab === "explain" && detail === "ready" && (
+              <ExplainTab key={photo.id} photo={photo as Photo} categories={categories} lensVersion={lensVersion} />
+            )}
+            {tab === "compare" && detail === "ready" && <CompareTab photo={photo as Photo} lensVersion={lensVersion} />}
             {tab === "metadata" && <MetadataTab photo={photo} lensVersion={lensVersion} />}
           </div>
         </aside>

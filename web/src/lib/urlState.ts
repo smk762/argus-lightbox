@@ -4,6 +4,9 @@
 import type { Selection } from "./filter";
 import type { WordField } from "./words";
 
+/** Photos per grid page. */
+export const PAGE_SIZE = 48;
+
 export interface ViewState {
   query: string;
   selection: Selection;

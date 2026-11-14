@@ -1,9 +1,10 @@
 // Slim strip above the gallery on the hosted demo. Opt-in at build time
 // (NEXT_PUBLIC_DEMO_BANNER=1) so a local or folder gallery doesn't carry it.
 
+import { LABS_URL as ORG_URL } from "@/lib/links";
+
 import { ExternalLink } from "./ExternalLink";
 
-const ORG_URL = "https://dragonhound.dev";
 const REPO_URL = "https://github.com/smk762/argus-lightbox";
 
 export function DemoBanner() {

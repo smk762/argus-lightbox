@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 
 import { loadIndex } from "@/lib/data";
 import { LENS_SECTIONS, type LensSection, captionSettings, lensPypiUrl, lensSource, lensTreeUrl } from "@/lib/lensDocs";
+import type { CaptionParams } from "@/lib/types";
 
 import { ExternalLink } from "./ExternalLink";
 import { LensDocLink } from "./LensDocLink";
@@ -24,13 +25,21 @@ const GUIDE: { section: LensSection; blurb: string }[] = [
   { section: "cli", blurb: "The argus-lens command." },
 ];
 
-/** /docs: the lens version this gallery was baked with, and where its docs live. */
-export function LensDocs() {
-  const [version, setVersion] = useState<string | null>(null);
-  const [settings, setSettings] = useState<string | null>(null);
+/**
+ * /docs: the lens version this gallery was baked with, and where its docs live. A prerendered build
+ * passes the version in (*initial*), so the page is complete in its HTML; otherwise it reads the index.
+ */
+export function LensDocs({
+  initial = null,
+}: {
+  initial?: { lensVersion: string; captionParams: CaptionParams | null } | null;
+}) {
+  const [version, setVersion] = useState<string | null>(initial?.lensVersion ?? null);
+  const [settings, setSettings] = useState<string | null>(initial ? captionSettings(initial.captionParams) : null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (initial) return;
     const ctrl = new AbortController();
     loadIndex(ctrl.signal)
       .then((index) => {
@@ -41,7 +50,7 @@ export function LensDocs() {
         if (!ctrl.signal.aborted) setError(e instanceof Error ? e.message : String(e));
       });
     return () => ctrl.abort();
-  }, []);
+  }, [initial]);
 
   const src = version ? lensSource(version) : null;
 

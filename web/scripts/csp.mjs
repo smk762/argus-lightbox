@@ -3,9 +3,9 @@
 // `next build` (output: "export") emits Next's bootstrap as inline <script>s and
 // there is no server to mint nonces, so each page gets a <meta http-equiv> CSP
 // listing the sha256 of exactly the inline scripts it shipped with. Hashing at
-// build time is safe here because the HTML contains no user content: captions
-// and every other piece of data arrive later from index.json and render through
-// React. Directives a <meta> CSP can't carry (frame-ancestors) go in out/_headers,
+// build time is safe here because the HTML contains no user content: the only
+// data in it is the committed bake (a prerendered build's first page of captions),
+// fixed at build time and escaped by React. Directives a <meta> CSP can't carry (frame-ancestors) go in out/_headers,
 // which Cloudflare Pages and Netlify read; other hosts should send the same.
 //
 // Trusted Types: Turbopack's chunk loader (and React's script preinit) assign

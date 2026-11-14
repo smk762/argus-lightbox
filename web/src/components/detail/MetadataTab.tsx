@@ -1,7 +1,7 @@
 "use client";
 
 import { assetUrl } from "@/lib/data";
-import type { Photo } from "@/lib/types";
+import type { ListPhoto } from "@/lib/types";
 
 import { ExternalLink } from "../ExternalLink";
 import { LensDocLink } from "../LensDocLink";
@@ -34,7 +34,7 @@ function download(filename: string, text: string) {
   URL.revokeObjectURL(url);
 }
 
-export function MetadataTab({ photo, lensVersion }: { photo: Photo; lensVersion: string }) {
+export function MetadataTab({ photo, lensVersion }: { photo: ListPhoto; lensVersion: string }) {
   const { exif, provenance, caption } = photo;
   const hasExif = Object.keys(exif).length > 0;
   const profile = (caption.profile ?? {}) as Record<string, string>;

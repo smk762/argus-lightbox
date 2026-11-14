@@ -1,4 +1,4 @@
-import type { Photo } from "./types";
+import type { ListPhoto } from "./types";
 
 /** Which caption text a word cloud counts. */
 export type WordField = "caption" | "tags";
@@ -54,7 +54,7 @@ export function tagPhrases(raw: string): string[] {
 }
 
 /** Word counts for *photos*, most frequent first. */
-export function wordHistogram(photos: Photo[], field: WordField): WordCount[] {
+export function wordHistogram(photos: ListPhoto[], field: WordField): WordCount[] {
   const counts = new Map<string, number>();
   for (const photo of photos) {
     const tokens = field === "tags" ? tagPhrases(photo.caption.raw_tags) : captionWords(photo.caption.final_caption);

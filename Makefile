@@ -9,7 +9,7 @@ PORT ?= 3000
 SITE_URL ?= https://lightbox.dragonhound.dev
 # The caption variant the grid and detail view show first (a caption_variants key, or `final`).
 NEXT_PUBLIC_DEFAULT_CAPTION ?= zeroshot
-PAGES_ENV = NEXT_PUBLIC_DATA_URL=/data-tape NEXT_PUBLIC_DEMO_BANNER=1 NEXT_PUBLIC_SITE_URL=$(SITE_URL) NEXT_PUBLIC_DEFAULT_CAPTION=$(NEXT_PUBLIC_DEFAULT_CAPTION)
+PAGES_ENV = LIGHTBOX_PRERENDER=1 NEXT_PUBLIC_DATA_URL=/data-tape NEXT_PUBLIC_DEMO_BANNER=1 NEXT_PUBLIC_SITE_URL=$(SITE_URL) NEXT_PUBLIC_DEFAULT_CAPTION=$(NEXT_PUBLIC_DEFAULT_CAPTION)
 NPM_PAGES ?= $(if $(HOST_NPM),$(PAGES_ENV) npm,$(call DOCKER_NPM,$(addprefix -e ,$(PAGES_ENV))))
 BAKE := bake/.venv/bin/lightbox-bake
 

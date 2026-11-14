@@ -1,9 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 
 import { groupStyle } from "@/lib/categories";
-import { browserStorage, defaultOpen, readOpenState, writeOpenState } from "@/lib/facetGroups";
+import {
+  browserStorage,
+  defaultOpen,
+  parseOpenState,
+  rawOpenState,
+  subscribeOpenState,
+  writeOpenState,
+} from "@/lib/facetGroups";
 import { type FacetTerm, type Selection, activeCount } from "@/lib/filter";
 
 import { SuiteLinks } from "./SuiteLinks";
@@ -22,8 +29,12 @@ function FacetGroup({
   onToggle: (group: string, term: string) => void;
 }) {
   const [expanded, setExpanded] = useState(false);
-  // The viewer's remembered choice; undefined means "use the default for this group's length".
-  const [remembered, setRemembered] = useState<boolean | undefined>(() => readOpenState(browserStorage())[group]);
+  // The viewer's remembered choice; undefined means "use the default for this group's length". Read
+  // through an external store so the prerendered HTML (no storage) and hydration agree.
+  const raw = useSyncExternalStore(subscribeOpenState, rawOpenState, () => null);
+  // This session's toggle, which still counts when storage is blocked.
+  const [toggled, setToggled] = useState<boolean | undefined>(undefined);
+  const remembered = toggled ?? parseOpenState(raw)[group];
   const style = groupStyle(group);
   if (terms.length === 0) return null;
   const open = remembered ?? defaultOpen(group, terms.length);
@@ -34,14 +45,15 @@ function FacetGroup({
       onToggle={(event) => {
         const next = event.currentTarget.open;
         if (next === open) return; // React re-applying `open`, not the viewer
-        setRemembered(next);
+        setToggled(next);
         writeOpenState(browserStorage(), group, next);
       }}
+      data-group={group}
       className="group/facet border-t border-base-700 py-3 first:border-t-0"
     >
       <summary
         title={style.blurb}
-        className="flex cursor-pointer list-none items-center gap-2 rounded-sm px-1 py-1 hover:bg-base-700 [&::-webkit-details-marker]:hidden"
+        className="flex cursor-pointer list-none items-center gap-2 rounded-sm px-1 py-2 hover:bg-base-700 md:py-1 [&::-webkit-details-marker]:hidden"
       >
         <span
           aria-hidden
@@ -49,7 +61,7 @@ function FacetGroup({
         >
           ▸
         </span>
-        <span aria-hidden className="size-2.5 rounded-full" style={{ background: style.color }} />
+        <span aria-hidden className="size-2.5 rounded-full bg-(--group)" />
         <h3 className="font-display text-small font-semibold">{style.label}</h3>
         {!open && active > 0 && (
           <span className="ml-auto rounded-full bg-base-700 px-1.5 text-caption tabular-nums text-text-primary">
@@ -62,7 +74,7 @@ function FacetGroup({
         {visible.map(({ term, count, selected }) => (
           <li key={term}>
             <label
-              className={`flex cursor-pointer items-center gap-2 rounded-sm px-1.5 py-1 text-small transition-colors hover:bg-base-700 ${
+              className={`flex min-h-11 cursor-pointer items-center gap-3 rounded-sm px-1.5 py-1 text-small md:min-h-0 md:gap-2 transition-colors hover:bg-base-700 ${
                 count === 0 && !selected ? "opacity-40" : ""
               }`}
             >
@@ -70,8 +82,7 @@ function FacetGroup({
                 type="checkbox"
                 checked={selected}
                 onChange={() => onToggle(group, term)}
-                className="size-3.5 rounded-sm"
-                style={{ accentColor: style.color }}
+                className="size-5 rounded-sm accent-(--group) md:size-3.5"
               />
               <span className="min-w-0 flex-1 truncate">{term}</span>
               <span className="text-caption tabular-nums text-text-muted">{count}</span>
@@ -83,7 +94,7 @@ function FacetGroup({
         <button
           type="button"
           onClick={() => setExpanded((e) => !e)}
-          className="mt-1 px-1.5 text-caption text-text-secondary hover:text-text-primary"
+          className="mt-1 min-h-11 px-1.5 text-caption text-text-secondary hover:text-text-primary md:min-h-0"
         >
           {expanded ? "Show fewer" : `Show all ${terms.length}`}
         </button>

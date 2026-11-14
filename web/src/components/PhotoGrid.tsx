@@ -1,19 +1,15 @@
 "use client";
 
+import { useEffect, useMemo, useRef } from "react";
+
 import { shownCaption } from "@/lib/caption";
 import { groupStyle } from "@/lib/categories";
 import { assetUrl } from "@/lib/data";
 import { type Selection, photoTerms } from "@/lib/filter";
-import type { Photo } from "@/lib/types";
+import { thumbLoading } from "@/lib/thumbs";
+import type { GridPhoto } from "@/lib/types";
 
-/**
- * Thumbnails that load eagerly. The grid is CSS columns, so DOM order runs down
- * the first column before the second and the "first row" isn't the first N items;
- * this is enough to cover the first screen at up to 4 columns.
- */
-const EAGER_THUMBS = 8;
-
-function matchedTerms(photo: Photo, selection: Selection): { group: string; term: string }[] {
+function matchedTerms(photo: GridPhoto, selection: Selection): { group: string; term: string }[] {
   return Object.entries(selection).flatMap(([group, terms]) =>
     terms.filter((t) => photoTerms(photo, group).includes(t)).map((term) => ({ group, term })),
   );
@@ -25,16 +21,28 @@ export function PhotoGrid({
   picked,
   onOpen,
   onToggle,
+  onIntent,
 }: {
-  photos: Photo[];
+  photos: GridPhoto[];
   selection: Selection;
   picked: ReadonlySet<string>;
   /** `thumb` is the clicked thumbnail, for the grid -> detail view transition. */
   onOpen: (id: string, thumb: HTMLImageElement | null) => void;
   onToggle: (id: string) => void;
+  /** The pointer or focus is on a thumbnail: a good moment to fetch its details. */
+  onIntent?: (id: string) => void;
 }) {
+  const loading = useMemo(() => thumbLoading(photos), [photos]);
+  const list = useRef<HTMLUListElement>(null);
+  // Each thumbnail's placeholder colour. The CSP allows no inline style attributes, and the first
+  // page is in the static HTML, so it is set through the CSSOM (which the CSP allows) after render.
+  useEffect(() => {
+    list.current?.querySelectorAll<HTMLElement>("[data-color]").forEach((el) => {
+      el.style.backgroundColor = el.dataset.color ?? "";
+    });
+  }, [photos]);
   return (
-    <ul className="columns-2 gap-3 sm:columns-3 2xl:columns-4">
+    <ul ref={list} className="columns-2 gap-3 sm:columns-3 2xl:columns-4">
       {photos.map((photo, i) => {
         const matches = matchedTerms(photo, selection);
         const label = photo.provenance.title || "photo";
@@ -51,21 +59,24 @@ export function PhotoGrid({
             <button
               type="button"
               onClick={(e) => onOpen(photo.id, e.currentTarget.querySelector("img"))}
-              className="group relative block w-full overflow-hidden rounded-md shadow-soft transition-shadow duration-200 hover:shadow-glow"
-              style={{ aspectRatio: `${photo.width} / ${photo.height}`, background: photo.color }}
+              onPointerEnter={() => onIntent?.(photo.id)}
+              onFocus={() => onIntent?.(photo.id)}
+              className="group relative block w-full overflow-hidden rounded-md bg-base-800 shadow-soft transition-shadow duration-200 hover:shadow-glow"
+              data-color={photo.color}
               aria-label={shown}
             >
               {/* eslint-disable-next-line @next/next/no-img-element -- static export; thumbnails are pre-sized by the bake */}
               <img
                 src={assetUrl(photo.thumb)}
                 alt=""
-                // The top of the first column is the likeliest LCP element; never lazy-load it.
-                loading={i < EAGER_THUMBS ? undefined : "lazy"}
-                fetchPriority={i === 0 ? "high" : undefined}
-                decoding="async"
+                // The first screen of every column loads eagerly; the column tops are the likeliest LCP.
+                loading={loading[i]?.eager ? undefined : "lazy"}
+                fetchPriority={loading[i]?.high ? "high" : undefined}
+                decoding={loading[i]?.eager ? undefined : "async"}
+                // width/height give the box its aspect ratio before the image (or any script) loads.
                 width={photo.width}
                 height={photo.height}
-                className="size-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.02]"
+                className="block h-auto w-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.02]"
               />
               {matches.length > 0 && (
                 <span className="absolute left-2 top-2 flex flex-wrap gap-1">

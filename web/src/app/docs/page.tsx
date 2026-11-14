@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { LensDocs } from "@/components/LensDocs";
+import { buildTimeIndex } from "@/lib/prerender";
 
 import { SITE_TITLE, pageMetadata } from "../siteMetadata";
 
@@ -11,5 +12,10 @@ export const metadata: Metadata = pageMetadata(
 );
 
 export default function DocsPage() {
-  return <LensDocs />;
+  const index = buildTimeIndex();
+  return (
+    <LensDocs
+      initial={index ? { lensVersion: index.lens_version, captionParams: index.caption_params ?? null } : null}
+    />
+  );
 }
