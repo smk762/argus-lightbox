@@ -49,11 +49,19 @@ export interface Exif {
   software?: string;
 }
 
+/** One grid thumbnail rendition (index 1.2+): a path in the data dir and its pixel width. */
+export interface ThumbSource {
+  src: string;
+  width: number;
+}
+
 export interface Photo {
   id: string;
   sha256: string;
   image: string;
   thumb: string;
+  /** Index 1.2+: grid thumbnails narrowest first, for `srcset`; the last one is `thumb`. */
+  thumbs?: ThumbSource[];
   xmp: string;
   width: number;
   height: number;
@@ -112,6 +120,7 @@ export interface ListIndex extends Omit<GalleryIndex, "photos"> {
 export interface GridPhoto {
   id: string;
   thumb: string;
+  thumbs?: ThumbSource[];
   width: number;
   height: number;
   color: string;

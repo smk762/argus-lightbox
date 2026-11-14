@@ -47,6 +47,7 @@ export function gridCard(photo: Photo): GridPhoto {
   return {
     id: photo.id,
     thumb: photo.thumb,
+    ...(photo.thumbs?.length ? { thumbs: photo.thumbs } : {}),
     width: photo.width,
     height: photo.height,
     color: photo.color,

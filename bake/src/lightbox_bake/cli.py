@@ -2,6 +2,7 @@
 
 lightbox-bake fixture --out web/public/data          # synthetic, committed
 lightbox-bake tape --out web/public/data-tape        # real run from the cortex lineage store
+lightbox-bake thumbs --out web/public/data-tape --blobs DIR   # add thumbnail widths, keep the captions
 lightbox-bake folder --photos /photos --lens-url http://lens:8100
 """
 
@@ -14,7 +15,7 @@ from pathlib import Path
 
 from lightbox_bake.fixture import fixture_records
 from lightbox_bake.folder import purge_store, stream_folder
-from lightbox_bake.index import build_index
+from lightbox_bake.index import build_index, regenerate_thumbs
 from lightbox_bake.sources import default_pg_url, tape_records
 
 
@@ -41,6 +42,12 @@ def main(argv: list[str] | None = None) -> int:
     folder.add_argument("--no-recursive", action="store_true", help="only the top of --photos, not subfolders")
     folder.add_argument("--recaption", action="store_true", help="ignore the caption cache and ask lens again")
 
+    thumbs = sub.add_parser(
+        "thumbs", help="write the grid thumbnail widths for an existing bake, without re-captioning"
+    )
+    thumbs.add_argument("--out", type=Path, required=True, help="baked data directory (index.json, thumbs/)")
+    thumbs.add_argument("--blobs", type=Path, required=True, help="directory of source images named by sha256")
+
     purge = sub.add_parser("purge", help="delete a baked gallery and its caption cache")
     purge.add_argument("--root", type=Path, required=True, help="directory that contains data/ and cache/")
 
@@ -49,6 +56,12 @@ def main(argv: list[str] | None = None) -> int:
         purge_store(args.root)
         print(f"purged gallery and caption cache under {args.root}")
         return 0
+    if args.command == "thumbs":
+        updated, skipped = regenerate_thumbs(args.out, args.blobs)
+        print(f"wrote thumbnail widths for {updated} photos in {args.out}/index.json")
+        for reason in skipped:
+            print(f"  skipped {reason}", file=sys.stderr)
+        return 0 if updated else 1
     if args.command == "fixture":
         stats = build_index(fixture_records(), args.out, source="fixture")
     elif args.command == "tape":

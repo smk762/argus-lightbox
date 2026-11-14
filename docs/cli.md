@@ -55,6 +55,19 @@ export LENS_URL=http://127.0.0.1:8100
 
 To view the result, either point the dev server at it (`NEXT_PUBLIC_DATA_URL=/data-folder make dev`, read-only), or build the export and serve it as below, which is the only way to get final-caption choice.
 
+## `lightbox-bake thumbs`
+
+Writes the narrower grid thumbnails (`thumbs/240/`, `thumbs/360/`) for a bake that already exists, and records them as each photo's `thumbs` in its `index.json`. Nothing is re-captioned: captions, explain data, `generated_at`, `caption_params` and the XMP sidecars stay as they are, and only `version` is raised to 1.2. A fresh `fixture`, `tape` or `folder` bake writes these widths itself.
+
+| Flag | |
+|---|---|
+| `--out` | The baked data directory (`index.json`, `thumbs/`). |
+| `--blobs` | A directory of the source images, each named by its sha256. Each one is checked against the photo's `sha256`, and a photo without a matching file is skipped. |
+
+```bash
+bake/.venv/bin/lightbox-bake thumbs --out web/public/data-tape --blobs /path/to/blobs
+```
+
 ## `lightbox-bake purge`
 
 | Flag | |

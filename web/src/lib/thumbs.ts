@@ -20,6 +20,25 @@ const FOLD = 2.5;
 /** The gap under each thumbnail (mb-3, 12 px) in column widths at phone size, where the estimate matters most. */
 const GAP = 0.07;
 
+/**
+ * The grid column's CSS width at each breakpoint, for `<img sizes>`. Mirrors the layout:
+ * page `px-4` (`sm:px-6`) inside `max-w-[1800px]`; from `md` a 256 px sidebar (`md:w-64`) and a
+ * 24 px gap (`md:gap-6`); `columns-2 sm:columns-3 2xl:columns-4` with 12 px column gaps (`gap-3`).
+ * At 390 px that is about 173 px, at 700 px about 209 px, and at 1440 px about 363 px.
+ */
+export const THUMB_SIZES = [
+  "(min-width: 1536px) calc((min(100vw, 1800px) - 364px) / 4)",
+  "(min-width: 768px) calc((100vw - 352px) / 3)",
+  "(min-width: 640px) calc((100vw - 72px) / 3)",
+  "calc((100vw - 44px) / 2)",
+].join(", ");
+
+/** `srcset` for a thumbnail's renditions, or undefined for a bake older than index 1.2 (just `thumb`). */
+export function thumbSrcSet(thumbs: { src: string; width: number }[] | undefined, url: (path: string) => string) {
+  if (!thumbs || thumbs.length < 2) return undefined;
+  return thumbs.map((t) => `${url(t.src)} ${t.width}w`).join(", ");
+}
+
 export interface ThumbLoading {
   eager: boolean;
   high: boolean;
