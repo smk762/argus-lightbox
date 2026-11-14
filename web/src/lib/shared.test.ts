@@ -17,7 +17,7 @@ const squash = (html: string) =>
     .replace(/<(path)([^>]*)\/>/g, "<$1$2></$1>")
     .trim();
 // The JSX strip also carries data-dh-site on the <nav> (dh-strip.css marks the current link from it).
-const rendered = (current?: "lightbox" | "studio" | "realms") =>
+const rendered = (current?: "lightbox" | "studio" | "atlas") =>
   renderToStaticMarkup(createElement(DemoStrip, current ? { current } : {})).replace(
     /<nav ([^>]*) data-dh-site="[a-z]+">/,
     "<nav $1>",
@@ -33,9 +33,9 @@ describe("dh-strip", () => {
   });
 
   it("marks exactly one site current, on the nav and the link", () => {
-    const html = renderToStaticMarkup(createElement(DemoStrip, { current: "realms" }));
-    expect(html).toContain('<nav class="dh-strip" aria-label="Dragonhound Labs demos" data-dh-site="realms">');
+    const html = renderToStaticMarkup(createElement(DemoStrip, { current: "atlas" }));
+    expect(html).toContain('<nav class="dh-strip" aria-label="Dragonhound Labs demos" data-dh-site="atlas">');
     expect(html.match(/aria-current/g)).toHaveLength(1);
-    expect(html).toContain('<a href="https://realms.dragonhound.dev/" data-dh-site="realms" aria-current="page">');
+    expect(html).toContain('<a href="https://atlas.dragonhound.dev/" data-dh-site="atlas" aria-current="page">');
   });
 });
