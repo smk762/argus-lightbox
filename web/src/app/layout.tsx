@@ -18,15 +18,8 @@ export const metadata: Metadata = {
     "A photo gallery navigated by argus-lens structured captions: filter by wardrobe, setting, lighting and more, and see how each caption was assembled.",
     "/",
   ),
-  // The argus-lens package mark (Lightbox demonstrates lens), dark variant on a dark tile. Source:
-  // argus-cortex brand/packages/lens/; the PNG and ICO sizes are rendered from it.
-  icons: {
-    icon: [
-      { url: `${BASE}/favicon.svg`, type: "image/svg+xml" },
-      { url: `${BASE}/favicon.ico`, sizes: "32x32" },
-    ],
-    apple: `${BASE}/apple-touch-icon.png`,
-  },
+  // Favicons: argus-cortex brand/packages/lens/favicon/, copied unchanged. favicon.ico, icon.svg and
+  // apple-icon.png sit in src/app/ and Next emits their tags; icon-192/512 in public/ are for the manifest.
   manifest: `${BASE}/site.webmanifest`,
 };
 
