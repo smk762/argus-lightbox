@@ -126,6 +126,7 @@ describe("isFamilyUrl", () => {
     expect(isFamilyUrl("https://dragonhound.dev")).toBe(true);
     expect(isFamilyUrl("https://studio.dragonhound.dev/curate/")).toBe(true);
     expect(isFamilyUrl("https://REALMS.dragonhound.dev/")).toBe(true);
+    expect(isFamilyUrl("https://atlas.dragonhound.dev/")).toBe(true);
   });
 
   it("treats everything else as external", () => {

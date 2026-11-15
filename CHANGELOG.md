@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- The footer's map-demo link is now **Atlas** (https://atlas.dragonhound.dev/), was "Atlas Realms" on realms.dragonhound.dev. The painted-map demo moved there; realms.dragonhound.dev is kept for the Realms minigame.
 - The hosted demo is re-captioned with argus-lens 0.11.0 using lens's `straightforward` prose prompt preset, not lens's default (`detailed`). The default wrote mood adjectives and "this is a … photograph" openers into the zero-shot captions and doubled the prose length (smk762/argus-lens#104).
 
 ## [0.1.0] - 2026-11-13
