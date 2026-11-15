@@ -9,7 +9,7 @@ export const FAMILY_DOMAIN = "dragonhound.dev";
 /** The live demos this gallery links to. The env overrides exist for self-hosted copies. */
 export const STUDIO_URL = (process.env.NEXT_PUBLIC_SUITE_URL || "https://studio.dragonhound.dev/").replace(/\/*$/, "/");
 export const CURATE_URL = process.env.NEXT_PUBLIC_CURATOR_URL || `${STUDIO_URL}curate/`;
-export const REALMS_URL = "https://realms.dragonhound.dev/";
+export const ATLAS_URL = "https://atlas.dragonhound.dev/";
 export const LABS_URL = "https://dragonhound.dev/";
 
 /** True for an http(s) URL on dragonhound.dev or one of its subdomains. */
