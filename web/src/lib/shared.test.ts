@@ -22,7 +22,7 @@ const defaultSuffixOnly = (html: string) =>
     .replace(/<span class="dh-strip-more" data-dh-label="[a-z]+" hidden>[^<]*<\/span>/g, "")
     .replace(/<span class="dh-strip-more" data-dh-label="[a-z]+">/, '<span class="dh-strip-more">');
 // The JSX strip also carries data-dh-site on the <nav> (dh-strip.css marks the current link from it).
-const rendered = (current?: "lightbox" | "studio" | "atlas" | "realms" | "safelight" | "assay" | "sightline") =>
+const rendered = (current?: "lightbox" | "studio" | "atlas" | "realms" | "safelight" | "assay" | "sightline" | "mask" | "quarry") =>
   renderToStaticMarkup(createElement(DemoStrip, current ? { current } : {})).replace(
     /<nav ([^>]*) data-dh-site="[a-z]+">/,
     "<nav $1>",
