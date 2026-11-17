@@ -164,6 +164,15 @@ def test_folder_bake_caches_captions_and_hides_the_path(tmp_path, monkeypatch) -
     stale.write_text("{}", encoding="utf-8")
     _Lens.posts = 0
     _Lens.payload = _lens_payload()
+
+    def _snapshot() -> dict[str, tuple[bytes, int]]:
+        return {
+            p.relative_to(photos).as_posix(): (p.read_bytes(), p.stat().st_mtime_ns)
+            for p in photos.rglob("*")
+            if p.is_file()
+        } | {f"{p.relative_to(photos).as_posix()}/": (b"", 0) for p in photos.rglob("*") if p.is_dir()}
+
+    before = _snapshot()
     server = ThreadingHTTPServer(("127.0.0.1", 0), _Lens)
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()
@@ -211,6 +220,7 @@ def test_folder_bake_caches_captions_and_hides_the_path(tmp_path, monkeypatch) -
     status = json.loads((out / "status.json").read_text())
     assert status["queue"] == 0 and status["count"] == 1
     assert "red dress" in (out / again["photos"][0]["xmp"]).read_text()
+    assert _snapshot() == before, "the bake must write nothing into the photo folder"
 
 
 def test_folder_publishes_the_queue_before_each_caption_lands(tmp_path, monkeypatch) -> None:

@@ -22,6 +22,9 @@ jobs:
       - run: uv venv --python 3.12 && uv pip install -e ".[dev,tape]"
       - run: .venv/bin/ruff check . && .venv/bin/ruff format --check .
       - run: .venv/bin/pytest -q
+      # The committed fixture (web/public/data) must be what the current bake writes. A lens or Pillow
+      # release can trip this too: run `make fixture` and commit the result.
+      - run: .venv/bin/lightbox-bake fixture --out ../web/public/data --check
 
   web:
     runs-on: ubuntu-latest
@@ -52,6 +55,27 @@ jobs:
         with:
           node-version: 22
       - run: node web/vendor/dh/sync-shared.mjs --check . --against https://dragonhound.dev/brand/v1/manifest.json --allow-outdated
+
+  # main never carries work dev lacks. The one exception is a release merge commit whose tree is the
+  # tree of a dev commit (one of its parents). dev may have moved on, so this checks ancestry, not a diff.
+  main-not-ahead:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - run: |
+          git fetch -q origin dev
+          bad=0
+          for c in $(git rev-list origin/dev..HEAD); do
+            ok=no
+            for p in $(git rev-list --parents -n 1 "$c" | cut -d' ' -f2-); do
+              if git merge-base --is-ancestor "$p" origin/dev && [ "$(git rev-parse "$c^{tree}")" = "$(git rev-parse "$p^{tree}")" ]; then ok=yes; fi
+            done
+            if [ "$ok" = no ]; then echo "::error::$(git log -1 --format='%h %s' "$c") is on main but not dev. Land it on dev and release from there."; bad=1; fi
+          done
+          exit $bad
 
   suite-rules:
     # argus-ci suite rules: lint rules that each eliminate a finding class. New violations fail;
