@@ -37,6 +37,26 @@ describe("lensSource", () => {
     );
     expect(lensDocUrl("overview", "0.10.0")).toBe("https://github.com/smk762/argus-lens/blob/v0.10.0/README.md");
   });
+
+  it("links the caption-result reference at the baked version, or its first release when older", () => {
+    expect(lensDocUrl("resultMetadata", "0.13.0")).toBe(
+      "https://github.com/smk762/argus-lens/blob/v0.13.0/docs/caption-result.md#metadata",
+    );
+    expect(lensDocUrl("resultFields", "0.11.0")).toBe(
+      "https://github.com/smk762/argus-lens/blob/v0.11.0/docs/caption-result.md#fields",
+    );
+    // The fixture's 0.7.0 predates the reference, so it links the first release that has it.
+    expect(lensDocUrl("captionResult", "0.7.0")).toBe(
+      "https://github.com/smk762/argus-lens/blob/v0.11.0/docs/caption-result.md",
+    );
+    expect(lensDocUrl("cliReference", "0.10.1.dev11+gcfb16b3")).toBe(
+      "https://github.com/smk762/argus-lens/blob/v0.11.0/docs/cli.md",
+    );
+    expect(lensDocUrl("cliReference", "0.12.1.dev2+gabc1234")).toBe(
+      "https://github.com/smk762/argus-lens/blob/abc1234/docs/cli.md",
+    );
+    expect(lensDocUrl("resultMetadata", "")).toBe("https://github.com/smk762/argus-lens/blob/dev/docs/caption-result.md#metadata");
+  });
 });
 
 describe("captioned by, from recorded data", () => {
