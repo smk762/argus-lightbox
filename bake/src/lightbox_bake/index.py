@@ -89,7 +89,7 @@ def build_index(records: Iterable[SourceRecord], out_dir: Path, *, source: str) 
         # Nothing rendered (an empty query, or every record failed): leave the published gallery as it is.
         stats.skipped.append(f"{out_dir}: nothing baked; the existing gallery was left in place")
         return stats
-    _prune(out_dir, seen)
+    _prune(out_dir, photos)
     write_gallery(out_dir, photos, source=source, caption_params=shared_params(params))
     return stats
 
@@ -224,7 +224,7 @@ def upsert_photo(out_dir: Path, record: SourceRecord, *, source: str, queue: int
 def finish_gallery(out_dir: Path, *, source: str) -> None:
     """Mark the folder bake finished and drop renditions no longer in the index."""
     photos = read_photos(out_dir)
-    _prune(out_dir, {str(photo["id"]) for photo in photos})
+    _prune(out_dir, photos)
     write_gallery(out_dir, photos, source=source, queue=0)
 
 
@@ -373,7 +373,7 @@ def regenerate_thumbs(out_dir: Path, blobs: Path) -> tuple[int, list[str]]:
     index["photos"] = photos
     if _version_key(str(index.get("version", ""))) < _version_key(INDEX_VERSION):
         index["version"] = INDEX_VERSION
-    _prune(out_dir, {str(photo["id"]) for photo in photos})
+    _prune(out_dir, photos)
     _atomic_json(path, index)
     return updated, skipped
 
@@ -385,11 +385,22 @@ def _version_key(version: str) -> tuple[int, ...]:
         return ()
 
 
-def _prune(out_dir: Path, keep: set[str]) -> None:
-    """Drop renditions left over from a previous bake (only inside our own subdirs)."""
-    subs = [("images", "*.webp"), ("thumbs", "*.webp"), ("xmp", "*.xmp")]
-    subs += [(f"thumbs/{width}", "*.webp") for width in THUMB_WIDTHS]
-    for sub, pattern in subs:
+def _prune(out_dir: Path, photos: list[dict]) -> None:
+    """Drop renditions left over from a previous bake (only inside our own subdirs).
+
+    A narrower thumbnail is kept only while its photo's ``thumbs`` lists it, so a width the current bake no
+    longer writes (the main thumbnail got narrower than it) goes too.
+    """
+    keep = {str(photo["id"]) for photo in photos}
+    for sub, pattern in (("images", "*.webp"), ("thumbs", "*.webp"), ("xmp", "*.xmp")):
         for path in (out_dir / sub).glob(pattern):
             if path.stem not in keep:
+                path.unlink()
+    listed = {
+        str(entry.get("src")) for photo in photos for entry in photo.get("thumbs") or [] if isinstance(entry, dict)
+    }
+    thumbs = out_dir / "thumbs"
+    for width in THUMB_WIDTHS:
+        for path in (thumbs / str(width)).glob("*.webp"):
+            if path.relative_to(out_dir).as_posix() not in listed:
                 path.unlink()
