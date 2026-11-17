@@ -13,7 +13,7 @@ PAGES_ENV = LIGHTBOX_PRERENDER=1 NEXT_PUBLIC_DATA_URL=/data-tape NEXT_PUBLIC_DEM
 NPM_PAGES ?= $(if $(HOST_NPM),$(PAGES_ENV) npm,$(call DOCKER_NPM,$(addprefix -e ,$(PAGES_ENV))))
 BAKE := bake/.venv/bin/lightbox-bake
 
-.PHONY: help install fixture tape dev build pages test lint check clean up purge
+.PHONY: help install fixture fixture-check tape dev build pages test lint check clean up purge
 
 help:  ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-10s\033[0m %s\n", $$1, $$2}'
@@ -24,6 +24,9 @@ install:  ## Bake venv (with the tape extra) + web dependencies
 
 fixture:  ## Re-bake the committed synthetic fixture into web/public/data
 	$(BAKE) fixture --out web/public/data
+
+fixture-check:  ## Fail if web/public/data is not what the current bake writes
+	$(BAKE) fixture --out web/public/data --check
 
 tape:  ## Bake the recorded pipeline run (needs CORTEX_PG_URL, CORTEX_S3_*) into web/public/data-tape
 	$(BAKE) tape --out web/public/data-tape
@@ -54,7 +57,7 @@ lint:  ## ruff (bake) + eslint & tsc (web)
 	cd bake && .venv/bin/ruff check . && .venv/bin/ruff format --check .
 	cd web && $(NPM) run lint && $(NPM) run typecheck
 
-check: lint test build  ## Everything CI runs
+check: lint test fixture-check build  ## Everything CI runs
 
 clean:  ## Remove build output and virtualenvs
 	rm -rf bake/.venv web/node_modules web/.next web/out
