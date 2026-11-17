@@ -26,7 +26,11 @@ export function parseView(params: URLSearchParams): ViewState {
     if (i <= 0 || i === raw.length - 1) continue;
     const group = raw.slice(0, i);
     const term = raw.slice(i + 1);
-    const terms = (selection[group] ??= []);
+    // Own keys only: "__proto__", "constructor" or "toString" from a shared link must not reach Object.prototype.
+    if (!Object.hasOwn(selection, group)) {
+      Object.defineProperty(selection, group, { value: [], enumerable: true, writable: true, configurable: true });
+    }
+    const terms = selection[group];
     if (!terms.includes(term)) terms.push(term);
   }
   const words = params.get("words") === "tags" ? "tags" : "caption";

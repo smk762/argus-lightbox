@@ -64,10 +64,17 @@ def build_index(records: Iterable[SourceRecord], out_dir: Path, *, source: str) 
     photos: list[dict] = []
     seen: set[str] = set()
     params: list[dict] = []
+    prior = {str(photo["id"]): photo for photo in read_photos(out_dir)}
     for record in records:
         photo, reason = render_photo(record, out_dir)
         if photo is None or reason is not None:
             stats.skipped.append(reason or f"{record.uri}: skipped")
+            # A record that is still in the source but failed this time (blob store down, file locked) keeps
+            # its previous entry and renditions, so a transient failure does not unpublish it.
+            kept = prior.get(record_id(record) or "")
+            if kept is not None and kept["id"] not in seen and renditions_present(out_dir, kept):
+                seen.add(kept["id"])
+                photos.append(kept)
             continue
         if photo["id"] in seen:
             stats.skipped.append(f"{record.uri}: duplicate of {photo['id']}")
@@ -78,9 +85,33 @@ def build_index(records: Iterable[SourceRecord], out_dir: Path, *, source: str) 
         params.append(record.params)
         stats.baked += 1
 
+    if stats.baked == 0 and prior:
+        # Nothing rendered (an empty query, or every record failed): leave the published gallery as it is.
+        stats.skipped.append(f"{out_dir}: nothing baked; the existing gallery was left in place")
+        return stats
     _prune(out_dir, seen)
     write_gallery(out_dir, photos, source=source, caption_params=shared_params(params))
     return stats
+
+
+_SHA256 = re.compile(r"[0-9a-f]{64}")
+
+
+def record_id(record: SourceRecord) -> str | None:
+    """The photo id a record declares through its sha256, or ``None`` when it declares no valid one."""
+    declared = (record.sha256 or "").lower()
+    return declared[:16] if _SHA256.fullmatch(declared) else None
+
+
+def renditions_present(out_dir: Path, photo: dict) -> bool:
+    """True when the display image and thumbnail an index entry points at are on disk."""
+    image, thumb = photo.get("image"), photo.get("thumb")
+    return (
+        isinstance(image, str)
+        and isinstance(thumb, str)
+        and (out_dir / image).is_file()
+        and (out_dir / thumb).is_file()
+    )
 
 
 def shared_params(params: list[dict]) -> dict | None:
@@ -97,7 +128,7 @@ def read_photos(out_dir: Path) -> list[dict]:
         return []
     try:
         payload = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError):
+    except (OSError, ValueError):  # ValueError covers JSONDecodeError and UnicodeDecodeError
         return []
     photos = payload.get("photos") if isinstance(payload, dict) else None
     return (
@@ -110,11 +141,15 @@ def render_photo(record: SourceRecord, out_dir: Path) -> tuple[dict | None, str 
     raw = record.load_bytes()
     if raw is None:
         return None, f"{record.uri}: image bytes not found"
-    sha256 = record.sha256 or hashlib.sha256(raw).hexdigest()
+    # The id names files on disk, so it always comes from the bytes. A declared hash is only checked.
+    sha256 = hashlib.sha256(raw).hexdigest()
+    if record.sha256 and record.sha256.lower() != sha256:
+        return None, f"{record.uri}: image bytes do not match the recorded sha256 {record.sha256[:16]}"
     photo_id = sha256[:16]
     try:
         rendition = render(raw, out_dir, photo_id)
-    except OSError as exc:  # PIL.UnidentifiedImageError is an OSError
+    except (OSError, ValueError, SyntaxError, Image.DecompressionBombError) as exc:
+        # UnidentifiedImageError is an OSError; malformed files can also raise ValueError or SyntaxError.
         return None, f"{record.uri}: unreadable image ({exc})"
     derived = explain(record.caption)
     return {
@@ -159,6 +194,9 @@ def write_gallery(
             out_dir / "status.json",
             {"queue": index["queue"], "count": len(photos), "generated_at": index["generated_at"]},
         )
+    else:
+        # A bake without a queue has nothing to poll; a status.json left by an earlier folder run would be stale.
+        (out_dir / "status.json").unlink(missing_ok=True)
 
 
 def _atomic_json(dest: Path, payload: dict) -> None:
@@ -170,7 +208,11 @@ def _atomic_json(dest: Path, payload: dict) -> None:
 def upsert_photo(out_dir: Path, record: SourceRecord, *, source: str, queue: int) -> str | None:
     """Render *record* into the live gallery index. A skip reason means it was not added."""
     photo, reason = render_photo(record, out_dir)
-    photos = [item for item in read_photos(out_dir) if item.get("id") != (photo or {}).get("id")]
+    # The id comes from the record, so a failed re-render still replaces the record's old entry.
+    replaced = {photo["id"]} if photo is not None else set()
+    if (declared := record_id(record)) is not None:
+        replaced.add(declared)
+    photos = [item for item in read_photos(out_dir) if item["id"] not in replaced]
     if photo is None:
         write_gallery(out_dir, photos, source=source, queue=queue)
         return reason
@@ -230,7 +272,7 @@ def _choose_locked(out_dir: Path, ids: list[str], category: str) -> dict[str, li
     path = out_dir / "index.json"
     try:
         payload = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:
+    except (OSError, ValueError) as exc:
         raise CaptionChoiceError(404, "gallery index is not ready") from exc
     photos = payload.get("photos") if isinstance(payload, dict) else None
     if not isinstance(photos, list):
@@ -308,9 +350,17 @@ def regenerate_thumbs(out_dir: Path, blobs: Path) -> tuple[int, list[str]]:
             skipped.append(f"{photo_id}: no source image matching sha256 {sha256[:16]}")
             photos.append(photo)
             continue
-        with Image.open(out_dir / photo["thumb"]) as thumb:
-            thumb_width = thumb.width
-        img, _ = decode(raw)
+        thumb_path = photo.get("thumb")
+        try:
+            if not isinstance(thumb_path, str):
+                raise OSError("no thumb in the index entry")
+            with Image.open(out_dir / thumb_path) as thumb:
+                thumb_width = thumb.width
+            img, _ = decode(raw)
+        except (OSError, ValueError, SyntaxError, Image.DecompressionBombError) as exc:
+            skipped.append(f"{photo_id}: cannot read its thumbnail or source image ({exc})")
+            photos.append(photo)
+            continue
         thumbs = thumb_set(img, out_dir, photo_id, thumb_width)
         rebuilt: dict = {}
         for key, value in photo.items():

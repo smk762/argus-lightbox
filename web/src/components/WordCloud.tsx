@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef } from "react";
 
 import type { ListPhoto } from "@/lib/types";
 import { type WordCount, type WordField, histogramCsv, wordHistogram } from "@/lib/words";
+import { downloadBlob } from "@/lib/download";
 
 const CLOUD_LIMIT = 60;
 // Text colours: the page text plus the shared categorical inks (each 6.8:1 or better on the page).
@@ -24,13 +25,7 @@ function mixKey(word: string): number {
 }
 
 function downloadHistogram(rows: WordCount[]): void {
-  const blob = new Blob([histogramCsv(rows)], { type: "text/csv;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = "lightbox-histogram.csv";
-  link.click();
-  URL.revokeObjectURL(url);
+  downloadBlob(new Blob([histogramCsv(rows)], { type: "text/csv;charset=utf-8" }), "lightbox-histogram.csv");
 }
 
 export function WordCloud({

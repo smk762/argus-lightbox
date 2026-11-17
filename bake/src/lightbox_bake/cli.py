@@ -21,7 +21,7 @@ from lightbox_bake.sources import default_pg_url, tape_records
 
 def main(argv: list[str] | None = None) -> int:
     """CLI entry point."""
-    parser = argparse.ArgumentParser(prog="lightbox-bake", description=__doc__.splitlines()[0])
+    parser = argparse.ArgumentParser(prog="lightbox-bake", description="build the gallery's static data directory")
     sub = parser.add_subparsers(dest="command", required=True)
 
     fixture = sub.add_parser("fixture", help="bake the synthetic fixture (no tape needed)")

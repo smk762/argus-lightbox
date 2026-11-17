@@ -4,8 +4,9 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 import { checkIndex, IndexVersionError } from "./data";
-import { traceVariant } from "./explain";
+import { containsPhrase, traceVariant } from "./explain";
 import { swipeStep } from "./gesture";
+import { safeHref } from "./links";
 import { activeCount, facetCounts, filterPhotos, matchesQuery, toggleTerm } from "./filter";
 import type { GalleryIndex, Photo } from "./types";
 import { parseView, serializeView } from "./urlState";
@@ -112,6 +113,15 @@ describe("url state", () => {
       "",
     );
   });
+
+  it("treats Object.prototype names in a shared link as ordinary groups", () => {
+    const url = "f=__proto__:x&f=constructor:y&f=toString:z&f=toString:z";
+    const view = parseView(new URLSearchParams(url));
+    expect(Object.keys(view.selection).sort()).toEqual(["__proto__", "constructor", "toString"]);
+    expect(view.selection.toString).toEqual(["z"]);
+    expect(Object.getPrototypeOf(view.selection)).toBe(Object.prototype);
+    expect(serializeView(view)).toBe(`?${new URLSearchParams("f=__proto__:x&f=constructor:y&f=toString:z")}`);
+  });
 });
 
 describe("explain trace", () => {
@@ -123,6 +133,22 @@ describe("explain trace", () => {
     // The training variant suppresses identity traits, so hair is trimmed there.
     const training = traceVariant(photo, "training");
     expect(training.fragments.find((f) => f.text === "brown hair")?.status).toBe("trimmed");
+  });
+
+  it("matches fragments as whole words, not substrings", () => {
+    expect(containsPhrase("a woman in a red hat", "hat")).toBe(true);
+    expect(containsPhrase("that is all", "hat")).toBe(false);
+    expect(containsPhrase("a quiet street", "tree")).toBe(false);
+    expect(containsPhrase("one hundred birds", "red")).toBe(false);
+    expect(containsPhrase("she smiles", "smile")).toBe(false);
+    expect(containsPhrase("a (soft) light", "(soft)")).toBe(true);
+    const photo = byTitle("beach sunset");
+    const tricky: Photo = {
+      ...photo,
+      caption: { ...photo.caption, caption_variants: { ...photo.caption.caption_variants, setting: "a street" } },
+      explain: { ...photo.explain, buckets: { tags: { setting: ["tree"] }, prose: {} } },
+    };
+    expect(traceVariant(tricky, "setting").fragments[0].status).toBe("trimmed");
   });
 });
 
@@ -154,6 +180,7 @@ describe("token budget", () => {
     expect(tokenBudget("sdxl")).toBe(60);
     expect(tokenBudget("flux")).toBe(200);
     expect(tokenBudget(undefined)).toBe(60);
+    for (const name of ["constructor", "toString", "__proto__", "hasOwnProperty"]) expect(tokenBudget(name)).toBe(60);
     const prose =
       "A wooden stool with a ladder-back design, made of light-brown, grain-textured planks, rests on a tiled floor beside a dark green mat. The stool's legs and horizontal supports are bolted together, casting a sharp shadow on the white tiles.";
     expect(estimateTokens(prose, "sdxl")).toBe(54);
@@ -189,5 +216,17 @@ describe("swipe", () => {
   it("ignores short drags and mostly-vertical scrolls", () => {
     expect(swipeStep(-30, 0)).toBe(0);
     expect(swipeStep(-80, 70)).toBe(0);
+  });
+});
+
+describe("provenance links", () => {
+  it("only lets http(s) URLs through", () => {
+    expect(safeHref("https://commons.wikimedia.org/x")).toBe("https://commons.wikimedia.org/x");
+    expect(safeHref("http://example.com/")).toBe("http://example.com/");
+    expect(safeHref("javascript:alert(1)")).toBeUndefined();
+    expect(safeHref(" JavaScript:alert(1)")).toBeUndefined();
+    expect(safeHref("data:text/html,<script>alert(1)</script>")).toBeUndefined();
+    expect(safeHref("/relative")).toBeUndefined();
+    expect(safeHref(undefined)).toBeUndefined();
   });
 });

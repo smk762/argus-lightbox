@@ -25,3 +25,14 @@ export function isFamilyUrl(href: string | undefined): boolean {
   const host = url.hostname.toLowerCase();
   return host === FAMILY_DOMAIN || host.endsWith(`.${FAMILY_DOMAIN}`);
 }
+
+/** *href* when it is an absolute http(s) URL, else `undefined`: `javascript:`, `data:` and relative values never become links. */
+export function safeHref(href: string | undefined): string | undefined {
+  if (!href) return undefined;
+  try {
+    const url = new URL(href);
+    return url.protocol === "https:" || url.protocol === "http:" ? url.href : undefined;
+  } catch {
+    return undefined;
+  }
+}

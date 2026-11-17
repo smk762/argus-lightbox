@@ -150,11 +150,17 @@ def _subjects_facet(subjects: dict[str, Any] | None) -> list[str]:
     return ["one person"] if count == 1 else ["group"]
 
 
+def _accepted_names(refine: dict[str, Any]) -> list[str]:
+    """``refine.accepted`` as sorted names. A bare string is one name; anything not a list or string is none."""
+    raw = refine.get("accepted")
+    if isinstance(raw, str):
+        raw = [raw]
+    return sorted(name for name in raw if isinstance(name, str) and name) if isinstance(raw, list) else []
+
+
 def _accepted_rewrites(caption: dict[str, Any]) -> set[str]:
     refine = caption.get("refine")
-    if not isinstance(refine, dict) or not isinstance(refine.get("accepted"), list):
-        return set()
-    return {name for name in refine["accepted"] if isinstance(name, str)}
+    return set(_accepted_names(refine)) if isinstance(refine, dict) else set()
 
 
 def _assembly_drift(result: CaptionResult, caption: dict[str, Any], accepted: set[str]) -> bool:
@@ -173,7 +179,7 @@ def _refine_notes(caption: dict[str, Any]) -> list[str]:
     refine = caption.get("refine")
     if not isinstance(refine, dict):
         return []
-    accepted = sorted(name for name in (refine.get("accepted") or []) if isinstance(name, str))
+    accepted = _accepted_names(refine)
     model = refine.get("model") if isinstance(refine.get("model"), str) else ""
     if accepted and model:
         return [f"Refined {', '.join(accepted)} with {model}."]
