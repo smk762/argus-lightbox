@@ -24,7 +24,12 @@ const GUIDE: { section: LensSection; blurb: string }[] = [
   { section: "features", blurb: "Backends (tagger, prose, hybrid, cloud) and what each one records." },
   { section: "refine", blurb: "The optional LLM rewrite, and the checks a rewrite has to pass to be kept." },
   { section: "xmp", blurb: "The XMP sidecar: keywords and description, merged into an existing file." },
+  {
+    section: "captionResult",
+    blurb: "Every field of a caption result, the variants, and the metadata the Explain tab reads: buckets, compaction notes and headcount.",
+  },
   { section: "cli", blurb: "The argus-lens command." },
+  { section: "cliReference", blurb: "Every argus-lens subcommand and flag." },
 ];
 
 /**
@@ -129,9 +134,8 @@ export function LensDocs({
           </section>
 
           <p className="text-caption text-text-muted">
-            These links open lens&apos;s README at the version above, so they match the captions in this gallery. A
-            reference for every caption-result field and a table of the prose prompt presets are not written yet; they
-            will be added here when lens publishes them.
+            These links open lens&apos;s README and reference docs at the version above, so they match the captions in
+            this gallery. A reference that lens added after that version opens at the first release that has it.
           </p>
         </main>
 

@@ -1,7 +1,8 @@
 // Where the gallery points for argus-lens docs, and the "Captioned by" line built from recorded data.
 //
-// Until lens's docs are imported into /docs (issue #16 follow-up), every help link goes to lens's README
+// Until lens's docs are imported into /docs (#21), every help link goes to lens's README or docs/ files
 // at the source the gallery was baked with: the release tag for a release, the commit for a dev build.
+// A section that lens added later (`since`) links to the first release that has it when the bake is older.
 // Keeping the links here means the import only has to change this file.
 
 import type { CaptionParams, CaptionRecord } from "./types";
@@ -9,7 +10,16 @@ import type { CaptionParams, CaptionRecord } from "./types";
 export const LENS_REPO = "https://github.com/smk762/argus-lens";
 const PYPI = "https://pypi.org/project/argus-lens";
 
-/** README sections the UI links to. The anchors are the same at every lens release from 0.7.0 on. */
+interface SectionDef {
+  anchor: string;
+  title: string;
+  /** The file in lens's repo; README.md when unset. */
+  file?: string;
+  /** The first lens release with this file and anchor, when it is newer than 0.7.0. */
+  since?: string;
+}
+
+/** Sections the UI links to. README anchors are the same at every lens release from 0.7.0 on. */
 export const LENS_SECTIONS = {
   overview: { anchor: "", title: "Overview" },
   assembly: { anchor: "what-the-assembly-pipeline-does", title: "What the assembly pipeline does" },
@@ -17,7 +27,11 @@ export const LENS_SECTIONS = {
   cli: { anchor: "cli", title: "Command-line interface" },
   refine: { anchor: "refinement-llm-rewrite-validated", title: "Refinement (LLM rewrite, validated)" },
   xmp: { anchor: "immich", title: "XMP sidecars and Immich" },
-} as const;
+  captionResult: { anchor: "", title: "Caption result reference", file: "docs/caption-result.md", since: "0.11.0" },
+  resultFields: { anchor: "fields", title: "Caption result fields", file: "docs/caption-result.md", since: "0.11.0" },
+  resultMetadata: { anchor: "metadata", title: "Caption result metadata", file: "docs/caption-result.md", since: "0.11.0" },
+  cliReference: { anchor: "", title: "CLI reference", file: "docs/cli.md", since: "0.11.0" },
+} as const satisfies Record<string, SectionDef>;
 export type LensSection = keyof typeof LENS_SECTIONS;
 
 export interface LensSource {
@@ -41,9 +55,23 @@ export function lensSource(version: string | undefined | null): LensSource {
   return { version: v, ref: sha ?? "dev", sha: sha ? sha.slice(0, 7) : null, release: false };
 }
 
+const LEADING = /^(\d+)\.(\d+)\.(\d+)/;
+
+/** True when *version*'s leading X.Y.Z is older than *since*; false when it has none (dev). */
+function olderThan(version: string | undefined | null, since: string): boolean {
+  const a = LEADING.exec((version ?? "").trim());
+  const b = LEADING.exec(since);
+  if (!a || !b) return false;
+  for (let i = 1; i <= 3; i++) {
+    if (Number(a[i]) !== Number(b[i])) return Number(a[i]) < Number(b[i]);
+  }
+  return false;
+}
+
 export function lensDocUrl(section: LensSection, version: string | undefined | null): string {
-  const { anchor } = LENS_SECTIONS[section];
-  return `${LENS_REPO}/blob/${lensSource(version).ref}/README.md${anchor ? `#${anchor}` : ""}`;
+  const def: SectionDef = LENS_SECTIONS[section];
+  const ref = def.since && olderThan(version, def.since) ? `v${def.since}` : lensSource(version).ref;
+  return `${LENS_REPO}/blob/${ref}/${def.file ?? "README.md"}${def.anchor ? `#${def.anchor}` : ""}`;
 }
 
 export function lensTreeUrl(version: string | undefined | null): string {

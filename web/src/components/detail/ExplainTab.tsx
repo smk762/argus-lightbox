@@ -72,6 +72,13 @@ export function ExplainTab({ photo, categories, lensVersion }: { photo: Photo; c
         </Step>
 
         <Step n={2} title="Classified into categories">
+          <p className="mb-2 text-caption text-text-muted">
+            Each tag and prose fragment lands in one category{" "}
+            <LensDocLink section="resultMetadata" version={lensVersion}>
+              bucket
+            </LensDocLink>
+            .
+          </p>
           <ul className="space-y-2">
             {groups.map((g) => {
               const tags = buckets.tags?.[g] ?? [];
@@ -137,6 +144,13 @@ export function ExplainTab({ photo, categories, lensVersion }: { photo: Photo; c
         </Step>
 
         <Step n={4} title="What the pipeline did">
+          <p className="mb-2 text-caption text-text-muted">
+            Lens&apos;s{" "}
+            <LensDocLink section="resultFields" version={lensVersion}>
+              compaction notes
+            </LensDocLink>
+            , as recorded:
+          </p>
           <ul className="list-disc space-y-1 pl-5 text-small text-text-secondary">
             {compaction_notes.map((note, i) => (
               <li key={`${i}-${note}`}>{note}</li>
@@ -149,6 +163,10 @@ export function ExplainTab({ photo, categories, lensVersion }: { photo: Photo; c
                 {subjects.count === 0 ? "No people" : `${subjects.count} ${subjects.count === 1 ? "person" : "people"}`}
                 {subjects.agree ? ", tags and prose agree" : ", tags and prose disagree (flagged for review)"}
                 {subjects.evidence.length > 0 && <> · evidence: {subjects.evidence.join(", ")}</>}
+                {" · "}
+                <LensDocLink section="resultMetadata" version={lensVersion}>
+                  how lens counts people
+                </LensDocLink>
               </p>
             </div>
           )}
