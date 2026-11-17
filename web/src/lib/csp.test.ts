@@ -3,7 +3,7 @@
 import { createHash } from "node:crypto";
 import { describe, expect, it } from "vitest";
 
-import { dataOrigin, headers, inlineScriptHashes, policy, trustedTypesPolicy, withCsp } from "../../scripts/csp.mjs";
+import { dataOrigin, headers, inlineScriptHashes, inlineStyle, policy, trustedTypesPolicy, withCsp } from "../../scripts/csp.mjs";
 
 const sha = (s: string) => `'sha256-${createHash("sha256").update(s).digest("base64")}'`;
 const page =
@@ -66,5 +66,13 @@ describe("csp post-build", () => {
     expect(p).toContain("img-src 'self' https://data.example.com");
     expect(p).toMatch(/script-src 'self';/);
     expect(p).toContain("object-src 'none'");
+  });
+
+  it("refuses a page with an inline style the policy would block", () => {
+    expect(inlineStyle(page)).toBeNull();
+    expect(inlineStyle('<p>x</p><script>self.__next_f.push(["<div style=1>"])</script>')).toBeNull();
+    expect(inlineStyle('<head></head><body><div class="a" style="color:red"></div></body>')).toContain("style=");
+    expect(inlineStyle("<head><style>a{}</style></head>")).toBe("<style>");
+    expect(() => withCsp('<html><head></head><body><p style="x"></p></body></html>')).toThrow(/style-src/);
   });
 });

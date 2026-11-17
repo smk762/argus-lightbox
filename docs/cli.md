@@ -9,6 +9,7 @@ Bakes the synthetic fixture: 12 drawn scenes captioned by lens's real assembly. 
 | Flag | Default | |
 |---|---|---|
 | `--out` | `web/public/data` | Output directory. `make fixture` writes here, and the result is committed. |
+| `--check` | off | Write nothing: bake into a temporary directory and exit 1 if `--out` differs. `generated_at` and lens's `training`/`training_prose` variants (random tag dropout and shuffle) are ignored; every other byte must match. `make fixture-check` and CI run this. |
 
 ## `lightbox-bake tape`
 

@@ -63,7 +63,7 @@ describe("captioned by, from recorded data", () => {
   it("fixture: lens version and backend, no refine", () => {
     const index = load("data");
     const by = captionedBy(index.photos[0].caption, index.lens_version);
-    expect(by).toMatchObject({ lensVersion: "0.7.0", backend: "hybrid", refineModel: null });
+    expect(by).toMatchObject({ lensVersion: index.lens_version, backend: "hybrid", refineModel: null });
     expect(refineSummary(by)).toBeNull();
     expect(lensSource(index.lens_version).release).toBe(true);
   });
