@@ -1,6 +1,8 @@
 "use client";
 
 import { assetUrl } from "@/lib/data";
+import { downloadBlob } from "@/lib/download";
+import { safeHref } from "@/lib/links";
 import type { ListPhoto } from "@/lib/types";
 
 import { ExternalLink } from "../ExternalLink";
@@ -8,7 +10,7 @@ import { LensDocLink } from "../LensDocLink";
 import { SectionTitle } from "../ui";
 
 function Row({ label, children }: { label: string; children: React.ReactNode }) {
-  if (children === undefined || children === null || children === "") return null;
+  if (children === undefined || children === null || children === "" || children === false) return null;
   return (
     <div className="flex justify-between gap-4 border-b border-base-700 py-1.5 text-small last:border-b-0">
       <dt className="text-text-secondary">{label}</dt>
@@ -17,9 +19,11 @@ function Row({ label, children }: { label: string; children: React.ReactNode }) 
   );
 }
 
+// Provenance URLs come from scraped third-party metadata: only http(s) becomes a link.
 function Link({ href, children }: { href?: string; children: React.ReactNode }) {
-  return href ? (
-    <ExternalLink href={href} className="text-link underline underline-offset-2 hover:decoration-2">
+  const safe = safeHref(href);
+  return safe ? (
+    <ExternalLink href={safe} className="text-link underline underline-offset-2 hover:decoration-2">
       {children}
     </ExternalLink>
   ) : (
@@ -28,10 +32,7 @@ function Link({ href, children }: { href?: string; children: React.ReactNode }) 
 }
 
 function download(filename: string, text: string) {
-  const url = URL.createObjectURL(new Blob([text], { type: "text/plain" }));
-  const a = Object.assign(document.createElement("a"), { href: url, download: filename });
-  a.click();
-  URL.revokeObjectURL(url);
+  downloadBlob(new Blob([text], { type: "text/plain" }), filename);
 }
 
 export function MetadataTab({ photo, lensVersion }: { photo: ListPhoto; lensVersion: string }) {
@@ -47,10 +48,11 @@ export function MetadataTab({ photo, lensVersion }: { photo: ListPhoto; lensVers
             <Row label="Camera">{exif.camera}</Row>
             <Row label="Lens">{exif.lens}</Row>
             <Row label="Focal length">
-              {exif.focal_length_mm !== undefined &&
-                `${exif.focal_length_mm} mm${exif.focal_length_35mm ? ` (${exif.focal_length_35mm} mm eq.)` : ""}`}
+              {exif.focal_length_mm !== undefined
+                ? `${exif.focal_length_mm} mm${exif.focal_length_35mm ? ` (${exif.focal_length_35mm} mm eq.)` : ""}`
+                : undefined}
             </Row>
-            <Row label="Aperture">{exif.aperture !== undefined && `ƒ/${exif.aperture}`}</Row>
+            <Row label="Aperture">{exif.aperture !== undefined ? `ƒ/${exif.aperture}` : undefined}</Row>
             <Row label="Shutter">{exif.shutter}</Row>
             <Row label="ISO">{exif.iso}</Row>
             <Row label="Taken">{exif.taken_at && new Date(exif.taken_at).toLocaleString()}</Row>

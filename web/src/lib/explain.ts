@@ -21,6 +21,12 @@ export interface Trace {
 }
 
 const norm = (s: string) => s.toLowerCase().replace(/_/g, " ").trim();
+const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+/** True when *fragment* appears in *text* as whole words: "hat" is not in "that", nor "tree" in "street". */
+export function containsPhrase(text: string, fragment: string): boolean {
+  return new RegExp(`(?<![\\p{L}\\p{N}])${escapeRegExp(fragment)}(?![\\p{L}\\p{N}])`, "u").test(text);
+}
 
 export function splitTags(raw: string): string[] {
   return raw
@@ -44,7 +50,7 @@ export function traceVariant(photo: Photo, variant: string): Trace {
         const t = norm(item);
         if (!t) continue;
         if (source === "tags") bucketed.add(t);
-        fragments.push({ text: item, source, category, status: text.includes(t) ? "kept" : "trimmed" });
+        fragments.push({ text: item, source, category, status: containsPhrase(text, t) ? "kept" : "trimmed" });
       }
     }
   }

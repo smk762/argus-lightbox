@@ -77,6 +77,8 @@ export function PhotoDetail({
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      // Alt/Cmd+Arrow is browser back/forward; a key a child already handled is not a step either.
+      if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey) return;
       const target = e.target as HTMLElement | null;
       // Arrow keys belong to form controls and to the tab list (which moves between tabs).
       if (target?.closest('input, select, textarea, [role="tablist"]')) return;

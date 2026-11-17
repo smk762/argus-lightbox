@@ -11,11 +11,13 @@ from __future__ import annotations
 
 import html
 import os
+import re
 from collections.abc import Callable, Iterator
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 from urllib.parse import urlparse
+from urllib.request import url2pathname
 
 
 @dataclass
@@ -87,12 +89,21 @@ def refine_record(payload: dict[str, Any]) -> dict[str, Any] | None:
     return record or None
 
 
+_DRIVE = re.compile(r"[A-Za-z]:[\\/]")
+
+
 def _local_path(uri: str) -> Path | None:
+    """The local file *uri* names: a plain path (``C:\\x.jpg`` included) or a ``file://`` URI."""
     parsed = urlparse(uri)
-    if parsed.scheme in ("", "file"):
-        path = Path(parsed.path if parsed.scheme else uri)
-        return path if path.is_file() else None
-    return None
+    if parsed.scheme == "file":
+        if parsed.netloc not in ("", "localhost"):
+            return None  # a file on another host
+        path = Path(url2pathname(parsed.path))  # percent-decodes, as Path.as_uri() encoded it
+    elif parsed.scheme == "" or _DRIVE.match(uri):  # urlparse reads a Windows drive letter as a scheme
+        path = Path(uri)
+    else:
+        return None
+    return path if path.is_file() else None
 
 
 def tape_records(pg_url: str, *, dataset: str | None = None, limit: int | None = None) -> Iterator[SourceRecord]:
@@ -108,7 +119,9 @@ def tape_records(pg_url: str, *, dataset: str | None = None, limit: int | None =
     if dataset:
         where = "WHERE c.id IN (SELECT caption_id FROM dataset_membership WHERE dataset = %s)"
         params.append(dataset)
-    sql = _TAPE_SQL.format(where=where) + (f" LIMIT {int(limit)}" if limit else "")
+    if limit is not None and limit < 0:
+        raise ValueError("limit must not be negative")
+    sql = _TAPE_SQL.format(where=where) + (f" LIMIT {int(limit)}" if limit is not None else "")
 
     with psycopg.connect(pg_url) as conn, conn.cursor() as cur:
         cur.execute(sql, params)

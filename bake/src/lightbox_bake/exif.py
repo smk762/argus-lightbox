@@ -7,6 +7,7 @@ normalised into display-ready fields; absent tags are simply omitted.
 
 from __future__ import annotations
 
+import math
 from datetime import datetime
 from fractions import Fraction
 from typing import Any
@@ -36,9 +37,15 @@ def _clean(value: Any) -> str | None:
 
 
 def _shutter(seconds: float) -> str:
+    if not math.isfinite(seconds) or seconds <= 0:
+        return ""
     if seconds >= 1:
         return f"{seconds:g}s"
-    return f"1/{round(1 / seconds)}s" if seconds > 0 else ""
+    # 1/N only where N is (close to) whole; 0.8s and 0.6s are not 1/1 and 1/2.
+    reciprocal = 1 / seconds
+    if seconds <= 0.3 or abs(reciprocal - round(reciprocal)) < 0.05:
+        return f"1/{round(reciprocal)}s"
+    return f"{seconds:g}s"
 
 
 def _taken_at(raw: str | None) -> str | None:
@@ -69,7 +76,7 @@ def read_exif(img: Image.Image) -> dict[str, Any]:
         out["focal_length_35mm"] = int(focal35)
     if (fnum := _num(sub.get(_FNUMBER))) is not None:
         out["aperture"] = round(fnum, 1)
-    if (exposure := _num(sub.get(_EXPOSURE))) is not None and exposure > 0:
+    if (exposure := _num(sub.get(_EXPOSURE))) is not None and math.isfinite(exposure) and exposure > 0:
         out["exposure_s"] = exposure
         out["shutter"] = _shutter(float(Fraction(exposure).limit_denominator(8000)))
     iso = sub.get(_ISO)

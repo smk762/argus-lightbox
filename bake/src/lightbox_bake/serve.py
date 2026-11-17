@@ -7,6 +7,7 @@ bake can replace the committed fixture without rebuilding the HTML.
 from __future__ import annotations
 
 import argparse
+import html
 import json
 import mimetypes
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -29,7 +30,10 @@ def _under(root: Path, rel: str) -> Path | None:
     if candidate != root_resolved and root_resolved not in candidate.parents:
         return None
     if candidate.is_dir():
-        candidate = candidate / "index.html"
+        # index.html may itself be a symlink, so check containment again after resolving it.
+        candidate = (candidate / "index.html").resolve()
+        if root_resolved not in candidate.parents:
+            return None
     if candidate.is_file():
         return candidate
     nested = (root / rel / "index.html").resolve()
@@ -73,7 +77,8 @@ def _status_page(data_root: Path) -> bytes:
     """A page shown until the bake has written ``index.json``."""
     error = data_root / "error.txt"
     if error.is_file():
-        message = error.read_text(encoding="utf-8").strip() or "Captioning failed."
+        # The error text can quote filenames and lens responses; it is shown as text, never markup.
+        message = html.escape(error.read_text(encoding="utf-8", errors="replace").strip() or "Captioning failed.")
         refresh = ""
     else:
         message = "Captioning photos. This page refreshes on its own, and the gallery opens here when that finishes."
@@ -95,6 +100,10 @@ def make_handler(html_root: Path, data_root: Path, cache_root: Path | None = Non
             self.wfile.write(body)
 
         def do_GET(self) -> None:
+            if urlsplit(self.path).path == "/health":
+                # Up as soon as the port is open, before the bake has written index.json.
+                self._json(200, {"ok": True, "ready": (data_root / "index.json").is_file()})
+                return
             # index.json appears once the folder has been counted. Until then
             # the port is already open, so a browser gets a status page instead
             # of a connection reset.
@@ -119,6 +128,14 @@ def make_handler(html_root: Path, data_root: Path, cache_root: Path | None = Non
             if urlsplit(self.path).path != "/api/caption-choice":
                 self._send(404, "text/plain; charset=utf-8", b"not found\n")
                 return
+            if not self._same_origin():
+                self._json(403, {"error": "cross-origin request refused"})
+                return
+            # Only JSON is accepted. A cross-site page cannot send that without a CORS preflight,
+            # which this server never answers.
+            if self.headers.get_content_type() != "application/json":
+                self._json(415, {"error": "expected Content-Type: application/json"})
+                return
             try:
                 length = int(self.headers.get("Content-Length", "0"))
             except ValueError:
@@ -128,7 +145,7 @@ def make_handler(html_root: Path, data_root: Path, cache_root: Path | None = Non
                 return
             try:
                 body = json.loads(self.rfile.read(length))
-            except json.JSONDecodeError:
+            except ValueError:  # JSONDecodeError, or bytes that are not UTF-8/16/32
                 self._json(400, {"error": "expected JSON"})
                 return
             if not isinstance(body, dict):
@@ -153,6 +170,15 @@ def make_handler(html_root: Path, data_root: Path, cache_root: Path | None = Non
                         selected_category=choice["selected_category"],
                     )
             self._json(200, {"updated": result["updated"], "skipped": result["skipped"]})
+
+        def _same_origin(self) -> bool:
+            """False for a browser request sent from another site (Origin or Sec-Fetch-Site says so)."""
+            if self.headers.get("Sec-Fetch-Site", "same-origin") not in ("same-origin", "none"):
+                return False
+            origin = self.headers.get("Origin")
+            if origin is None:
+                return True  # not a browser cross-site request (curl, or an old browser's same-origin POST)
+            return urlsplit(origin).netloc.lower() == (self.headers.get("Host") or "").lower()
 
         def _json(self, status: int, payload: dict) -> None:
             self._send(status, "application/json", json.dumps(payload).encode(), cache="no-store")

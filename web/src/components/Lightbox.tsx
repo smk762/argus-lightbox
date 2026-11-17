@@ -188,6 +188,15 @@ export function Lightbox({ initial = null }: { initial?: PrerenderedGallery | nu
       });
       const body = (await res.json().catch(() => ({}))) as { error?: string; updated?: string[]; skipped?: { reason: string }[] };
       if (!res.ok) throw new Error(body.error || `HTTP ${res.status}`);
+      // Cached Explain/Compare data was built from the old caption. Drop it, so the open photo and its
+      // neighbours are fetched again (the effect below asks for them once the list reloads).
+      const changed = body.updated ?? ids;
+      for (const id of changed) detailRequests.current.delete(id);
+      setDetails((current) => {
+        const kept = { ...current };
+        for (const id of changed) delete kept[id];
+        return kept;
+      });
       const next = await loadList(split);
       shownCount.current = next.photos.length;
       setIndex(next);
@@ -237,7 +246,11 @@ export function Lightbox({ initial = null }: { initial?: PrerenderedGallery | nu
       detailRequests.current.add(id);
       loadDetail(id)
         .then((d) => setDetails((current) => ({ ...current, [id]: d })))
-        .catch(() => setDetails((current) => ({ ...current, [id]: "error" })));
+        .catch(() => {
+          // Shown as an error now; a later hover, open or step tries again.
+          detailRequests.current.delete(id);
+          setDetails((current) => ({ ...current, [id]: "error" }));
+        });
     },
     [split],
   );
