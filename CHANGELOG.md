@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-11-19
+
 ### Added
 
 - README links this UI's row in the suite's [What to run for which UI](https://docs.dragonhound.dev/setup/which-services/#lightbox) matrix.
@@ -63,5 +65,6 @@ The first release: the standalone demo for argus-lens.
 - **Docs:** README, `docs/cli.md` (every subcommand and flag, and running without Docker), and the Argus suite map in `CLAUDE.md`.
 - **CI** on `dev` and `main`: ruff, pytest, eslint, tsc, vitest, the build, and the suite check.
 
-[Unreleased]: https://github.com/smk762/argus-lightbox/compare/v0.1.0...dev
+[Unreleased]: https://github.com/smk762/argus-lightbox/compare/v0.2.0...dev
+[0.2.0]: https://github.com/smk762/argus-lightbox/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/smk762/argus-lightbox/releases/tag/v0.1.0
