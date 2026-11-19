@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - The footer's map-demo link is now **Atlas** (https://atlas.dragonhound.dev/), was "Atlas Realms" on realms.dragonhound.dev. The painted-map demo moved there; realms.dragonhound.dev is kept for the Realms minigame.
 - The hosted demo is re-captioned with argus-lens 0.11.0 using lens's `straightforward` prose prompt preset, not lens's default (`detailed`). The default wrote mood adjectives and "this is a … photograph" openers into the zero-shot captions and doubled the prose length (smk762/argus-lens#104).
+- The bake needs argus-lens 0.14.0 or later (was 0.11.0), and the synthetic fixture is re-baked with it. Lens 0.14's assembly keeps some setting and lighting tags that 0.13 dropped (a "sunset" in the beach scene's caption, for example). The hosted demo tape is unchanged.
 - Caption-cache files for a profile (`CAPTION_CACHE_KEY` set, as Compose does) are now named `<sha256>.<key>-<hash>.json`, with the key cut to 40 safe characters plus 16 hex of its sha256, so keys that read the same stay apart. 0.1.0's `<sha256>.<key>.json` files are still read, so upgrading does not re-caption the folder.
 
 ## [0.1.0] - 2026-11-13
