@@ -121,11 +121,25 @@ def _cache_file(cache: Path, sha256: str) -> Path:
     return cache / f"{sha256}.{safe or 'profile'}-{digest}.json"
 
 
+def _stored_cache_file(cache: Path, sha256: str) -> Path:
+    """The cache file to read for one image: the current name, else the name 0.1.0 wrote (``<sha256>.<key>.json``).
+
+    Without the fallback, upgrading would re-caption every photo of a gallery that sets ``CAPTION_CACHE_KEY``.
+    """
+    current = _cache_file(cache, sha256)
+    profile = os.environ.get("CAPTION_CACHE_KEY", "").strip()
+    if current.is_file() or not profile:
+        return current
+    safe = "".join(ch if ch.isalnum() or ch in "._-" else "_" for ch in profile)[:120].strip("._")
+    legacy = cache / f"{sha256}.{safe or 'profile'}.json"
+    return legacy if legacy.is_file() else current
+
+
 def _read_cache(cache: Path | None, sha256: str) -> dict[str, Any] | None:
     if cache is None:
         return None
     try:
-        payload = json.loads(_cache_file(cache, sha256).read_text(encoding="utf-8"))
+        payload = json.loads(_stored_cache_file(cache, sha256).read_text(encoding="utf-8"))
     except (OSError, ValueError):  # ValueError covers JSONDecodeError and UnicodeDecodeError
         return None
     if not isinstance(payload, dict):
@@ -165,7 +179,7 @@ def purge_store(root: Path) -> None:
 
 def remember_caption_choice(cache: Path, sha256: str, *, final_caption: str, selected_category: str) -> bool:
     """Keep a chosen final caption in the cache file, when that file already exists."""
-    path = _cache_file(cache, sha256)
+    path = _stored_cache_file(cache, sha256)
     if not path.is_file():
         return False
     try:

@@ -65,6 +65,7 @@ def build_index(records: Iterable[SourceRecord], out_dir: Path, *, source: str) 
     seen: set[str] = set()
     params: list[dict] = []
     prior = {str(photo["id"]): photo for photo in read_photos(out_dir)}
+    kept_ids: set[str] = set()  # previous entries standing in for a failed record; a fresh render replaces them
     for record in records:
         photo, reason = render_photo(record, out_dir)
         if photo is None or reason is not None:
@@ -74,8 +75,13 @@ def build_index(records: Iterable[SourceRecord], out_dir: Path, *, source: str) 
             kept = prior.get(record_id(record) or "")
             if kept is not None and kept["id"] not in seen and renditions_present(out_dir, kept):
                 seen.add(kept["id"])
+                kept_ids.add(kept["id"])
                 photos.append(kept)
             continue
+        if photo["id"] in kept_ids:
+            kept_ids.discard(photo["id"])
+            seen.discard(photo["id"])
+            photos = [item for item in photos if item["id"] != photo["id"]]
         if photo["id"] in seen:
             stats.skipped.append(f"{record.uri}: duplicate of {photo['id']}")
             continue

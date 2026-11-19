@@ -79,6 +79,8 @@ def main(argv: list[str] | None = None) -> int:
     elif args.command == "tape":
         if not args.pg_url:
             parser.error("no lineage store: pass --pg-url or set CORTEX_PG_URL")
+        if args.limit is not None and args.limit < 0:
+            parser.error("--limit must not be negative")
         stats = build_index(tape_records(args.pg_url, dataset=args.dataset, limit=args.limit), args.out, source="tape")
     else:
         stats = stream_folder(
