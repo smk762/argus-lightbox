@@ -23,6 +23,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The bake needs argus-lens 0.14.0 or later (was 0.11.0), and the synthetic fixture is re-baked with it. Lens 0.14's assembly keeps some setting and lighting tags that 0.13 dropped (a "sunset" in the beach scene's caption, for example). The hosted demo tape is unchanged.
 - Caption-cache files for a profile (`CAPTION_CACHE_KEY` set, as Compose does) are now named `<sha256>.<key>-<hash>.json`, with the key cut to 40 safe characters plus 16 hex of its sha256, so keys that read the same stay apart. 0.1.0's `<sha256>.<key>.json` files are still read, so upgrading does not re-caption the folder.
 
+### Fixed
+
+- Choosing a caption no longer fails with 403 when the folder server sits behind a reverse proxy that rewrites `Host`. A `Sec-Fetch-Site` header now decides the same-origin check on its own. Without it, `Origin` is compared with `Host` or `X-Forwarded-Host`.
+- A shared link with a facet group named `constructor` or `__proto__` (`?f=constructor:y`) no longer stops the grid from rendering.
+- In a tape bake, a photo whose first record failed no longer keeps its old entry when a later record with the same bytes renders. The fresh render replaces it.
+- `lightbox-bake tape --limit -1` is a usage error, not a traceback.
+- `lightbox-bake fixture --check` ignores lens's random `training` variants only under `caption_variants`, and `generated_at` only at the top level, so a real difference elsewhere is no longer missed.
+
+### Security
+
+- Next.js 16.2.4 → 16.4.6, with `eslint-config-next` to match, vitest 4.1.11 → 4.1.12, and the lockfile's transitive packages updated (postcss, sharp, js-yaml, brace-expansion, minimatch, browserslist, zod and others). This clears all 56 open Dependabot alerts, 5 of them critical, and `npm audit` reports none.
+
 ## [0.1.0] - 2026-11-13
 
 The first release: the standalone demo for argus-lens.
