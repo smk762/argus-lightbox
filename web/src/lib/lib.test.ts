@@ -121,6 +121,12 @@ describe("url state", () => {
     expect(view.selection.toString).toEqual(["z"]);
     expect(Object.getPrototypeOf(view.selection)).toBe(Object.prototype);
     expect(serializeView(view)).toBe(`?${new URLSearchParams("f=__proto__:x&f=constructor:y&f=toString:z")}`);
+    // Filtering and counting with those groups matches nothing rather than throwing.
+    expect(filterPhotos(photos, "", view.selection)).toEqual([]);
+    expect(facetCounts(photos, "constructor", "", view.selection).map((t) => t.term)).toEqual(["y"]);
+    const toggled = toggleTerm({}, "__proto__", "x");
+    expect(Object.getPrototypeOf(toggled)).toBe(Object.prototype);
+    expect(Object.keys(toggled)).toEqual(["__proto__"]);
   });
 });
 

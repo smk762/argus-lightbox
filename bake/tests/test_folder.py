@@ -85,6 +85,18 @@ def test_caption_cache_keeps_hybrid_names_and_separates_another_profile(tmp_path
     assert _cache_file(tmp_path, "abc").name != punct
 
 
+def test_caption_cache_still_reads_a_file_named_the_0_1_0_way(tmp_path, monkeypatch) -> None:
+    from lightbox_bake.folder import _read_cache, _write_cache
+
+    monkeypatch.setenv("CAPTION_CACHE_KEY", "qwen3-vl:8b-instruct")
+    sha = "cd" * 32
+    recorded = caption_record(_lens_payload())
+    _write_cache(tmp_path, sha, recorded)
+    written = next(tmp_path.glob(f"{sha}.*.json"))
+    written.rename(tmp_path / f"{sha}.qwen3-vl_8b-instruct.json")
+    assert _read_cache(tmp_path, sha)["final_caption"] == recorded["final_caption"]
+
+
 def test_caption_record_keeps_a_checked_rewrite_and_the_cache_round_trips_it(tmp_path, monkeypatch) -> None:
     from lightbox_bake.folder import _read_cache, _write_cache
 
@@ -379,6 +391,13 @@ def test_caption_choice_updates_the_index_and_cache(tmp_path, monkeypatch) -> No
             assert exc.code == 400
         else:
             raise AssertionError("expected 400 for a body that is not text")
+        # Behind a reverse proxy that rewrites Host, the browser's Sec-Fetch-Site still says same-origin.
+        proxied = {
+            "Content-Type": "application/json",
+            "Origin": "https://photos.example",
+            "Sec-Fetch-Site": "same-origin",
+        }
+        assert urlopen(Request(url, data=body, method="POST", headers=proxied)).status == 200
         same = {"Content-Type": "application/json", "Origin": f"http://127.0.0.1:{port}"}
         opened = urlopen(Request(url, data=body, method="POST", headers=same))
         payload = json.loads(opened.read())

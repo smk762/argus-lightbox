@@ -173,12 +173,16 @@ def make_handler(html_root: Path, data_root: Path, cache_root: Path | None = Non
 
         def _same_origin(self) -> bool:
             """False for a browser request sent from another site (Origin or Sec-Fetch-Site says so)."""
-            if self.headers.get("Sec-Fetch-Site", "same-origin") not in ("same-origin", "none"):
-                return False
+            # The browser sets Sec-Fetch-Site from the URL the user is on, so it holds behind a reverse proxy
+            # that rewrites Host. Only a browser without it falls back to comparing Origin with Host.
+            fetch_site = self.headers.get("Sec-Fetch-Site")
+            if fetch_site is not None:
+                return fetch_site in ("same-origin", "none")
             origin = self.headers.get("Origin")
             if origin is None:
                 return True  # not a browser cross-site request (curl, or an old browser's same-origin POST)
-            return urlsplit(origin).netloc.lower() == (self.headers.get("Host") or "").lower()
+            hosts = {(self.headers.get(name) or "").lower() for name in ("Host", "X-Forwarded-Host")}
+            return urlsplit(origin).netloc.lower() in hosts - {""}
 
         def _json(self, status: int, payload: dict) -> None:
             self._send(status, "application/json", json.dumps(payload).encode(), cache="no-store")

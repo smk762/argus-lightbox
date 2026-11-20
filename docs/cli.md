@@ -43,7 +43,7 @@ Environment:
 | Variable | |
 |---|---|
 | `LENS_URL` | Default for `--lens-url`. |
-| `CAPTION_CACHE_KEY` | Caption-profile name added to cache file names (`<sha256>.<key>.json`), so captions from a different backend or model are not reused. Unset or empty means `<sha256>.json`. Compose derives it from the backend and model settings. |
+| `CAPTION_CACHE_KEY` | Caption-profile name added to cache file names (`<sha256>.<key>-<hash>.json`; 0.1.0's `<sha256>.<key>.json` is still read), so captions from a different backend or model are not reused. Unset or empty means `<sha256>.json`. Compose derives it from the backend and model settings. |
 | `FACET_LISTS_JSON` | Path to a replacement for `facet_lists.example.json`. A missing file keeps the example. |
 
 Example: a lens server on this machine and a folder in your home directory.

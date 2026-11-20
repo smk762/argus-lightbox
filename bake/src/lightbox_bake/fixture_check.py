@@ -19,12 +19,17 @@ RANDOM_KEYS = frozenset({"training", "training_prose"})
 _SKIP = frozenset({"status.json"})
 
 
-def _stable(value: object) -> object:
-    """*value* without the keys that differ between two runs of the same bake."""
+def _stable(value: object, key: str = "") -> object:
+    """*value* without the keys that differ between two runs of the same bake.
+
+    The random variants are dropped only inside ``caption_variants``, so a ``training`` key anywhere else
+    (a facet group, a bucket) is still compared.
+    """
     if isinstance(value, dict):
-        return {k: _stable(v) for k, v in value.items() if k not in RANDOM_KEYS and k != "generated_at"}
+        drop = RANDOM_KEYS if key == "caption_variants" else frozenset()
+        return {k: _stable(v, k) for k, v in value.items() if k not in drop and not (key == "" and k == "generated_at")}
     if isinstance(value, list):
-        return [_stable(v) for v in value]
+        return [_stable(v, "[]") for v in value]
     return value
 
 
