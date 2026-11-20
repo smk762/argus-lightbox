@@ -48,6 +48,8 @@ The web app loads `index.json` and does everything else client-side. All gallery
 
 ## Quick start
 
+What this UI needs live, what its mock or recording stands in for, and the no-GPU command are in [What to run for which UI](https://docs.dragonhound.dev/setup/which-services/#lightbox). Each external service it depends on has a setup page under the suite's [Setup and services](https://docs.dragonhound.dev/setup/).
+
 Needs [uv](https://docs.astral.sh/uv/). Node 22 is optional: the Makefile runs npm in the `node:22` Docker image when `npm` isn't on your PATH.
 
 ```bash
@@ -101,7 +103,7 @@ ComfyUI's own workflow port does not caption anything until a vision model is se
 
 With `OLLAMA_URL` set, lens 0.10 rewrites every finished caption with `qwen3:8b` on that server. A rewrite is kept only when lens's own checks accept it. `OLLAMA_REFINE_MODEL` names a different rewriter and does not replace Florence. `ARGUS_REFINE=off` leaves the assembled caption. With no Ollama URL, refinement stays off. Captions cached before this rewrite are kept until the cache key changes or `RECAPTION=1` is set. `ARGUS_BACKEND=openai` and `OPENAI_API_KEY` still select the cloud backend instead.
 
-The caption cache is keyed by each photo's sha256 plus `CAPTION_CACHE_KEY`, a caption-profile name. Compose derives it from `ARGUS_BACKEND` and the model settings (`OLLAMA_MODEL`, `OLLAMA_REFINE_MODEL`, `COMFYUI_MODEL`, refinement on or off), so after a profile switch photos are captioned again rather than reusing another profile's results. Set `CAPTION_CACHE_KEY` yourself to pin or share a profile name. Cache files are `<sha256>.<key>.json`; with the key empty they are `<sha256>.json`.
+The caption cache is keyed by each photo's sha256 plus `CAPTION_CACHE_KEY`, a caption-profile name. Compose derives it from `ARGUS_BACKEND` and the model settings (`OLLAMA_MODEL`, `OLLAMA_REFINE_MODEL`, `COMFYUI_MODEL`, refinement on or off), so after a profile switch photos are captioned again rather than reusing another profile's results. Set `CAPTION_CACHE_KEY` yourself to pin or share a profile name. Cache files are `<sha256>.<key>-<hash>.json` (the key cut to 40 safe characters, plus 16 hex of its sha256 so keys that read the same stay apart); with the key empty they are `<sha256>.json`. A `<sha256>.<key>.json` file written by 0.1.0 is still read.
 
 The container has to be able to read the mount. On a NAS export that squashes root, the files need to be world-readable.
 

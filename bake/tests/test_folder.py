@@ -74,7 +74,27 @@ def test_caption_cache_keeps_hybrid_names_and_separates_another_profile(tmp_path
     monkeypatch.delenv("CAPTION_CACHE_KEY", raising=False)
     assert _cache_file(tmp_path, "abc").name == "abc.json"
     monkeypatch.setenv("CAPTION_CACHE_KEY", "qwen3-vl:8b-instruct")
-    assert _cache_file(tmp_path, "abc").name == "abc.qwen3-vl_8b-instruct.json"
+    name = _cache_file(tmp_path, "abc").name
+    assert name.startswith("abc.qwen3-vl_8b-instruct-") and name.endswith(".json")
+    # Keys that read the same once sanitised still get their own files.
+    monkeypatch.setenv("CAPTION_CACHE_KEY", "qwen3-vl/8b-instruct")
+    assert _cache_file(tmp_path, "abc").name != name
+    monkeypatch.setenv("CAPTION_CACHE_KEY", "///")
+    punct = _cache_file(tmp_path, "abc").name
+    monkeypatch.setenv("CAPTION_CACHE_KEY", ":::")
+    assert _cache_file(tmp_path, "abc").name != punct
+
+
+def test_caption_cache_still_reads_a_file_named_the_0_1_0_way(tmp_path, monkeypatch) -> None:
+    from lightbox_bake.folder import _read_cache, _write_cache
+
+    monkeypatch.setenv("CAPTION_CACHE_KEY", "qwen3-vl:8b-instruct")
+    sha = "cd" * 32
+    recorded = caption_record(_lens_payload())
+    _write_cache(tmp_path, sha, recorded)
+    written = next(tmp_path.glob(f"{sha}.*.json"))
+    written.rename(tmp_path / f"{sha}.qwen3-vl_8b-instruct.json")
+    assert _read_cache(tmp_path, sha)["final_caption"] == recorded["final_caption"]
 
 
 def test_caption_record_keeps_a_checked_rewrite_and_the_cache_round_trips_it(tmp_path, monkeypatch) -> None:
@@ -156,6 +176,15 @@ def test_folder_bake_caches_captions_and_hides_the_path(tmp_path, monkeypatch) -
     stale.write_text("{}", encoding="utf-8")
     _Lens.posts = 0
     _Lens.payload = _lens_payload()
+
+    def _snapshot() -> dict[str, tuple[bytes, int]]:
+        return {
+            p.relative_to(photos).as_posix(): (p.read_bytes(), p.stat().st_mtime_ns)
+            for p in photos.rglob("*")
+            if p.is_file()
+        } | {f"{p.relative_to(photos).as_posix()}/": (b"", 0) for p in photos.rglob("*") if p.is_dir()}
+
+    before = _snapshot()
     server = ThreadingHTTPServer(("127.0.0.1", 0), _Lens)
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()
@@ -196,7 +225,14 @@ def test_folder_bake_caches_captions_and_hides_the_path(tmp_path, monkeypatch) -
         raise AssertionError("cached photos must not call lens")
 
     monkeypatch.setattr("lightbox_bake.folder.wait_until_ready", _refuse)
+    monkeypatch.setattr("lightbox_bake.folder.caption_file", _refuse)
     assert main(args) == 0
+    again = json.loads((out / "index.json").read_text())
+    assert again["queue"] == 0 and [p["id"] for p in again["photos"]] == [photo["id"]]
+    status = json.loads((out / "status.json").read_text())
+    assert status["queue"] == 0 and status["count"] == 1
+    assert "red dress" in (out / again["photos"][0]["xmp"]).read_text()
+    assert _snapshot() == before, "the bake must write nothing into the photo folder"
 
 
 def test_folder_publishes_the_queue_before_each_caption_lands(tmp_path, monkeypatch) -> None:
@@ -336,7 +372,34 @@ def test_caption_choice_updates_the_index_and_cache(tmp_path, monkeypatch) -> No
     _wait_for(f"http://127.0.0.1:{port}/")
     body = json.dumps({"ids": [photo_id], "category": "pose_composition"}).encode()
     try:
-        opened = urlopen(Request(f"http://127.0.0.1:{port}/api/caption-choice", data=body, method="POST"))
+        url = f"http://127.0.0.1:{port}/api/caption-choice"
+        # A cross-site form or no-cors fetch (text/plain, or another Origin) changes nothing.
+        for headers, code in (
+            ({"Content-Type": "text/plain"}, 415),
+            ({"Content-Type": "application/json", "Origin": "https://evil.example"}, 403),
+            ({"Content-Type": "application/json", "Sec-Fetch-Site": "cross-site"}, 403),
+        ):
+            try:
+                urlopen(Request(url, data=body, method="POST", headers=headers))
+            except HTTPError as exc:
+                assert exc.code == code
+            else:
+                raise AssertionError(f"expected {code} for {headers}")
+        try:
+            urlopen(Request(url, data=b"\xff\xfe\x00{", method="POST", headers={"Content-Type": "application/json"}))
+        except HTTPError as exc:
+            assert exc.code == 400
+        else:
+            raise AssertionError("expected 400 for a body that is not text")
+        # Behind a reverse proxy that rewrites Host, the browser's Sec-Fetch-Site still says same-origin.
+        proxied = {
+            "Content-Type": "application/json",
+            "Origin": "https://photos.example",
+            "Sec-Fetch-Site": "same-origin",
+        }
+        assert urlopen(Request(url, data=body, method="POST", headers=proxied)).status == 200
+        same = {"Content-Type": "application/json", "Origin": f"http://127.0.0.1:{port}"}
+        opened = urlopen(Request(url, data=body, method="POST", headers=same))
         payload = json.loads(opened.read())
     finally:
         server.shutdown()
@@ -349,3 +412,96 @@ def test_caption_choice_updates_the_index_and_cache(tmp_path, monkeypatch) -> No
     assert cached["final_caption"] == pose
     assert cached["selected_category"] == "pose_composition"
     assert remember_caption_choice(cache, "f" * 64, final_caption="x", selected_category="setting") is False
+
+
+def test_multipart_filename_cannot_break_out_of_its_header() -> None:
+    from lightbox_bake.folder import _multipart
+
+    evil = 'a"\r\nContent-Type: text/html\r\n\r\n\\x\udcff.jpg'
+    body, content_type = _multipart(evil, b"DATA", "image/jpeg")
+    boundary = content_type.split("boundary=", 1)[1]
+    head = body.split(b"DATA", 1)[0].decode("utf-8")
+    disposition = next(line for line in head.split("\r\n") if 'name="file"' in line)
+    assert disposition.endswith('filename="a___Content-Type: text/html_____x_.jpg"')
+    # The profile fields plus the file: no injected parts.
+    assert body.count(f"--{boundary}\r\n".encode()) == 4
+
+
+def test_cache_with_invalid_utf8_is_a_miss(tmp_path, monkeypatch) -> None:
+    from lightbox_bake.folder import _read_cache
+
+    monkeypatch.delenv("CAPTION_CACHE_KEY", raising=False)
+    sha = "ab" * 32
+    (tmp_path / f"{sha}.json").write_bytes(b"\xff\xfe{garbage")
+    assert _read_cache(tmp_path, sha) is None
+    assert remember_caption_choice(tmp_path, sha, final_caption="x", selected_category="setting") is False
+
+
+def test_unreachable_lens_is_a_lens_error(tmp_path) -> None:
+    import pytest
+
+    from lightbox_bake.folder import LensError, caption_file
+
+    server = ThreadingHTTPServer(("127.0.0.1", 0), BaseHTTPRequestHandler)
+    port = server.server_address[1]
+    server.server_close()  # nothing listens on this port now
+    with pytest.raises(LensError):
+        caption_file(f"http://127.0.0.1:{port}", tmp_path / "a.jpg", _jpeg())
+
+
+def test_a_file_that_cannot_be_hashed_keeps_its_cached_caption(tmp_path, monkeypatch) -> None:
+    monkeypatch.delenv("CAPTION_CACHE_KEY", raising=False)
+    photos = tmp_path / "photos"
+    photos.mkdir()
+    (photos / "a.jpg").write_bytes(_jpeg("#112233"))
+    (photos / "b.jpg").write_bytes(_jpeg("#445566"))
+    cache = tmp_path / "cache"
+    cache.mkdir()
+    real = folder_mod.file_sha256
+    shas = {name: real(photos / name) for name in ("a.jpg", "b.jpg")}
+    for sha in shas.values():
+        (cache / f"{sha}.json").write_text(json.dumps(_lens_payload()), encoding="utf-8")
+
+    def flaky(path: Path) -> str:
+        if path.name == "b.jpg":
+            raise OSError("share went away")
+        return real(path)
+
+    monkeypatch.setattr(folder_mod, "file_sha256", flaky)
+    folder_mod.stream_folder(photos, "http://127.0.0.1:9", tmp_path / "data", cache=cache)
+    assert (cache / f"{shas['b.jpg']}.json").is_file()
+
+
+def _serve(html: Path, data: Path):
+    server = ThreadingHTTPServer(("127.0.0.1", 0), make_handler(html, data))
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    return server, f"http://127.0.0.1:{server.server_address[1]}"
+
+
+def test_serve_escapes_the_error_page_and_answers_health(tmp_path) -> None:
+    html, data = tmp_path / "html", tmp_path / "data"
+    html.mkdir()
+    data.mkdir()
+    (html / "index.html").write_text("gallery", encoding="utf-8")
+    (data / "error.txt").write_text("<img src=x onerror=alert(1)>.jpg failed", encoding="utf-8")
+    server, base = _serve(html, data)
+    try:
+        _wait_for(base + "/")
+        page = urlopen(base + "/").read()
+        assert b"<img" not in page and b"&lt;img src=x" in page
+        health = urlopen(base + "/health")
+        assert health.status == 200 and json.loads(health.read()) == {"ok": True, "ready": False}
+    finally:
+        server.shutdown()
+        server.server_close()
+
+
+def test_serve_does_not_follow_a_directory_index_out_of_root(tmp_path) -> None:
+    html, data = tmp_path / "html", tmp_path / "data"
+    (html / "sub").mkdir(parents=True)
+    data.mkdir()
+    secret = tmp_path / "secret.html"
+    secret.write_text("secret", encoding="utf-8")
+    (html / "sub" / "index.html").symlink_to(secret)
+    assert _resolve(html, data, "/sub") is None
+    assert _resolve(html, data, "/sub/") is None

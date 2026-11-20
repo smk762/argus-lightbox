@@ -23,10 +23,11 @@ function Step({ n, title, children }: { n: number; title: string; children: Reac
 
 export function ExplainTab({ photo, categories, lensVersion }: { photo: Photo; categories: string[]; lensVersion: string }) {
   const variants = Object.keys(photo.caption.caption_variants);
-  const [variant, setVariant] = useState(
-    variants.includes(photo.caption.selected_category) ? photo.caption.selected_category : variants[0],
-  );
-  const trace = traceVariant(photo, variant);
+  const fallback = variants.includes(photo.caption.selected_category) ? photo.caption.selected_category : variants[0];
+  const [picked, setVariant] = useState<string | undefined>(undefined);
+  // The pick only holds while this photo has that variant; otherwise follow the photo's own selection.
+  const variant = picked !== undefined && variants.includes(picked) ? picked : fallback;
+  const trace = variant !== undefined ? traceVariant(photo, variant) : { stripped: [], fragments: [] };
   const stripped = new Set(trace.stripped);
   const { buckets, compaction_notes, subjects, drift } = photo.explain;
   const groups = [...categories, "unclassified"];
@@ -50,8 +51,8 @@ export function ExplainTab({ photo, categories, lensVersion }: { photo: Photo; c
         <Step n={1} title={`Raw model output (${photo.caption.backend_name || "unknown backend"})`}>
           {photo.caption.raw_tags && (
             <div className="mb-3 flex flex-wrap gap-1">
-              {splitTags(photo.caption.raw_tags).map((t) => (
-                <Chip key={t} struck={stripped.has(t)} title={stripped.has(t) ? "Dropped before classification" : undefined}>
+              {splitTags(photo.caption.raw_tags).map((t, i) => (
+                <Chip key={`${i}-${t}`} struck={stripped.has(t)} title={stripped.has(t) ? "Dropped before classification" : undefined}>
                   {t}
                 </Chip>
               ))}
@@ -71,6 +72,13 @@ export function ExplainTab({ photo, categories, lensVersion }: { photo: Photo; c
         </Step>
 
         <Step n={2} title="Classified into categories">
+          <p className="mb-2 text-caption text-text-muted">
+            Each tag and prose fragment lands in one category{" "}
+            <LensDocLink section="resultMetadata" version={lensVersion}>
+              bucket
+            </LensDocLink>
+            .
+          </p>
           <ul className="space-y-2">
             {groups.map((g) => {
               const tags = buckets.tags?.[g] ?? [];
@@ -80,13 +88,13 @@ export function ExplainTab({ photo, categories, lensVersion }: { photo: Photo; c
                 <li key={g}>
                   <GroupLabel group={g} className="mb-1 text-caption font-medium text-text-secondary" />
                   <div className="flex flex-wrap gap-1">
-                    {tags.map((t) => (
-                      <Chip key={`t-${t}`} group={g}>
+                    {tags.map((t, i) => (
+                      <Chip key={`t-${i}-${t}`} group={g}>
                         {t}
                       </Chip>
                     ))}
-                    {prose.map((p) => (
-                      <Chip key={`p-${p}`} group={g} title="prose fragment">
+                    {prose.map((p, i) => (
+                      <Chip key={`p-${i}-${p}`} group={g} title="prose fragment">
                         “{p}”
                       </Chip>
                     ))}
@@ -98,41 +106,54 @@ export function ExplainTab({ photo, categories, lensVersion }: { photo: Photo; c
         </Step>
 
         <Step n={3} title="Specialised into a variant">
-          <label className="mb-3 flex items-center gap-2 text-caption text-text-secondary">
-            Variant
-            <select
-              value={variant}
-              onChange={(e) => setVariant(e.target.value)}
-              className="rounded-sm border border-base-600 bg-base-900 px-2 py-1 text-small text-text-primary"
-            >
-              {variants.map((v) => (
-                <option key={v} value={v}>
-                  {groupStyle(v).label}
-                </option>
-              ))}
-            </select>
-          </label>
-          <div className="mb-3 flex flex-wrap gap-1">
-            {trace.fragments.map((f) => (
-              <Chip
-                key={`${f.source}-${f.category}-${f.text}`}
-                group={f.status === "kept" ? f.category : undefined}
-                struck={f.status === "trimmed"}
-                title={f.status === "kept" ? `kept (${groupStyle(f.category).label})` : "trimmed from this variant"}
-              >
-                {f.source === "prose" ? `“${f.text}”` : f.text}
-              </Chip>
-            ))}
-          </div>
-          <p className="rounded-md bg-base-900 p-3 text-small leading-relaxed">
-            {photo.caption.caption_variants[variant]}
-          </p>
+          {variant === undefined ? (
+            <p className="text-small text-text-muted">This caption has no variants recorded.</p>
+          ) : (
+            <>
+              <label className="mb-3 flex items-center gap-2 text-caption text-text-secondary">
+                Variant
+                <select
+                  value={variant}
+                  onChange={(e) => setVariant(e.target.value)}
+                  className="rounded-sm border border-base-600 bg-base-900 px-2 py-1 text-small text-text-primary"
+                >
+                  {variants.map((v) => (
+                    <option key={v} value={v}>
+                      {groupStyle(v).label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <div className="mb-3 flex flex-wrap gap-1">
+                {trace.fragments.map((f, i) => (
+                  <Chip
+                    key={`${i}-${f.source}-${f.category}-${f.text}`}
+                    group={f.status === "kept" ? f.category : undefined}
+                    struck={f.status === "trimmed"}
+                    title={f.status === "kept" ? `kept (${groupStyle(f.category).label})` : "trimmed from this variant"}
+                  >
+                    {f.source === "prose" ? `“${f.text}”` : f.text}
+                  </Chip>
+                ))}
+              </div>
+              <p className="rounded-md bg-base-900 p-3 text-small leading-relaxed">
+                {photo.caption.caption_variants[variant]}
+              </p>
+            </>
+          )}
         </Step>
 
         <Step n={4} title="What the pipeline did">
+          <p className="mb-2 text-caption text-text-muted">
+            Lens&apos;s{" "}
+            <LensDocLink section="resultFields" version={lensVersion}>
+              compaction notes
+            </LensDocLink>
+            , as recorded:
+          </p>
           <ul className="list-disc space-y-1 pl-5 text-small text-text-secondary">
-            {compaction_notes.map((note) => (
-              <li key={note}>{note}</li>
+            {compaction_notes.map((note, i) => (
+              <li key={`${i}-${note}`}>{note}</li>
             ))}
           </ul>
           {subjects && subjects.count !== null && (
@@ -142,6 +163,10 @@ export function ExplainTab({ photo, categories, lensVersion }: { photo: Photo; c
                 {subjects.count === 0 ? "No people" : `${subjects.count} ${subjects.count === 1 ? "person" : "people"}`}
                 {subjects.agree ? ", tags and prose agree" : ", tags and prose disagree (flagged for review)"}
                 {subjects.evidence.length > 0 && <> · evidence: {subjects.evidence.join(", ")}</>}
+                {" · "}
+                <LensDocLink section="resultMetadata" version={lensVersion}>
+                  how lens counts people
+                </LensDocLink>
               </p>
             </div>
           )}

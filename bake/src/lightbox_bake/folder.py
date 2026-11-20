@@ -20,7 +20,14 @@ import uuid
 from pathlib import Path
 from typing import Any
 
-from lightbox_bake.index import BakeStats, finish_gallery, read_photos, render_photo, write_gallery
+from lightbox_bake.index import (
+    BakeStats,
+    finish_gallery,
+    read_photos,
+    render_photo,
+    renditions_present,
+    write_gallery,
+)
 from lightbox_bake.sources import SourceRecord, refine_record
 
 # Same set lens's filesystem connector walks, plus ``.tif`` (common on cameras;
@@ -108,16 +115,32 @@ def _cache_file(cache: Path, sha256: str) -> Path:
     profile = os.environ.get("CAPTION_CACHE_KEY", "").strip()
     if not profile:
         return cache / f"{sha256}.json"
+    # The readable prefix is lossy ("a/b" and "a:b" both read "a_b"), so a hash of the raw key keeps them apart.
+    safe = "".join(ch if ch.isalnum() or ch in "._-" else "_" for ch in profile)[:40].strip("._")
+    digest = hashlib.sha256(profile.encode("utf-8", "surrogatepass")).hexdigest()[:16]
+    return cache / f"{sha256}.{safe or 'profile'}-{digest}.json"
+
+
+def _stored_cache_file(cache: Path, sha256: str) -> Path:
+    """The cache file to read for one image: the current name, else the name 0.1.0 wrote (``<sha256>.<key>.json``).
+
+    Without the fallback, upgrading would re-caption every photo of a gallery that sets ``CAPTION_CACHE_KEY``.
+    """
+    current = _cache_file(cache, sha256)
+    profile = os.environ.get("CAPTION_CACHE_KEY", "").strip()
+    if current.is_file() or not profile:
+        return current
     safe = "".join(ch if ch.isalnum() or ch in "._-" else "_" for ch in profile)[:120].strip("._")
-    return cache / f"{sha256}.{safe or 'profile'}.json"
+    legacy = cache / f"{sha256}.{safe or 'profile'}.json"
+    return legacy if legacy.is_file() else current
 
 
 def _read_cache(cache: Path | None, sha256: str) -> dict[str, Any] | None:
     if cache is None:
         return None
     try:
-        payload = json.loads(_cache_file(cache, sha256).read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError):
+        payload = json.loads(_stored_cache_file(cache, sha256).read_text(encoding="utf-8"))
+    except (OSError, ValueError):  # ValueError covers JSONDecodeError and UnicodeDecodeError
         return None
     if not isinstance(payload, dict):
         return None
@@ -156,12 +179,12 @@ def purge_store(root: Path) -> None:
 
 def remember_caption_choice(cache: Path, sha256: str, *, final_caption: str, selected_category: str) -> bool:
     """Keep a chosen final caption in the cache file, when that file already exists."""
-    path = _cache_file(cache, sha256)
+    path = _stored_cache_file(cache, sha256)
     if not path.is_file():
         return False
     try:
         payload = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError):
+    except (OSError, ValueError):
         return False
     if not isinstance(payload, dict):
         return False
@@ -203,7 +226,18 @@ def wait_until_ready(lens_url: str, *, timeout_s: float = _READY_TIMEOUT_S) -> N
     raise SystemExit(f"lens at {lens_url} did not become ready ({last})")
 
 
+def _header_filename(name: str) -> str:
+    """*name* made safe for a quoted ``filename=""`` parameter.
+
+    Quotes, backslashes and control characters (CR/LF included) could end the parameter or the header, and
+    undecodable bytes from the folder scan (surrogate escapes) cannot be sent as UTF-8; all become ``_``.
+    """
+    safe = "".join(ch if ch.isprintable() and ch not in '"\\' else "_" for ch in name).strip()
+    return safe or "image"
+
+
 def _multipart(filename: str, content: bytes, mime: str) -> tuple[bytes, str]:
+    filename = _header_filename(filename)
     boundary = "----lightbox-" + uuid.uuid4().hex
     while boundary.encode() in content:
         boundary = "----lightbox-" + uuid.uuid4().hex
@@ -221,8 +255,7 @@ def _multipart(filename: str, content: bytes, mime: str) -> tuple[bytes, str]:
 
 def caption_file(lens_url: str, path: Path, data: bytes) -> dict[str, Any]:
     """Upload one image to ``POST /caption`` and return the index caption record."""
-    safe_name = path.name.replace('"', "").replace("\r", "").replace("\n", "") or "image"
-    body, content_type = _multipart(safe_name, data, _MIME.get(path.suffix.lower(), "application/octet-stream"))
+    body, content_type = _multipart(path.name, data, _MIME.get(path.suffix.lower(), "application/octet-stream"))
     request = urllib.request.Request(
         lens_url.rstrip("/") + "/caption",
         data=body,
@@ -235,6 +268,12 @@ def caption_file(lens_url: str, path: Path, data: bytes) -> dict[str, Any]:
     except urllib.error.HTTPError as exc:
         detail = exc.read().decode("utf-8", errors="replace")[:300]
         raise LensError(f"HTTP {exc.code}: {detail}") from exc
+    except urllib.error.URLError as exc:
+        raise LensError(f"could not reach lens: {exc.reason}") from exc
+    except OSError as exc:  # TimeoutError, connection reset while reading the body
+        raise LensError(f"lens connection failed: {exc}") from exc
+    except ValueError as exc:  # a 200 that is not JSON (a proxy error page)
+        raise LensError(f"lens response was not JSON: {exc}") from exc
     if not isinstance(payload, dict):
         raise LensError("lens response was not a JSON object")
     return caption_record(payload)
@@ -256,11 +295,6 @@ def _record(path: Path, sha256: str, caption: dict[str, Any]) -> SourceRecord:
         load_bytes=load,
         provenance={"source": "local folder", "title": path.stem.replace("-", " ").replace("_", " ")},
     )
-
-
-def _renditions_present(out: Path, photo: dict) -> bool:
-    image, thumb = photo.get("image"), photo.get("thumb")
-    return isinstance(image, str) and isinstance(thumb, str) and (out / image).is_file() and (out / thumb).is_file()
 
 
 def stream_folder(
@@ -297,6 +331,7 @@ def stream_folder(
     pending: list[tuple[Path, str]] = []
     cached: list[tuple[Path, str, dict[str, Any]]] = []
     kept_sha: set[str] = set()
+    unhashed = False  # a file that could not be read now; its cached caption must survive the prune
     prior = {} if recaption else {str(photo["id"]): photo for photo in read_photos(out)}
 
     def publish() -> None:
@@ -309,6 +344,7 @@ def stream_folder(
         try:
             sha256 = file_sha256(path)
         except OSError as exc:
+            unhashed = True
             stats.skipped.append(f"{rel}: {exc}")
             print(f"  skipped {rel}: {exc}", file=sys.stderr)
             continue
@@ -328,7 +364,7 @@ def stream_folder(
 
     for path, sha256, hit in cached:
         kept = prior.get(sha256[:16])
-        if kept is not None and _renditions_present(out, kept):
+        if kept is not None and renditions_present(out, kept):
             photos.append(kept)
             stats.baked += 1
             stats.drifted += bool((kept.get("explain") or {}).get("drift"))
@@ -356,8 +392,8 @@ def stream_folder(
         print(f"{stats.baked} cached caption(s); lens was not called", flush=True)
 
     finish_gallery(out, source="folder")
-    # A capped walk must not throw away captions for files it never opened.
-    if limit is None:
+    # A capped walk, or one that could not read every file, must not throw away captions for files it never hashed.
+    if limit is None and not unhashed:
         removed = prune_cache(cache, kept_sha)
         if removed:
             print(f"dropped {removed} cached caption(s) that are not in this folder", flush=True)

@@ -6,10 +6,11 @@
 //   node scripts/sync-shared.mjs --stamp                 recompute shared/manifest.json + header checksums
 //   node scripts/sync-shared.mjs --check                 fail if manifest or the landing's own copies are stale
 //   node scripts/sync-shared.mjs --publish dist          copy shared/ to dist/brand/v<major>/ (run by npm run build)
-//   node scripts/sync-shared.mjs <repo> [--dest vendor/dh] [--with-favicons]
+//   node scripts/sync-shared.mjs <repo> [--dest vendor/dh] [--with-favicons] [--no-theme-script]
 //                                                        vendor shared/ into <repo>/<dest>, write <repo>/.dh-shared.json.
-//                                                        favicons/ (the lab's own icons) are left out unless asked for.
-// --stamp also regenerates dh-strip.html and the current-site rules in dh-strip.css from dh-strip.mjs.
+//                                                        favicons/ (the lab's own icons) are left out unless asked for;
+//                                                        --no-theme-script leaves out dh-theme.js (locked single-theme sites).
+// --stamp also regenerates dh-strip.html and the current-site and label-suffix rules in dh-strip.css from dh-strip.mjs.
 //
 // In a target repo (after vendoring):
 //   node vendor/dh/sync-shared.mjs --check .             fail if any vendored file was edited
@@ -29,7 +30,7 @@ const positional = args.filter((a, i) => !a.startsWith("--") && !(i > 0 && ["--d
 
 const sha = (buf) => createHash("sha256").update(buf).digest("hex");
 // Hash text with LF line endings so a checkout with autocrlf does not count as drift.
-const TEXT = /\.(css|js|mjs|html|svg|md|json|webmanifest)$/;
+const TEXT = /\.(css|js|mjs|ts|mts|html|svg|md|json|webmanifest)$/;
 const fileHash = (p) => { const b = readFileSync(p); return sha(TEXT.test(p) ? b.toString("utf8").replace(/\r\n/g, "\n") : b); };
 const setHash = (files) => sha(Object.keys(files).sort().map((k) => `${files[k]}  ${k}\n`).join(""));
 const walk = (dir, base = dir) => readdirSync(dir).flatMap((n) => {
@@ -60,7 +61,7 @@ function stampTokens(version) {
   writeFileSync(p, head + body);
 }
 function stampVersions(version) {
-  for (const f of sourceFiles().filter((f) => /\.(css|m?js|html)$/.test(f))) {
+  for (const f of sourceFiles().filter((f) => /\.(css|m?js|m?ts|html)$/.test(f))) {
     const p = join(SRC, f);
     const s = readFileSync(p, "utf8");
     const t = s.replace(/^(\/\*! dh-[a-z]+ v|<!-- dh-[a-z]+ v)[\d.]+/, `$1${version}`);
@@ -69,17 +70,21 @@ function stampVersions(version) {
 }
 // dh-strip.mjs is the source of dh-strip.html and of the current-site selectors in dh-strip.css.
 const STRIP_CSS_BLOCK = /(\/\* @generated from dh-strip\.mjs[^*]*\*\/\n)[\s\S]*?(\/\* @end \*\/)/;
+const LABEL_CSS_BLOCK = /(\/\* @generated label suffixes from dh-strip\.mjs[^*]*\*\/\n)[\s\S]*?(\/\* @end \*\/)/;
 async function stripOutputs(version) {
   const mod = await import(pathToFileURL(join(SRC, "dh-strip.mjs")).href);
   const html = `<!-- dh-strip v${version}: Dragonhound Labs family bar. Generated from dh-strip.mjs by --stamp: do not edit.
-     Paste as the first element after the skip link. Mark the current site with data-dh-site="<site>" on <html>
-     or on this <nav> (lightbox, studio, realms): dh-strip.css shows it, dh-theme.js adds aria-current="page".
+     Paste everything from the nav element below as the first element after the skip link. Mark the current site
+     with a data-dh-site attribute (${mod.strip.links.map((l) => l.site).join(", ").replace(/, (?=[^,]*$)/, " or ")}) on the html element or on the nav element:
+     dh-strip.css shows it, dh-theme.js adds aria-current="page". The label suffix defaults to "${mod.strip.labelSuffixes[mod.strip.defaultLabel].replace(/^ · /, "")}";
+     pick another with data-dh-label (${Object.keys(mod.strip.labelSuffixes).filter((k) => k !== mod.strip.defaultLabel).map((k) => `${k}: "${mod.strip.labelSuffixes[k].replace(/^ · /, "")}"`).join(", ")}) on the html or nav element.
      Links are same-tab: every *.dragonhound.dev host is internal. Needs dh-tokens.css + dh-strip.css. -->
 ${mod.stripHtml()}
 `;
   const cssNow = readFileSync(join(SRC, "dh-strip.css"), "utf8").replace(/\r\n/g, "\n");
-  if (!STRIP_CSS_BLOCK.test(cssNow)) die("dh-strip.css lost its @generated/@end markers");
-  const css = cssNow.replace(STRIP_CSS_BLOCK, (_, open, close) => `${open}${mod.currentSiteSelector()}\n${close}`);
+  if (!STRIP_CSS_BLOCK.test(cssNow) || !LABEL_CSS_BLOCK.test(cssNow)) die("dh-strip.css lost its @generated/@end markers");
+  const css = cssNow.replace(STRIP_CSS_BLOCK, (_, open, close) => `${open}${mod.currentSiteSelector()}\n${close}`)
+    .replace(LABEL_CSS_BLOCK, (_, open, close) => `${open}${mod.labelSuffixCss()}\n${close}`);
   const svgPath = (readFileSync(join(SRC, "dh-mark.svg"), "utf8").match(/ d="([^"]+)"/) || [])[1];
   if (svgPath !== mod.strip.markPath) die("dh-strip.mjs markPath differs from dh-mark.svg");
   return { "dh-strip.html": html, "dh-strip.css": css };
@@ -182,7 +187,7 @@ async function main() {
       if (!existsSync(p)) fail(`${lock.dest}/${f} is missing`);
       else if (fileHash(p) !== h) fail(`${lock.dest}/${f} was edited locally (change it in dragonhound-site/shared/ instead)`);
     }
-    // Files left out at vendoring time (favicons/ unless --with-favicons) still count towards the upstream checksum.
+    // Files left out at vendoring time (favicons/ unless --with-favicons, dh-theme.js with --no-theme-script) still count towards the upstream checksum.
     const core = { ...lock.omitted, ...Object.fromEntries(Object.entries(lock.files).filter(([k]) => !HELPERS.includes(k))) };
     if (setHash(core) !== lock.checksum) fail(".dh-shared.json checksum does not match its file list");
 
@@ -202,7 +207,7 @@ async function main() {
 
   // Vendor into a target repo.
   const target = positional[0];
-  if (!target) die("usage: sync-shared.mjs <target-repo> [--dest vendor/dh] [--with-favicons] | --check [repo] | --stamp | --publish <dir>");
+  if (!target) die("usage: sync-shared.mjs <target-repo> [--dest vendor/dh] [--with-favicons] [--no-theme-script] | --check [repo] | --stamp | --publish <dir>");
   if (!isSource) die("vendoring runs from dragonhound-site (the source of truth)");
   const m = readJSON(join(SRC, MANIFEST));
   const fresh = buildManifest(m.version);
@@ -213,7 +218,8 @@ async function main() {
   const out = join(repo, dest);
   // The lab's favicons are Dragonhound's own icons: product sites (the Argus apps use argus-cortex brand/) must
   // not ship them by accident, so they are vendored only with --with-favicons.
-  const omit = (f) => f.startsWith("favicons/") && !flag("--with-favicons");
+  // Locked single-theme sites may leave out dh-theme.js with --no-theme-script (it only drives the toggle and cookie).
+  const omit = (f) => (f.startsWith("favicons/") && !flag("--with-favicons")) || (f === "dh-theme.js" && flag("--no-theme-script"));
   const files = {}, omitted = {};
   for (const [f, h] of Object.entries(m.files)) {
     if (omit(f)) { omitted[f] = h; continue; }
@@ -241,10 +247,12 @@ async function main() {
   // The lock's checksum is over the upstream file set, so --against compares like with like;
   // the two helper files are hashed too, for the local-edit check.
   const lock = { name: "dh-shared", version: m.version, checksum: m.checksum, dest, files };
+  // Left-out files keep their hashes, so --check and --against still verify against the full upstream set.
   if (Object.keys(omitted).length) lock.omitted = omitted;
+  if (flag("--no-theme-script")) lock.noThemeScript = true;
   writeFileSync(join(repo, ".dh-shared.json"), JSON.stringify(lock, null, 2) + "\n");
   console.log(`vendored dh-shared v${m.version} ${m.checksum.slice(0, 12)} into ${join(target, dest)} (${Object.keys(files).length} files` +
-    `${Object.keys(omitted).length ? `; left out ${Object.keys(omitted).length} favicon files, add --with-favicons to include them` : ""}` +
+    `${Object.keys(omitted).length ? `; left out ${Object.keys(omitted).length}: ${Object.keys(omitted).some((f) => f.startsWith("favicons/")) ? "favicons/ (add --with-favicons to include)" : ""}${"dh-theme.js" in omitted ? `${Object.keys(omitted).length > 1 ? ", " : ""}dh-theme.js (--no-theme-script)` : ""}` : ""}` +
     `${removed.length ? `; removed ${removed.length} no longer vendored: ${removed.join(", ")}` : ""})`);
 }
 

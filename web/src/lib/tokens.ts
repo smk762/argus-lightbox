@@ -43,7 +43,8 @@ export function estimateTokens(text: string, backend?: string): number {
 
 export function tokenBudget(backend?: string): number {
   const name = (backend ?? "").toLowerCase().trim();
-  return BUDGETS[name] ?? DEFAULT_BUDGET;
+  // Own keys only: a backend named "constructor" or "toString" must not read Object.prototype.
+  return Object.hasOwn(BUDGETS, name) ? BUDGETS[name] : DEFAULT_BUDGET;
 }
 
 export function tokenUse(text: string, backend?: string): { used: number; budget: number; over: boolean } {

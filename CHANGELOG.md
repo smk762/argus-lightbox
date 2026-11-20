@@ -8,14 +8,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-11-19
+
 ### Added
 
+- README links this UI's row in the suite's [What to run for which UI](https://docs.dragonhound.dev/setup/which-services/#lightbox) matrix.
 - `index.json` 1.1 adds an optional `caption_params`: the run settings recorded with every caption (prose model, prompt preset, refine model), written only when all photos agree. `/docs` shows them under the lens version.
 - `index.json` 1.2 adds an optional per-photo `thumbs`: the grid thumbnail at 240 and 360 px wide as well as the 480 px one, narrowest first. The grid serves them with `srcset` and `sizes` matched to the column layout, so a phone downloads about a third of the thumbnail bytes it did. `lightbox-bake thumbs` adds them to an existing bake without re-captioning; the demo tape and the fixture were updated that way.
 
 ### Changed
 
+- The footer's map-demo link is now **Atlas** (https://atlas.dragonhound.dev/), was "Atlas Realms" on realms.dragonhound.dev. The painted-map demo moved there; realms.dragonhound.dev is kept for the Realms minigame.
 - The hosted demo is re-captioned with argus-lens 0.11.0 using lens's `straightforward` prose prompt preset, not lens's default (`detailed`). The default wrote mood adjectives and "this is a … photograph" openers into the zero-shot captions and doubled the prose length (smk762/argus-lens#104).
+- The bake needs argus-lens 0.14.0 or later (was 0.11.0), and the synthetic fixture is re-baked with it. Lens 0.14's assembly keeps some setting and lighting tags that 0.13 dropped (a "sunset" in the beach scene's caption, for example). The hosted demo tape is unchanged.
+- Caption-cache files for a profile (`CAPTION_CACHE_KEY` set, as Compose does) are now named `<sha256>.<key>-<hash>.json`, with the key cut to 40 safe characters plus 16 hex of its sha256, so keys that read the same stay apart. 0.1.0's `<sha256>.<key>.json` files are still read, so upgrading does not re-caption the folder.
 
 ## [0.1.0] - 2026-11-13
 
@@ -61,5 +67,6 @@ The first release: the standalone demo for argus-lens.
 - **Docs:** README, `docs/cli.md` (every subcommand and flag, and running without Docker), and the Argus suite map in `CLAUDE.md`.
 - **CI** on `dev` and `main`: ruff, pytest, eslint, tsc, vitest, the build, and the suite check.
 
-[Unreleased]: https://github.com/smk762/argus-lightbox/compare/v0.1.0...dev
+[Unreleased]: https://github.com/smk762/argus-lightbox/compare/v0.2.0...dev
+[0.2.0]: https://github.com/smk762/argus-lightbox/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/smk762/argus-lightbox/releases/tag/v0.1.0

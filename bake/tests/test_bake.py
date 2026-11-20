@@ -281,6 +281,9 @@ def test_tape_records_maps_lineage_rows(monkeypatch, tmp_path) -> None:
     assert record.load_bytes() == img.read_bytes()  # blob store miss falls back to the local uri
     assert record.params == {"prose_prompt": "straightforward"}
 
+    list(tape_records("postgresql://x", limit=0))  # zero means none, not "no limit"
+    assert executed["sql"].rstrip().endswith("LIMIT 0")
+
 
 def test_build_index_records_params_only_when_every_photo_agrees(tmp_path) -> None:
     records = list(fixture_records())[:2]
@@ -381,3 +384,146 @@ def test_choose_final_caption_refuses_a_live_bake_and_an_unknown_option(tmp_path
 def test_cli_fixture(tmp_path, capsys) -> None:
     assert main(["fixture", "--out", str(tmp_path)]) == 0
     assert f"baked {len(SCENES)} photos" in capsys.readouterr().out
+
+
+def _solid(color: str) -> bytes:
+    buf = io.BytesIO()
+    Image.new("RGB", (64, 48), color).save(buf, "JPEG")
+    return buf.getvalue()
+
+
+def test_fixture_jpegs_carry_the_exif_sub_ifd() -> None:
+    from lightbox_bake.fixture import _draw
+
+    with Image.open(io.BytesIO(_draw(SCENES[0]))) as img:
+        sub = img.getexif().get_ifd(0x8769)
+    assert {0x920A, 0x829D, 0x829A, 0x8827, 0x9003} <= set(sub)
+
+
+def test_shutter_labels_slow_sub_second_speeds_as_decimals() -> None:
+    from lightbox_bake.exif import _shutter
+
+    assert _shutter(1 / 250) == "1/250s"
+    assert _shutter(1 / 3) == "1/3s"
+    assert _shutter(0.5) == "1/2s"
+    assert _shutter(0.8) == "0.8s"
+    assert _shutter(0.6) == "0.6s"
+    assert _shutter(0.4) == "0.4s"
+    assert _shutter(2.0) == "2s"
+    assert _shutter(float("inf")) == "" and _shutter(float("nan")) == ""
+
+
+def test_refine_accepted_that_is_not_a_list() -> None:
+    record = next(fixture_records())
+    one = explain({**record.caption, "refine": {"model": "m", "accepted": "identity"}})
+    assert one["explain"]["compaction_notes"][-1] == "Refined identity with m."
+    bad = explain({**record.caption, "refine": {"model": "m", "accepted": 3}})
+    assert not any(note.startswith("Refined") for note in bad["explain"]["compaction_notes"])
+
+
+def _record(raw: bytes, **kw) -> SourceRecord:
+    base = next(iter(fixture_records()))
+    return SourceRecord(uri=kw.pop("uri", "file:///x.jpg"), caption=base.caption, load_bytes=lambda: raw, **kw)
+
+
+def test_render_photo_ids_come_from_the_bytes(tmp_path) -> None:
+    from lightbox_bake.index import render_photo
+
+    raw = _jpeg()
+    sha = hashlib.sha256(raw).hexdigest()
+    photo, reason = render_photo(_record(raw, sha256=sha.upper()), tmp_path)
+    assert reason is None and photo["id"] == sha[:16]
+    photo, reason = render_photo(_record(raw, sha256="../../../../etc/x" + "0" * 48), tmp_path)
+    assert photo is None and "do not match" in reason
+    assert not (tmp_path.parent / "etc").exists()
+
+
+def test_render_photo_skips_a_decompression_bomb(tmp_path, monkeypatch) -> None:
+    from lightbox_bake.index import render_photo
+
+    monkeypatch.setattr(Image, "MAX_IMAGE_PIXELS", 10)  # 32x24 is over twice this: an error, not a warning
+    photo, reason = render_photo(_record(_jpeg()), tmp_path)
+    assert photo is None and "unreadable image" in reason
+
+
+def test_read_photos_tolerates_an_index_that_is_not_utf8(tmp_path) -> None:
+    from lightbox_bake.index import read_photos
+
+    (tmp_path / "index.json").write_bytes(b'{"photos": [\xff\xfe]}')
+    assert read_photos(tmp_path) == []
+
+
+def test_a_failed_bake_keeps_the_published_gallery(tmp_path) -> None:
+    first = [_record(_solid("#112233")), _record(_solid("#445566"))]
+    build_index(first, tmp_path, source="tape")
+    before = json.loads((tmp_path / "index.json").read_text())
+    ids = [p["id"] for p in before["photos"]]
+    shas = [p["sha256"] for p in before["photos"]]
+
+    # Every record fails (the blob store is down): nothing is pruned or rewritten.
+    down = [SourceRecord(uri=f"file:///{i}.jpg", sha256=sha, caption=first[0].caption, load_bytes=lambda: None)
+            for i, sha in enumerate(shas)]  # fmt: skip
+    stats = build_index(down, tmp_path, source="tape")
+    assert stats.baked == 0
+    assert json.loads((tmp_path / "index.json").read_text()) == before
+    assert all((tmp_path / "thumbs" / f"{i}.webp").is_file() for i in ids)
+    assert build_index([], tmp_path, source="tape").baked == 0
+    assert json.loads((tmp_path / "index.json").read_text()) == before
+
+    # One fails, one renders: the failed one keeps its previous entry and files.
+    build_index([first[0], down[1]], tmp_path, source="tape")
+    after = json.loads((tmp_path / "index.json").read_text())
+    assert sorted(p["id"] for p in after["photos"]) == sorted(ids)
+    assert (tmp_path / "images" / f"{ids[1]}.webp").is_file()
+
+
+def test_write_gallery_without_a_queue_drops_a_stale_status(tmp_path) -> None:
+    write_gallery(tmp_path, [], source="folder", queue=3)
+    assert (tmp_path / "status.json").is_file()
+    write_gallery(tmp_path, [], source="fixture")
+    assert not (tmp_path / "status.json").exists()
+
+
+def test_upsert_photo_drops_the_old_entry_when_a_rerender_fails(tmp_path) -> None:
+    from lightbox_bake.index import upsert_photo
+
+    raw = _jpeg()
+    sha = hashlib.sha256(raw).hexdigest()
+    assert upsert_photo(tmp_path, _record(raw, sha256=sha), source="folder", queue=0) is None
+    assert len(json.loads((tmp_path / "index.json").read_text())["photos"]) == 1
+    gone = SourceRecord(uri="x.jpg", sha256=sha, caption=_record(raw).caption, load_bytes=lambda: None)
+    assert upsert_photo(tmp_path, gone, source="folder", queue=0) is not None
+    assert json.loads((tmp_path / "index.json").read_text())["photos"] == []
+
+
+def test_regenerate_thumbs_skips_a_photo_whose_thumb_is_missing(tmp_path) -> None:
+    blobs = tmp_path / "blobs"
+    blobs.mkdir()
+    out = tmp_path / "out"
+    raws = [_solid("#224466"), _solid("#664422")]
+    for raw in raws:
+        (blobs / hashlib.sha256(raw).hexdigest()).write_bytes(raw)
+    build_index([_record(raw) for raw in raws], out, source="tape")
+    index = json.loads((out / "index.json").read_text())
+    (out / index["photos"][0]["thumb"]).unlink()
+    del index["photos"][1]["thumb"]
+    (out / "index.json").write_text(json.dumps(index))
+    updated, skipped = regenerate_thumbs(out, blobs)
+    assert updated == 0 and len(skipped) == 2
+    assert len(json.loads((out / "index.json").read_text())["photos"]) == 2
+
+
+def test_local_path_decodes_file_uris_and_reads_drive_letters(tmp_path, monkeypatch) -> None:
+    from lightbox_bake.sources import _local_path
+
+    spaced = tmp_path / "my photo#1.jpg"
+    spaced.write_bytes(b"x")
+    assert _local_path(spaced.as_uri()) == spaced
+    assert _local_path(f"file://localhost{spaced.as_uri()[len('file://') :]}") == spaced
+    assert _local_path(f"file://otherhost{spaced}") is None
+    # On Windows "C:/a.jpg" is absolute; here it is relative to the working directory, which is enough to
+    # show it is read as a path rather than as a URI with scheme "c".
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / "C:").mkdir()
+    (tmp_path / "C:" / "a.jpg").write_bytes(b"x")
+    assert _local_path("C:/a.jpg") is not None

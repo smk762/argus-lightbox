@@ -15,7 +15,8 @@ export const EXTRA_GROUPS = ["detail", "people", "camera"] as const;
 /** The facet terms *photo* carries for *group*. */
 export function photoTerms(photo: Pick<GridPhoto, "facets" | "exif">, group: string): string[] {
   if (group === "camera") return photo.exif.camera ? [photo.exif.camera] : [];
-  return photo.facets[group] ?? [];
+  // Own keys only: a group named "constructor" or "__proto__" (from a shared link) is not a facet list.
+  return Object.hasOwn(photo.facets, group) ? photo.facets[group] : [];
 }
 
 function normalise(text: string): string {
@@ -81,7 +82,7 @@ export function facetCounts(
     if (!matchesSelection(photo, selection, group) || !matchesQuery(photo, query, cache)) continue;
     for (const term of new Set(photoTerms(photo, group))) counts.set(term, (counts.get(term) ?? 0) + 1);
   }
-  const selected = selection[group] ?? [];
+  const selected = Object.hasOwn(selection, group) ? selection[group] : [];
   for (const term of selected) if (!counts.has(term)) counts.set(term, 0);
   return [...counts.entries()]
     .map(([term, count]) => ({ term, count, selected: selected.includes(term) }))
@@ -89,10 +90,11 @@ export function facetCounts(
 }
 
 export function toggleTerm(selection: Selection, group: string, term: string): Selection {
-  const current = selection[group] ?? [];
+  const current = Object.hasOwn(selection, group) ? selection[group] : [];
   const next = current.includes(term) ? current.filter((t) => t !== term) : [...current, term];
   const out = { ...selection };
-  if (next.length) out[group] = next;
+  // defineProperty, not assignment: `out["__proto__"] = next` would set the prototype instead.
+  if (next.length) Object.defineProperty(out, group, { value: next, enumerable: true, writable: true, configurable: true });
   else delete out[group];
   return out;
 }

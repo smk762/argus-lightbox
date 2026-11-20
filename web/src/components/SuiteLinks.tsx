@@ -2,7 +2,7 @@
 // the curator (argus-cull), which runs in Argus Studio's Curate demo. The full pipeline lives in the
 // suite UI (Argus Studio). Live demos are linked where one exists; the repos where they are the point.
 
-import { CURATE_URL, LABS_URL, REALMS_URL, STUDIO_URL } from "@/lib/links";
+import { CURATE_URL, LABS_URL, ATLAS_URL, STUDIO_URL } from "@/lib/links";
 
 import { ExternalLink } from "./ExternalLink";
 
@@ -48,8 +48,8 @@ export function DemoLinks({ className = LINK }: { className?: string }) {
       <ExternalLink className={className} href={STUDIO_URL}>
         Argus Studio
       </ExternalLink>
-      <ExternalLink className={className} href={REALMS_URL}>
-        Atlas Realms
+      <ExternalLink className={className} href={ATLAS_URL}>
+        Atlas
       </ExternalLink>
       <ExternalLink className={className} href={LABS_URL}>
         Dragonhound Labs

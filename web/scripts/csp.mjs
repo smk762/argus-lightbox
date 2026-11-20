@@ -78,12 +78,25 @@ export function policy(hashes, data = "") {
  */
 export function withCsp(html, data = "", basePath = "") {
   if (html.includes('http-equiv="Content-Security-Policy"')) throw new Error("page already has a CSP <meta>");
+  const inline = inlineStyle(html);
+  if (inline) throw new Error(`style-src 'self' would block ${inline}: style it with a class in globals.css`);
   const anchor = /<meta charset=[^>]*>/i.exec(html) ?? /<head[^>]*>/i.exec(html);
   if (!anchor) throw new Error("no <head> to put the CSP in");
   const end = anchor.index + anchor[0].length;
   const tt = `<script>${trustedTypesPolicy(basePath)}</script>`;
   const meta = `<meta http-equiv="Content-Security-Policy" content="${policy(inlineScriptHashes(tt + html), data)}"/>`;
   return html.slice(0, end) + meta + tt + html.slice(end);
+}
+
+/**
+ * @param {string} html @returns {string | null} the first inline style the policy would block (a `style`
+ *   attribute or a `<style>` element outside scripts), or null. Per-photo colours are set through the
+ *   CSSOM after hydration, which the policy allows, so they never reach the HTML.
+ */
+export function inlineStyle(html) {
+  const markup = html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, "");
+  const found = /<style[\s>]/i.exec(markup) ?? /<[a-z][^>]*\sstyle\s*=/i.exec(markup);
+  return found ? found[0].slice(0, 60) : null;
 }
 
 // Response headers for hosts that read a _headers file. frame-ancestors only works as a header.

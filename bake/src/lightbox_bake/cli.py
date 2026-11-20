@@ -1,6 +1,7 @@
 """``lightbox-bake`` — build the gallery's static data directory.
 
 lightbox-bake fixture --out web/public/data          # synthetic, committed
+lightbox-bake fixture --out web/public/data --check  # fail if the committed fixture is stale
 lightbox-bake tape --out web/public/data-tape        # real run from the cortex lineage store
 lightbox-bake thumbs --out web/public/data-tape --blobs DIR   # add thumbnail widths, keep the captions
 lightbox-bake folder --photos /photos --lens-url http://lens:8100
@@ -14,6 +15,7 @@ import sys
 from pathlib import Path
 
 from lightbox_bake.fixture import fixture_records
+from lightbox_bake.fixture_check import check_fixture
 from lightbox_bake.folder import purge_store, stream_folder
 from lightbox_bake.index import build_index, regenerate_thumbs
 from lightbox_bake.sources import default_pg_url, tape_records
@@ -21,11 +23,12 @@ from lightbox_bake.sources import default_pg_url, tape_records
 
 def main(argv: list[str] | None = None) -> int:
     """CLI entry point."""
-    parser = argparse.ArgumentParser(prog="lightbox-bake", description=__doc__.splitlines()[0])
+    parser = argparse.ArgumentParser(prog="lightbox-bake", description="build the gallery's static data directory")
     sub = parser.add_subparsers(dest="command", required=True)
 
     fixture = sub.add_parser("fixture", help="bake the synthetic fixture (no tape needed)")
     fixture.add_argument("--out", type=Path, default=Path("web/public/data"))
+    fixture.add_argument("--check", action="store_true", help="compare --out with a fresh bake; write nothing")
 
     tape = sub.add_parser("tape", help="bake from the cortex lineage store (CORTEX_PG_URL, CORTEX_S3_*)")
     tape.add_argument("--out", type=Path, default=Path("web/public/data-tape"))
@@ -62,11 +65,22 @@ def main(argv: list[str] | None = None) -> int:
         for reason in skipped:
             print(f"  skipped {reason}", file=sys.stderr)
         return 0 if updated else 1
+    if args.command == "fixture" and args.check:
+        problems = check_fixture(args.out)
+        for problem in problems:
+            print(f"  {problem}", file=sys.stderr)
+        if problems:
+            print(f"{args.out} is stale: run `make fixture` and commit the result", file=sys.stderr)
+            return 1
+        print(f"{args.out} matches a fresh fixture bake")
+        return 0
     if args.command == "fixture":
         stats = build_index(fixture_records(), args.out, source="fixture")
     elif args.command == "tape":
         if not args.pg_url:
             parser.error("no lineage store: pass --pg-url or set CORTEX_PG_URL")
+        if args.limit is not None and args.limit < 0:
+            parser.error("--limit must not be negative")
         stats = build_index(tape_records(args.pg_url, dataset=args.dataset, limit=args.limit), args.out, source="tape")
     else:
         stats = stream_folder(
