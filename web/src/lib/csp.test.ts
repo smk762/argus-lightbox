@@ -64,7 +64,7 @@ describe("csp post-build", () => {
     const p = policy([], "https://data.example.com");
     expect(p).toContain("connect-src 'self' https://data.example.com");
     expect(p).toContain("img-src 'self' https://data.example.com");
-    expect(p).toMatch(/script-src 'self';/);
+    expect(p).toMatch(/script-src 'self' https:\/\/static\.cloudflareinsights\.com;/);
     expect(p).toContain("object-src 'none'");
   });
 

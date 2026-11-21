@@ -52,12 +52,16 @@ export function trustedTypesPolicy(basePath = "") {
   );
 }
 
+// Cloudflare Web Analytics is on for the zone: Cloudflare adds its beacon tag at the edge, and the
+// tag loads this one script. It reports to this site's own /cdn-cgi/rum, so connect-src is unchanged.
+const BEACON = "https://static.cloudflareinsights.com";
+
 /** @param {string[]} hashes @param {string} data extra origin for index.json and renditions ("" = same origin) */
 export function policy(hashes, data = "") {
   const self = data ? `'self' ${data}` : "'self'";
   return [
     "default-src 'self'",
-    `script-src 'self' ${hashes.join(" ")}`.trim(),
+    `script-src 'self' ${BEACON} ${hashes.join(" ")}`.trim(),
     "style-src 'self'",
     `img-src ${self}`,
     `connect-src ${self}`,
