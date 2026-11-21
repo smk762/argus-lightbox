@@ -44,7 +44,7 @@ Each rule names what checks it. A new rule gets a check, not just a row; one abo
 | A raw colour outside the `--dh-accent`/`--dh-on-accent` override, or text below 12 px | `rules.test.ts` |
 | Inline `<script>`, `<style>`, `dangerouslySetInnerHTML` or `next/script` | ESLint (`react/no-danger`, `no-restricted-syntax`, `no-restricted-imports` in `eslint.config.mjs`) |
 | An inline `style` attribute or `<style>` in exported HTML (`style-src 'self'`) | `csp.mjs` fails the build; `csp.test.ts` |
-| A third-party origin in the CSP (only the baked-data origin, for `connect-src`/`img-src`) | `csp.test.ts` |
+| A third-party origin in the CSP (only the baked-data origin, for `connect-src`/`img-src`, and Cloudflare's Web Analytics script in `script-src`) | `csp.test.ts` |
 | `main` carries a commit `dev` lacks (other than a release merge with `dev`'s tree) | CI `main-not-ahead` |
 
 ## Layout
