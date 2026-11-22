@@ -10,7 +10,7 @@ import shutil
 import struct
 from pathlib import Path
 
-from PIL import Image, ImageCms
+from PIL import Image, ImageCms, IptcImagePlugin
 
 from lightbox_bake.fixture import fixture_records
 from lightbox_bake.fixture_check import compare
@@ -41,7 +41,10 @@ def _tagged_jpeg() -> bytes:
     buf = io.BytesIO()
     Image.new("RGB", (96, 64), "#336699").save(buf, "JPEG", exif=exif, xmp=xmp, icc_profile=icc)
     raw = buf.getvalue()
-    iptc = b"Photoshop 3.0\x008BIM\x04\x04\x00\x00\x00\x00\x00\x0c\x1c\x02\x78\x00\x08secret-i"
+    value = b"secret-iptc"
+    record = b"\x1c\x02\x78" + struct.pack(">H", len(value)) + value
+    resource = b"8BIM\x04\x04\x00\x00" + struct.pack(">I", len(record)) + record + b"\x00" * (len(record) & 1)
+    iptc = b"Photoshop 3.0\x00" + resource
     app13 = b"\xff\xed" + struct.pack(">H", len(iptc) + 2) + iptc
     return raw[:2] + app13 + raw[2:]
 
@@ -51,6 +54,8 @@ def test_renditions_carry_no_source_metadata(tmp_path) -> None:
     with Image.open(io.BytesIO(raw)) as src:  # the source really does carry all of it
         assert src.getexif() and "xmp" in src.info and "icc_profile" in src.info
     assert b"secret-i" in raw
+    with Image.open(io.BytesIO(raw)) as src:  # and the IPTC block parses whole
+        assert IptcImagePlugin.getiptcinfo(src) == {(2, 120): b"secret-iptc"}
 
     rendition = render(raw, tmp_path, "abc123")
     files = sorted((tmp_path / "images").glob("*.webp")) + sorted((tmp_path / "thumbs").rglob("*.webp"))
@@ -125,6 +130,9 @@ def test_a_thumbnail_width_the_bake_no_longer_writes_is_pruned(tmp_path) -> None
     stale.write_bytes(b"old")
     build_index(fixture_records(), tmp_path, source="fixture")
     assert not stale.exists()
+    index = json.loads((tmp_path / "index.json").read_text())  # the rebuilt index, not the first one
+    rebuilt = next(p for p in index["photos"] if p["id"] == photo["id"])
+    assert not any("/360/" in t["src"] for t in rebuilt["thumbs"])
     listed = [t["src"] for p in index["photos"] for t in p["thumbs"]]
     assert all((tmp_path / src).is_file() for src in listed)
 

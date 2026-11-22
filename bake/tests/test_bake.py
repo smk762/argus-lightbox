@@ -7,6 +7,7 @@ import shutil
 import sys
 import types
 
+import pytest
 from PIL import Image
 
 from lightbox_bake.cli import main
@@ -43,6 +44,21 @@ def test_exif_is_normalised_and_never_includes_gps() -> None:
         "taken_at": "2025-09-21T07:05:44",
     }
     assert not any("gps" in k.lower() for k in out)
+
+
+def test_exif_drops_non_finite_and_zero_values() -> None:
+    from PIL.TiffImagePlugin import IFDRational
+
+    exif = Image.Exif()
+    exif[0x0110] = "Model X"  # an Exif holding only a sub-IFD is falsy, and _jpeg would drop it
+    # A zero denominator reads back as NaN or inf; json.dumps would write the bare token NaN.
+    exif.get_ifd(0x8769).update(
+        {0x920A: IFDRational(1, 0), 0x829D: IFDRational(0, 0), 0x8827: float("inf"), 0xA405: float("inf")}
+    )
+    with Image.open(io.BytesIO(_jpeg(exif))) as img:
+        out = read_exif(img)
+    assert out == {"camera": "Model X"}
+    json.dumps(out, allow_nan=False)
 
 
 def test_exif_absent_is_empty() -> None:
@@ -433,9 +449,12 @@ def test_render_photo_ids_come_from_the_bytes(tmp_path) -> None:
     sha = hashlib.sha256(raw).hexdigest()
     photo, reason = render_photo(_record(raw, sha256=sha.upper()), tmp_path)
     assert reason is None and photo["id"] == sha[:16]
-    photo, reason = render_photo(_record(raw, sha256="../../../../etc/x" + "0" * 48), tmp_path)
+    # Deep enough that a four-level climb still lands inside tmp_path, where the snapshot can see it.
+    out = tmp_path / "a" / "b" / "c" / "d"
+    before = sorted(tmp_path.rglob("*"))
+    photo, reason = render_photo(_record(raw, sha256="../../../../etc/x" + "0" * 48), out)
     assert photo is None and "do not match" in reason
-    assert not (tmp_path.parent / "etc").exists()
+    assert sorted(tmp_path.rglob("*")) == before
 
 
 def test_render_photo_skips_a_decompression_bomb(tmp_path, monkeypatch) -> None:
@@ -475,6 +494,25 @@ def test_a_failed_bake_keeps_the_published_gallery(tmp_path) -> None:
     after = json.loads((tmp_path / "index.json").read_text())
     assert sorted(p["id"] for p in after["photos"]) == sorted(ids)
     assert (tmp_path / "images" / f"{ids[1]}.webp").is_file()
+
+
+def test_a_failed_index_write_keeps_the_files_the_old_index_names(tmp_path, monkeypatch) -> None:
+    import lightbox_bake.index as index_mod
+
+    records = list(fixture_records())
+    build_index(records, tmp_path, source="fixture")
+    old = json.loads((tmp_path / "index.json").read_text())
+
+    def fail(dest, payload):
+        raise OSError("disk full")
+
+    monkeypatch.setattr(index_mod, "_atomic_json", fail)
+    with pytest.raises(OSError):
+        build_index(records[:1], tmp_path, source="fixture")
+    assert json.loads((tmp_path / "index.json").read_text()) == old
+    for photo in old["photos"]:
+        for src in [photo["image"], photo["thumb"], *(t["src"] for t in photo["thumbs"])]:
+            assert (tmp_path / src).is_file(), src
 
 
 def test_write_gallery_without_a_queue_drops_a_stale_status(tmp_path) -> None:

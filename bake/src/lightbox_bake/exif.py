@@ -21,10 +21,12 @@ _FOCAL, _FOCAL_35MM, _LENS_MODEL = 0x920A, 0xA405, 0xA434
 
 
 def _num(value: Any) -> float | None:
+    """A finite float, or None. A RATIONAL with a zero denominator reads as NaN or inf, which JSON can't carry."""
     try:
-        return float(value)
+        number = float(value)
     except (TypeError, ValueError, ZeroDivisionError):
         return None
+    return number if math.isfinite(number) else None
 
 
 def _clean(value: Any) -> str | None:
@@ -70,19 +72,19 @@ def read_exif(img: Image.Image) -> dict[str, Any]:
         out["camera"] = model or make
     if lens := _clean(sub.get(_LENS_MODEL)):
         out["lens"] = lens
-    if (focal := _num(sub.get(_FOCAL))) is not None:
+    if (focal := _num(sub.get(_FOCAL))) is not None and focal > 0:
         out["focal_length_mm"] = round(focal, 1)
     if (focal35 := _num(sub.get(_FOCAL_35MM))) is not None and focal35 > 0:
         out["focal_length_35mm"] = int(focal35)
-    if (fnum := _num(sub.get(_FNUMBER))) is not None:
+    if (fnum := _num(sub.get(_FNUMBER))) is not None and fnum > 0:
         out["aperture"] = round(fnum, 1)
-    if (exposure := _num(sub.get(_EXPOSURE))) is not None and math.isfinite(exposure) and exposure > 0:
+    if (exposure := _num(sub.get(_EXPOSURE))) is not None and exposure > 0:
         out["exposure_s"] = exposure
         out["shutter"] = _shutter(float(Fraction(exposure).limit_denominator(8000)))
     iso = sub.get(_ISO)
     if isinstance(iso, tuple):
         iso = iso[0] if iso else None
-    if (iso_num := _num(iso)) is not None:
+    if (iso_num := _num(iso)) is not None and iso_num > 0:
         out["iso"] = int(iso_num)
     if taken := _taken_at(_clean(sub.get(_DATETIME_ORIGINAL)) or _clean(exif.get(_DATETIME))):
         out["taken_at"] = taken
