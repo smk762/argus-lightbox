@@ -95,8 +95,9 @@ def build_index(records: Iterable[SourceRecord], out_dir: Path, *, source: str) 
         # Nothing rendered (an empty query, or every record failed): leave the published gallery as it is.
         stats.skipped.append(f"{out_dir}: nothing baked; the existing gallery was left in place")
         return stats
-    _prune(out_dir, photos)
+    # Publish first, prune after: a failed write leaves the old index with every file it names.
     write_gallery(out_dir, photos, source=source, caption_params=shared_params(params))
+    _prune(out_dir, photos)
     return stats
 
 
@@ -230,8 +231,8 @@ def upsert_photo(out_dir: Path, record: SourceRecord, *, source: str, queue: int
 def finish_gallery(out_dir: Path, *, source: str) -> None:
     """Mark the folder bake finished and drop renditions no longer in the index."""
     photos = read_photos(out_dir)
-    _prune(out_dir, photos)
     write_gallery(out_dir, photos, source=source, queue=0)
+    _prune(out_dir, photos)
 
 
 # Variants lens writes beside the six categories. A chosen final caption has to be one of these.
@@ -379,8 +380,8 @@ def regenerate_thumbs(out_dir: Path, blobs: Path) -> tuple[int, list[str]]:
     index["photos"] = photos
     if _version_key(str(index.get("version", ""))) < _version_key(INDEX_VERSION):
         index["version"] = INDEX_VERSION
-    _prune(out_dir, photos)
     _atomic_json(path, index)
+    _prune(out_dir, photos)
     return updated, skipped
 
 

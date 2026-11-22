@@ -1,8 +1,8 @@
 {
  "version": "1.2",
- "generated_at": "2026-11-19T12:12:37+00:00",
+ "generated_at": "2026-11-22T13:22:18+00:00",
  "source": "fixture",
- "lens_version": "0.14.0",
+ "lens_version": "0.15.0",
  "categories": [
   "identity",
   "wardrobe",
@@ -40,7 +40,7 @@
      "setting": "outdoors, beach, ocean, sky, cloud, long hair, brown hair",
      "lighting": "sunset, long hair, brown hair, smile, standing, looking at viewer",
      "action": "long hair, brown hair, smile, standing, looking at viewer, red dress, sunset, outdoors",
-     "training": "standing, looking at viewer, smile, red dress, sunset, beach, outdoors, ocean",
+     "training": "standing, smile, looking at viewer, red dress, sunset, ocean, beach, outdoors",
      "training_prose": "A smiling woman wearing a red dress, standing on a sandy beach at sunset with waves.",
      "zeroshot": "long hair, brown hair, smile, 1girl, solo, looking at viewer, standing, red dress, sunset, outdoors"
     },
@@ -125,8 +125,8 @@
       "setting": "outdoors, beach, ocean, sky, cloud, long hair, brown hair",
       "lighting": "sunset, long hair, brown hair, smile, standing, looking at viewer",
       "action": "long hair, brown hair, smile, standing, looking at viewer, red dress, sunset, outdoors",
-      "training": "standing, smile, looking at viewer, red dress, sunset, beach",
-      "training_prose": "standing, smile, looking at viewer, red dress, sunset, beach",
+      "training": "standing, smile, looking at viewer, red dress, sunset, outdoors, ocean, beach",
+      "training_prose": "standing, smile, looking at viewer, red dress, sunset, outdoors, ocean, beach",
       "zeroshot": "long hair, brown hair, smile, 1girl, solo, looking at viewer, standing, red dress, sunset, outdoors"
      }
     },
@@ -153,7 +153,7 @@
       "setting": "outdoors, beach, ocean, sky, cloud, long hair, brown hair",
       "lighting": "sunset, long hair, brown hair, smile, standing, looking at viewer",
       "action": "long hair, brown hair, smile, standing, looking at viewer, red dress, sunset, outdoors",
-      "training": "standing, smile, looking at viewer, red dress, sunset, ocean, outdoors",
+      "training": "standing, smile, looking at viewer, red dress, sunset, outdoors",
       "training_prose": "A smiling woman wearing a red dress, standing on a sandy beach at sunset with waves.",
       "zeroshot": "long hair, brown hair, smile, 1girl, solo, looking at viewer, standing, red dress, sunset, outdoors"
      }
@@ -234,7 +234,7 @@
      "setting": "city, street, rain, short hair, black hair, wet ground, walking",
      "lighting": "night, neon lights, short hair, black hair, wet ground, walking",
      "action": "walking, short hair, black hair, wet ground, leather jacket, night, city",
-     "training": "walking, leather jacket, jeans, neon lights, night, rain, wet ground",
+     "training": "walking, leather jacket, jeans, neon lights, night, rain, street, wet ground",
      "training_prose": "A man in a black leather jacket walks down a rain-soaked city street at night, lit by pink and blue neon signs.",
      "zeroshot": "short hair, black hair, wet ground, 1boy, solo, walking, leather jacket, jeans, neon lights, night"
     },
@@ -317,8 +317,8 @@
       "setting": "city, street, rain, short hair, black hair, wet ground, walking",
       "lighting": "night, neon lights, short hair, black hair, wet ground, walking",
       "action": "walking, short hair, black hair, wet ground, leather jacket, night, city",
-      "training": "walking, leather jacket, jeans, neon lights, night, city, street, wet ground",
-      "training_prose": "walking, leather jacket, jeans, neon lights, night, city, street, wet ground",
+      "training": "leather jacket, jeans, night, neon lights, rain, city, wet ground",
+      "training_prose": "leather jacket, jeans, night, neon lights, rain, city, wet ground",
       "zeroshot": "short hair, black hair, wet ground, 1boy, solo, walking, leather jacket, jeans, neon lights, night"
      }
     },
@@ -345,7 +345,7 @@
       "setting": "city, street, rain, short hair, black hair, wet ground, walking",
       "lighting": "night, neon lights, short hair, black hair, wet ground, walking",
       "action": "walking, short hair, black hair, wet ground, leather jacket, night, city",
-      "training": "jeans, leather jacket, night, neon lights, city, street, wet ground",
+      "training": "walking, jeans, leather jacket, neon lights, night, city, rain, wet ground",
       "training_prose": "A man in a black leather jacket walks down a rain-soaked city street at night, lit by pink and blue neon signs.",
       "zeroshot": "short hair, black hair, wet ground, 1boy, solo, walking, leather jacket, jeans, neon lights, night"
      }
@@ -423,7 +423,7 @@
      "setting": "forest, tree, ponytail, blonde hair, hiking, walking, backpack",
      "lighting": "soft lighting, ponytail, blonde hair, hiking, walking, backpack",
      "action": "walking, ponytail, blonde hair, hiking, backpack, soft lighting, forest",
-     "training": "walking, jacket, soft lighting, forest, tree, hiking, fog, morning",
+     "training": "walking, jacket, soft lighting, tree, forest, hiking, fog, morning",
      "training_prose": "A woman hikes along a misty forest trail in the early morning, wearing a green jacket and a backpack.",
      "zeroshot": "blonde hair, ponytail, hiking, fog, morning, 1girl, solo, walking, a woman with a blonde ponytail hikes along a misty forest trail in the early morning, wearing a green jacket and a backpack, backpack"
     },
@@ -508,8 +508,8 @@
       "setting": "forest, tree, ponytail, blonde hair, hiking, walking, backpack",
       "lighting": "soft lighting, ponytail, blonde hair, hiking, walking, backpack",
       "action": "walking, ponytail, blonde hair, hiking, backpack, soft lighting, forest",
-      "training": "walking, jacket, backpack, soft lighting, tree, forest, hiking, fog",
-      "training_prose": "walking, jacket, backpack, soft lighting, tree, forest, hiking, fog",
+      "training": "walking, jacket, backpack, soft lighting, forest, hiking, fog, morning",
+      "training_prose": "walking, jacket, backpack, soft lighting, forest, hiking, fog, morning",
       "zeroshot": "blonde hair, ponytail, hiking, fog, morning, 1girl, solo, walking, backpack, jacket"
      }
     },
@@ -536,7 +536,7 @@
       "setting": "forest, tree, ponytail, blonde hair, hiking, walking, backpack",
       "lighting": "soft lighting, ponytail, blonde hair, hiking, walking, backpack",
       "action": "walking, ponytail, blonde hair, hiking, backpack, soft lighting, forest",
-      "training": "backpack, jacket, soft lighting, tree, hiking, fog, morning",
+      "training": "walking, jacket, backpack, soft lighting, tree, forest, hiking, fog",
       "training_prose": "A woman hikes along a misty forest trail in the early morning, wearing a green jacket and a backpack.",
       "zeroshot": "blonde hair, ponytail, hiking, fog, morning, 1girl, solo, walking, a woman with a blonde ponytail hikes along a misty forest trail in the early morning, wearing a green jacket and a backpack, backpack"
      }
@@ -615,7 +615,7 @@
      "setting": "simple background, grey background, beard, short hair, black turtleneck, sitting, upper body",
      "lighting": "rim lighting, beard, short hair, black turtleneck, sitting, upper body",
      "action": "beard, short hair, black turtleneck, sitting, upper body, rim lighting, simple background",
-     "training": "upper body, sitting, looking at viewer, rim lighting, simple background, black turtleneck",
+     "training": "upper body, sitting, looking at viewer, rim lighting, grey background, simple background, black turtleneck",
      "training_prose": "A studio portrait of a bearded man in a black turtleneck sitting against a plain grey backdrop, rim light outlining his shoulders.",
      "zeroshot": "short hair, black turtleneck, beard, 1boy, solo, a studio portrait of a bearded man in a black turtleneck sitting against a plain grey backdrop, rim light outlining his shoulders, looking at viewer, upper body, sitting, rim lighting"
     },
@@ -696,8 +696,8 @@
       "setting": "simple background, grey background, beard, short hair, black turtleneck, sitting, upper body",
       "lighting": "rim lighting, beard, short hair, black turtleneck, sitting, upper body",
       "action": "beard, short hair, black turtleneck, sitting, upper body, rim lighting, simple background",
-      "training": "upper body, sitting, looking at viewer, rim lighting, grey background, simple background, black turtleneck",
-      "training_prose": "upper body, sitting, looking at viewer, rim lighting, grey background, simple background, black turtleneck",
+      "training": "upper body, sitting, looking at viewer, rim lighting, grey background, black turtleneck",
+      "training_prose": "upper body, sitting, looking at viewer, rim lighting, grey background, black turtleneck",
       "zeroshot": "short hair, black turtleneck, beard, 1boy, solo, looking at viewer, upper body, sitting, rim lighting, simple background"
      }
     },
@@ -724,7 +724,7 @@
       "setting": "simple background, grey background, beard, short hair, black turtleneck, sitting, upper body",
       "lighting": "rim lighting, beard, short hair, black turtleneck, sitting, upper body",
       "action": "beard, short hair, black turtleneck, sitting, upper body, rim lighting, simple background",
-      "training": "upper body, sitting, looking at viewer, rim lighting, simple background, black turtleneck",
+      "training": "upper body, sitting, looking at viewer, simple background, grey background, black turtleneck",
       "training_prose": "A studio portrait of a bearded man in a black turtleneck sitting against a plain grey backdrop, rim light outlining his shoulders.",
       "zeroshot": "short hair, black turtleneck, beard, 1boy, solo, a studio portrait of a bearded man in a black turtleneck sitting against a plain grey backdrop, rim light outlining his shoulders, looking at viewer, upper body, sitting, rim lighting"
      }
@@ -802,7 +802,7 @@
      "setting": "table, cafe, indoors, window, coffee cup, smile, sitting",
      "lighting": "daylight, coffee cup, smile, sitting, talking, sweater",
      "action": "talking, coffee cup, smile, sitting, sweater, daylight, table",
-     "training": "sitting, smile, daylight, table, cafe, coffee cup",
+     "training": "sitting, smile, talking, sweater, daylight, indoors, coffee cup",
      "training_prose": "Two women chat across a small table in a sunlit cafe, coffee cups between them, soft daylight falling through the window.",
      "zeroshot": "coffee cup, multiple girls, smile, 2girls, sitting, talking, sweater, daylight, two women chat across a small table in a sunlit cafe, coffee cups between them, soft daylight falling through the window, table"
     },
@@ -884,8 +884,8 @@
       "setting": "table, cafe, indoors, window, coffee cup, smile, sitting",
       "lighting": "daylight, coffee cup, smile, sitting, talking, sweater",
       "action": "talking, coffee cup, smile, sitting, sweater, daylight, table",
-      "training": "sitting, smile, sweater, daylight, cafe, indoors, table, coffee cup",
-      "training_prose": "sitting, smile, sweater, daylight, cafe, indoors, table, coffee cup",
+      "training": "sitting, smile, talking, sweater, daylight, table, indoors, coffee cup",
+      "training_prose": "sitting, smile, talking, sweater, daylight, table, indoors, coffee cup",
       "zeroshot": "coffee cup, multiple girls, smile, 2girls, sitting, talking, sweater, daylight, table, cafe"
      }
     },
@@ -912,7 +912,7 @@
       "setting": "table, cafe, indoors, window, coffee cup, smile, sitting",
       "lighting": "daylight, coffee cup, smile, sitting, talking, sweater",
       "action": "talking, coffee cup, smile, sitting, sweater, daylight, table",
-      "training": "sitting, smile, talking, daylight, cafe, table, coffee cup",
+      "training": "sitting, talking, sweater, cafe, indoors, table, coffee cup",
       "training_prose": "Two women chat across a small table in a sunlit cafe, coffee cups between them, soft daylight falling through the window.",
       "zeroshot": "coffee cup, multiple girls, smile, 2girls, sitting, talking, sweater, daylight, two women chat across a small table in a sunlit cafe, coffee cups between them, soft daylight falling through the window, table"
      }
@@ -995,7 +995,7 @@
      "setting": "mountain, lake, outdoors, sky, cloud, tree, scenery",
      "lighting": "golden hour, scenery, reflection, water, mountain",
      "action": "scenery, reflection, water, golden hour, mountain",
-     "training": "golden hour, outdoors, lake, scenery, reflection, water, golden-hour_light",
+     "training": "golden hour, outdoors, mountain, scenery, reflection, water, golden-hour_light",
      "training_prose": "A still alpine lake reflects snow-capped mountains and pine trees in warm golden-hour light, with no people in the scene.",
      "zeroshot": "no humans, scenery, reflection, water, golden hour, a still alpine lake reflects snow-capped mountains and pine trees in warm golden-hour light, with no people in the scene, mountain, lake"
     },
@@ -1071,8 +1071,8 @@
       "setting": "mountain, lake, outdoors, sky, cloud, tree, scenery",
       "lighting": "golden hour, scenery, reflection, water, mountain",
       "action": "scenery, reflection, water, golden hour, mountain",
-      "training": "lake, mountain, outdoors, scenery, reflection, water",
-      "training_prose": "lake, mountain, outdoors, scenery, reflection, water",
+      "training": "golden hour, lake, outdoors, mountain, scenery, reflection, water",
+      "training_prose": "golden hour, lake, outdoors, mountain, scenery, reflection, water",
       "zeroshot": "no humans, scenery, reflection, water, golden hour, mountain, lake, outdoors"
      }
     },
@@ -1099,7 +1099,7 @@
       "setting": "mountain, lake, outdoors, sky, cloud, tree, scenery",
       "lighting": "golden hour, scenery, reflection, water, mountain",
       "action": "scenery, reflection, water, golden hour, mountain",
-      "training": "golden hour, mountain, lake, outdoors, scenery, reflection, water, golden-hour_light",
+      "training": "golden hour, lake, mountain, scenery, reflection, water, golden-hour_light",
       "training_prose": "A still alpine lake reflects snow-capped mountains and pine trees in warm golden-hour light, with no people in the scene.",
       "zeroshot": "no humans, scenery, reflection, water, golden hour, a still alpine lake reflects snow-capped mountains and pine trees in warm golden-hour light, with no people in the scene, mountain, lake"
      }
@@ -1172,7 +1172,7 @@
      "setting": "kitchen, indoors, knife, vegetables, standing, cooking, cutting board",
      "lighting": "warm lighting, knife, vegetables, standing, cooking, cutting board",
      "action": "cooking, cutting board, knife, vegetables, standing, apron, warm lighting, kitchen",
-     "training": "standing, cooking, cutting board, t-shirt, apron, warm lighting, kitchen, indoors",
+     "training": "standing, cutting board, cooking, t-shirt, apron, warm lighting, indoors, kitchen",
      "training_prose": "A man in an apron chops vegetables on a wooden cutting board in a warmly lit home kitchen.",
      "zeroshot": "knife, vegetables, 1boy, solo, standing, cutting board, cooking, apron, t-shirt, warm lighting"
     },
@@ -1253,8 +1253,8 @@
       "setting": "kitchen, indoors, knife, vegetables, standing, cooking, cutting board",
       "lighting": "warm lighting, knife, vegetables, standing, cooking, cutting board",
       "action": "cooking, cutting board, knife, vegetables, standing, apron, warm lighting, kitchen",
-      "training": "standing, cooking, cutting board, t-shirt, apron, warm lighting, kitchen, indoors",
-      "training_prose": "standing, cooking, cutting board, t-shirt, apron, warm lighting, kitchen, indoors",
+      "training": "standing, cooking, cutting board, apron, t-shirt, warm lighting, indoors, knife",
+      "training_prose": "standing, cooking, cutting board, apron, t-shirt, warm lighting, indoors, knife",
       "zeroshot": "knife, vegetables, 1boy, solo, standing, cutting board, cooking, apron, t-shirt, warm lighting"
      }
     },
@@ -1281,7 +1281,7 @@
       "setting": "kitchen, indoors, knife, vegetables, standing, cooking, cutting board",
       "lighting": "warm lighting, knife, vegetables, standing, cooking, cutting board",
       "action": "cooking, cutting board, knife, vegetables, standing, apron, warm lighting, kitchen",
-      "training": "standing, cutting board, apron, t-shirt, warm lighting, kitchen, indoors, knife",
+      "training": "standing, cooking, apron, t-shirt, warm lighting, kitchen, indoors, knife",
       "training_prose": "A man in an apron chops vegetables on a wooden cutting board in a warmly lit home kitchen.",
       "zeroshot": "knife, vegetables, 1boy, solo, standing, cutting board, cooking, apron, t-shirt, warm lighting"
      }
@@ -1358,7 +1358,7 @@
      "setting": "snow, outdoors, park, tree, beanie, smile, running",
      "lighting": "overcast, beanie, smile, running, winter coat, snow",
      "action": "running, beanie, smile, winter coat, overcast, snow",
-     "training": "running, winter coat, scarf, park, snow, outdoors, beanie",
+     "training": "smile, running, scarf, overcast, snow, outdoors, park, beanie",
      "training_prose": "A girl in a winter coat, scarf and knitted beanie runs through a snowy park under an overcast sky.",
      "zeroshot": "beanie, smile, 1girl, solo, running, winter coat, scarf, overcast, snow, outdoors"
     },
@@ -1439,8 +1439,8 @@
       "setting": "snow, outdoors, park, tree, beanie, smile, running",
       "lighting": "overcast, beanie, smile, running, winter coat, snow",
       "action": "running, beanie, smile, winter coat, overcast, snow",
-      "training": "smile, running, winter coat, scarf, overcast, park, outdoors, snow",
-      "training_prose": "smile, running, winter coat, scarf, overcast, park, outdoors, snow",
+      "training": "running, winter coat, overcast, snow, outdoors, beanie",
+      "training_prose": "running, winter coat, overcast, snow, outdoors, beanie",
       "zeroshot": "beanie, smile, 1girl, solo, running, winter coat, scarf, overcast, snow, outdoors"
      }
     },
@@ -1467,7 +1467,7 @@
       "setting": "snow, outdoors, park, tree, beanie, smile, running",
       "lighting": "overcast, beanie, smile, running, winter coat, snow",
       "action": "running, beanie, smile, winter coat, overcast, snow",
-      "training": "smile, running, winter coat, outdoors, park, snow, beanie",
+      "training": "smile, running, winter coat, scarf, overcast, snow, park, beanie",
       "training_prose": "A girl in a winter coat, scarf and knitted beanie runs through a snowy park under an overcast sky.",
       "zeroshot": "beanie, smile, 1girl, solo, running, winter coat, scarf, overcast, snow, outdoors"
      }
@@ -1548,7 +1548,7 @@
      "setting": "rooftop, city, outdoors, group, string lights, evening, standing",
      "lighting": "group, string lights, evening, standing, laughing, rooftop",
      "action": "laughing, group, string lights, evening, standing, rooftop",
-     "training": "standing, laughing, outdoors, group, string lights, evening, drink",
+     "training": "standing, laughing, rooftop, outdoors, city, group, string lights, evening",
      "training_prose": "A group of friends laugh together on a city rooftop in the evening under strings of warm fairy lights.",
      "zeroshot": "string lights, multiple boys, multiple girls, group, evening, drink, standing, laughing, rooftop, city"
     },
@@ -1625,8 +1625,8 @@
       "setting": "rooftop, city, outdoors, group, string lights, evening, standing",
       "lighting": "group, string lights, evening, standing, laughing, rooftop",
       "action": "laughing, group, string lights, evening, standing, rooftop",
-      "training": "standing, laughing, rooftop, group, string lights, evening, drink",
-      "training_prose": "standing, laughing, rooftop, group, string lights, evening, drink",
+      "training": "standing, city, outdoors, group, string lights, evening, drink",
+      "training_prose": "standing, city, outdoors, group, string lights, evening, drink",
       "zeroshot": "string lights, multiple boys, multiple girls, group, evening, drink, standing, laughing, rooftop, city"
      }
     },
@@ -1653,7 +1653,7 @@
       "setting": "rooftop, city, outdoors, group, string lights, evening, standing",
       "lighting": "group, string lights, evening, standing, laughing, rooftop",
       "action": "laughing, group, string lights, evening, standing, rooftop",
-      "training": "standing, laughing, rooftop, city, group, string lights, evening, drink",
+      "training": "standing, laughing, rooftop, outdoors, city, group, string lights, evening",
       "training_prose": "A group of friends laugh together on a city rooftop in the evening under strings of warm fairy lights.",
       "zeroshot": "string lights, multiple boys, multiple girls, group, evening, drink, standing, laughing, rooftop, city"
      }
@@ -1729,8 +1729,8 @@
      "setting": "vintage car, road, desert, outdoors, sky, day",
      "lighting": "day, sunlight, shadow, car",
      "action": "day, car",
-     "training": "sunlight, vintage car, road",
-     "training_prose": "sunlight, vintage car, road",
+     "training": "day, sunlight, road, vintage car",
+     "training_prose": "day, sunlight, road, vintage car",
      "zeroshot": "no humans, day, sunlight, vintage car, road"
     },
     "selected_category": "identity",
@@ -1960,7 +1960,7 @@
      "setting": "rain, street, city, outdoors, umbrella, blue hour, standing",
      "lighting": "blue hour, standing, holding umbrella, trench coat, rain",
      "action": "holding umbrella, blue hour, standing, trench coat, rain",
-     "training": "standing, holding umbrella, trench coat, city, rain, street, blue hour",
+     "training": "standing, trench coat, city, rain, street, umbrella, blue hour",
      "training_prose": "A woman in a beige trench coat stands holding an umbrella on a rainy street during the blue hour.",
      "zeroshot": "blue hour, 1girl, solo, standing, holding umbrella, trench coat, rain, street, city"
     },
@@ -2040,8 +2040,8 @@
       "setting": "rain, street, city, outdoors, umbrella, blue hour, standing",
       "lighting": "blue hour, standing, holding umbrella, trench coat, rain",
       "action": "holding umbrella, blue hour, standing, trench coat, rain",
-      "training": "standing, holding umbrella, rain, street, city, blue hour",
-      "training_prose": "standing, holding umbrella, rain, street, city, blue hour",
+      "training": "standing, trench coat, street, rain, city, umbrella, blue hour",
+      "training_prose": "standing, trench coat, street, rain, city, umbrella, blue hour",
       "zeroshot": "blue hour, 1girl, solo, standing, holding umbrella, trench coat, rain, street, city"
      }
     },
@@ -2068,7 +2068,7 @@
       "setting": "rain, street, city, outdoors, umbrella, blue hour, standing",
       "lighting": "blue hour, standing, holding umbrella, trench coat, rain",
       "action": "holding umbrella, blue hour, standing, trench coat, rain",
-      "training": "standing, holding umbrella, rain, city, blue hour",
+      "training": "standing, holding umbrella, trench coat, city, street, blue hour",
       "training_prose": "A woman in a beige trench coat stands holding an umbrella on a rainy street during the blue hour.",
       "zeroshot": "blue hour, 1girl, solo, standing, holding umbrella, trench coat, rain, street, city"
      }
