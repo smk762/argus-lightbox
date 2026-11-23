@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `compose.yaml` labels the lens container for the suite directory (smk762/argus-cortex#212): `argus.peer: lens`, `argus.service: argus-lens`, `argus.health: /health` and `argus.port: "8100"`, with `ARGUS_PEER=lens` in its environment. argus-iris's node agents read the labels; nothing else does, so a host without iris is unaffected. The lightbox container is the UI and carries none. The pinned lens 0.10.0 predates argus-cortex 0.16's health contract, so the directory lists it with its health marked off contract until `LENS_TAG` moves to a release that has it.
+
 ## [0.2.0] - 2026-11-19
 
 ### Added
