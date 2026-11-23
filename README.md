@@ -107,6 +107,8 @@ The caption cache is keyed by each photo's sha256 plus `CAPTION_CACHE_KEY`, a ca
 
 The container has to be able to read the mount. On a NAS export that squashes root, the files need to be world-readable.
 
+The lens container carries the suite's discovery labels (`argus.peer: lens`, `argus.service`, `argus.health`, `argus.port`), which argus-iris's node agents read to list it in the suite directory. Nothing else reads them.
+
 Running the folder bake without Docker (against a lens server you already run) is covered in [docs/cli.md](docs/cli.md).
 
 ### Choosing the final caption

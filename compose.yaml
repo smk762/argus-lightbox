@@ -40,7 +40,18 @@ name: argus-lightbox
 services:
   lens:
     image: ghcr.io/smk762/argus-lens:${LENS_TAG:-0.10.0}
+    # How the suite finds this service (argus-cortex#212): argus-iris's node agents read these
+    # labels and list it in the suite directory as peer "lens". The port is the one lens listens
+    # on in this stack (docker/lens-backend.sh starts it on 8100, not the image's 8080).
+    labels:
+      argus.peer: lens
+      argus.service: argus-lens
+      argus.health: /health
+      argus.port: "8100"
     environment:
+      # The argus.peer label above, for a lens with argus-cortex 0.16's health contract to
+      # report in /health. Lens 0.10.0 ignores it.
+      ARGUS_PEER: lens
       ARGUS_BACKEND: ${ARGUS_BACKEND:-}
       ARGUS_REFINE: ${ARGUS_REFINE:-}
       OLLAMA_URL: ${OLLAMA_URL:-}
