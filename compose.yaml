@@ -100,7 +100,7 @@ services:
       start_period: 90s
     restart: unless-stopped
 
-  lightbox:
+  lightbox:  # nosemgrep: service-peer-label  the gallery UI, not a suite service (its /health is not ServiceHealth)
     build:
       context: .
       args:
